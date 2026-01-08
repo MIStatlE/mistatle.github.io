@@ -6,31 +6,24 @@
     <title>MIStatlE | Math & Intelligence</title>
     <meta name="description" content="Bridging the gap between Abstract Theory & Concrete Reality.">
     
-    <!-- 核心依赖 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- 样式库 (Tailwind CSS) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 图标库 (Lucide) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Markdown 解析器 (Marked) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
-    <!-- 数学公式 (KaTeX) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     
-    <!-- 代码高亮 (PrismJS) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
-    <!-- 字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
@@ -76,8 +69,23 @@
         .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
         .prose li { margin-bottom: 0.5rem; }
         
-        .katex-display { overflow-x: auto; overflow-y: hidden; padding: 10px 0; }
+        /* 公式滚动优化 */
+        .katex-display { 
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            padding: 1rem 0; 
+            -webkit-overflow-scrolling: touch;
+        }
+        .katex-display > .katex {
+            white-space: normal;
+            max-width: 100%;
+        }
+
         pre[class*="language-"] { border-radius: 8px; margin: 1.5em 0; font-size: 0.85em; padding: 1.5em !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        
+        /* 移动端菜单动画 */
+        .slide-down { animation: slideDown 0.3s ease-out forwards; transform-origin: top; }
+        @keyframes slideDown { from { opacity: 0; transform: scaleY(0.95); } to { opacity: 1; transform: scaleY(1); } }
     </style>
 </head>
 <body>
@@ -125,19 +133,22 @@
             ]
         };
 
-        // --- 工具组件 ---
+        // --- 工具组件 (修复版：更稳定的 Icon 渲染) ---
         const Icon = ({ name, size = 20, className, ...props }) => {
             const iconRef = useRef(null);
+            
             useEffect(() => {
-                if (window.lucide) {
+                if (window.lucide && iconRef.current) {
+                    // 先清空避免重复
+                    iconRef.current.innerHTML = `<i data-lucide="${name}"></i>`;
                     window.lucide.createIcons({
-                        root: iconRef.current ? iconRef.current.parentNode : document,
-                        nameAttr: 'data-lucide',
+                        root: iconRef.current,
                         attrs: { width: size, height: size, class: className || '' }
                     });
                 }
             }, [name, size, className]);
-            return <i ref={iconRef} data-lucide={name} className={className} {...props}></i>;
+
+            return <span ref={iconRef} style={{ display: 'inline-flex', verticalAlign: 'middle' }} {...props}></span>;
         };
 
         // --- 统一的 "Action Button" ---
@@ -190,33 +201,56 @@
             </a>
         );
 
-        // --- 导航栏 (Navbar) ---
-        // 修改点：移除右侧单独的 Tools 图标，将 Tools 加入中间的胶囊式导航
-        const Navbar = ({ activeTab, setActiveTab }) => (
-          <nav className="sticky top-0 z-50 glass-nav transition-all duration-300">
-            <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-              <div onClick={() => setActiveTab('home')}><Logo /></div>
-              
-              {/* 胶囊式导航菜单 */}
-              <div className="hidden lg:flex items-center gap-1 bg-stone-100/50 p-1 rounded-full border border-stone-200/50">
-                {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
-                  <button key={item} onClick={() => setActiveTab(item)} 
-                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}>
-                    {item.charAt(0).toUpperCase() + item.slice(1)}
-                  </button>
-                ))}
-              </div>
-              
-              <div className="hidden lg:flex items-center gap-4">
-                  {/* Tools 图标已移除，移入上方列表 */}
-                  <button onClick={() => setActiveTab('community')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">ABOUT</button>
-              </div>
-              <div className="lg:hidden"><Icon name="menu" className="text-stone-800" /></div>
-            </div>
-          </nav>
-        );
+        // --- 导航栏 (Navbar) - 修复移动端交互 ---
+        const Navbar = ({ activeTab, setActiveTab }) => {
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-// --- 最终修复版 ArticleReader (兼容新版 Marked) ---
+            const handleTabClick = (tab) => {
+                setActiveTab(tab);
+                setIsMenuOpen(false); // 点击后关闭菜单
+            };
+
+            return (
+                <nav className="sticky top-0 z-50 glass-nav transition-all duration-300">
+                    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                        <div onClick={() => handleTabClick('home')}><Logo /></div>
+                        
+                        {/* 桌面端导航 */}
+                        <div className="hidden lg:flex items-center gap-1 bg-stone-100/50 p-1 rounded-full border border-stone-200/50">
+                            {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
+                                <button key={item} onClick={() => setActiveTab(item)} 
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}>
+                                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+                        
+                        <div className="hidden lg:flex items-center gap-4">
+                            <button onClick={() => setActiveTab('community')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">ABOUT</button>
+                        </div>
+
+                        {/* 移动端汉堡按钮 */}
+                        <div className="lg:hidden cursor-pointer p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                            <Icon name={isMenuOpen ? "x" : "menu"} className="text-stone-800" />
+                        </div>
+                    </div>
+
+                    {/* 移动端下拉菜单 */}
+                    {isMenuOpen && (
+                        <div className="lg:hidden absolute top-20 left-0 w-full bg-[#fafaf9] border-b border-stone-200 shadow-xl p-4 flex flex-col gap-2 slide-down">
+                            {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
+                                <button key={item} onClick={() => handleTabClick(item)} 
+                                    className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}>
+                                    {item.toUpperCase()}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </nav>
+            );
+        };
+
+        // --- ArticleReader ---
         const ArticleReader = ({ item, onBack }) => {
             const [state, setState] = useState({ 
                 content: '', 
@@ -270,25 +304,21 @@
                         const { meta, body } = parseMetadata(text);
                         const renderer = new marked.Renderer();
                         
-                        // ⭐️ 核心修复：兼容新旧版本的参数传递
+                        // 兼容新旧版本的代码高亮参数
                         renderer.code = function(entry, langStr) {
-                            // 判断 entry 是字符串还是对象
                             let codeContent = '';
                             let codeLang = '';
 
                             if (typeof entry === 'object') {
-                                // 新版 marked 传入的是对象 { text: "...", lang: "..." }
                                 codeContent = entry.text || '';
                                 codeLang = entry.lang || 'text';
                             } else {
-                                // 旧版 marked 传入的是字符串
                                 codeContent = entry || '';
                                 codeLang = langStr || 'text';
                             }
 
                             const validLang = (codeLang || 'text').toLowerCase();
                             
-                            // 数据处理
                             const buttonData = encodeURIComponent(codeContent);
                             const displayCode = codeContent
                                 .replace(/&/g, '&amp;')
@@ -420,7 +450,7 @@
             );
         };
 
-        // --- Hero (无变动) ---
+        // --- Hero ---
         const Hero = ({ setActiveTab }) => (
           <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[75vh] relative">
             <div className="absolute right-0 top-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
@@ -459,7 +489,7 @@
           </div>
         );
 
-        // --- Library (无变动) ---
+        // --- Library ---
         const Library = ({ onRead, data }) => {
           const [selectedDiscipline, setSelectedDiscipline] = useState(null);
           
@@ -524,7 +554,7 @@
           );
         };
 
-        // --- Papers (Refined Version 3) ---
+        // --- Papers ---
         const Papers = ({ data, onRead }) => {
             const [selectedTheme, setSelectedTheme] = useState(null);
             
@@ -604,7 +634,7 @@
             );
         };
 
-        // --- Lab (无变动) ---
+        // --- Lab ---
         const Lab = ({ data }) => (
             <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
                 <div className="flex items-end justify-between mb-12 border-b border-stone-200 pb-4">
@@ -653,7 +683,7 @@
             </div>
         );
 
-        // --- Posts (无变动) ---
+        // --- Posts ---
         const Posts = ({ data, onRead }) => (
             <div className="max-w-4xl mx-auto px-6 py-20 fade-in min-h-screen">
                  <div className="text-center mb-20">
@@ -692,7 +722,7 @@
             </div>
         );
 
-        // --- Tools (Refined Version 3) ---
+        // --- Tools ---
         const Tools = ({ data, onRead }) => (
             <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
                 <div className="flex items-center gap-4 mb-12">
@@ -719,7 +749,6 @@
                             <h3 className="font-bold text-lg mb-2 text-stone-800 group-hover:text-blue-900 font-sans tracking-tight">{tool.title}</h3>
                             <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">{tool.desc}</p>
                             
-                            {/* 使用统一的 ActionButton */}
                             <ActionButton text="View Guide" />
                         </div>
                     )) : <div className="text-stone-400">No tools loaded.</div>}
@@ -727,7 +756,7 @@
             </div>
         );
 
-        // --- Community (无变动) ---
+        // --- Community ---
         const Community = () => (
             <div className="max-w-4xl mx-auto px-6 py-24 fade-in min-h-screen flex flex-col items-center text-center">
                 <div className="mb-8 text-blue-900"><Icon name="users" size={64} strokeWidth={1} /></div>
@@ -761,6 +790,11 @@
           const [db, setDb] = useState(DEFAULT_DB);
           const [loading, setLoading] = useState(true);
           
+          // 修复：页面切换自动回到顶部
+          useEffect(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, [activeTab, readingItem]);
+
           useEffect(() => {
             const safeFetch = async (url) => {
                 try {
@@ -768,6 +802,7 @@
                     if (!res.ok) throw new Error(res.statusText);
                     return await res.json();
                 } catch (e) {
+                    console.log(`Failed to load ${url}, using default.`);
                     return null;
                 }
             };
