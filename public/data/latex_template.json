@@ -1,0 +1,20 @@
+[
+  {
+    "id": "cover-v7",
+    "title": "Academic Light Cover (V7)",
+    "desc": "极简学术风格封面，包含流形可视化与神经网络拓扑图，适合博士论文或讲义。",
+    "icon": "layout",
+    "tags": ["Book", "TikZ"],
+    "filePath": "data/templates/cover_v7.md",
+    "link": null
+  },
+  {
+    "id": "codex-structure",
+    "title": "The Codex Structure",
+    "desc": "专为 1000+ 页长篇笔记设计的分卷管理架构 (Part -> Chapter)，支持无限扩展。",
+    "icon": "library",
+    "tags": ["Architecture", "Overleaf"],
+    "filePath": "data/templates/codex_structure.md",
+    "link": null
+  }
+]
