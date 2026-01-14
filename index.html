@@ -723,38 +723,89 @@
         );
 
         // --- Tools ---
-        const Tools = ({ data, onRead }) => (
-            <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-                <div className="flex items-center gap-4 mb-12">
-                    <h2 className="text-4xl font-serif font-bold text-stone-900">Toolbox</h2>
-                    <div className="h-px bg-stone-200 flex-grow"></div>
+        // --- Updated Tools Component ---
+const Tools = ({ data, onRead }) => {
+    // 解构数据，如果没有分层则做容错处理
+    const generalTools = data.general || data || [];
+    const latexTemplates = data.latex || [];
+
+    // 提取公共的卡片渲染逻辑 (DRY原则)
+    const ToolCard = ({ item }) => (
+        <div onClick={() => item.filePath ? onRead(item) : (item.link && window.open(item.link))} 
+             className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900">
+            
+            {/* 外部链接图标 */}
+            {item.link && (
+                <div className="absolute top-4 right-4 text-stone-300 hover:text-blue-900 transition-colors p-2">
+                    <Icon name="external-link" size={16} />
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {data && data.length > 0 ? data.map(tool => (
-                        <div key={tool.id} onClick={() => onRead(tool)} className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900">
-                            
-                            {tool.link && (
-                                <a href={tool.link} target="_blank" onClick={(e) => e.stopPropagation()} className="absolute top-4 right-4 text-stone-300 hover:text-blue-900 transition-colors p-2" title="Visit Official Site">
-                                    <Icon name="external-link" size={16} />
-                                </a>
-                            )}
-                            
-                            <div className="mb-6 flex items-center justify-between">
-                                <div className="w-12 h-12 bg-stone-50 rounded-lg flex items-center justify-center text-stone-400 group-hover:text-blue-900 group-hover:bg-blue-50 transition-colors">
-                                    <Icon name={tool.icon || "box"} size={24}/>
-                                </div>
-                            </div>
-                            
-                            <h3 className="font-bold text-lg mb-2 text-stone-800 group-hover:text-blue-900 font-sans tracking-tight">{tool.title}</h3>
-                            <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">{tool.desc}</p>
-                            
-                            <ActionButton text="View Guide" />
-                        </div>
-                    )) : <div className="text-stone-400">No tools loaded.</div>}
+            )}
+            
+            <div className="mb-6 flex items-center justify-between">
+                <div className="w-12 h-12 bg-stone-50 rounded-lg flex items-center justify-center text-stone-400 group-hover:text-blue-900 group-hover:bg-blue-50 transition-colors">
+                    <Icon name={item.icon || "box"} size={24}/>
+                </div>
+                {/* 如果有 Tags 就显示 */}
+                {item.tags && (
+                    <div className="flex gap-1">
+                        {item.tags.map(t => (
+                            <span key={t} className="text-[10px] font-mono text-stone-400 border border-stone-100 px-1.5 py-0.5 rounded uppercase">{t}</span>
+                        ))}
+                    </div>
+                )}
+            </div>
+            
+            <h3 className="font-bold text-lg mb-2 text-stone-800 group-hover:text-blue-900 font-sans tracking-tight">
+                {item.title}
+            </h3>
+            <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">
+                {item.desc}
+            </p>
+            
+            {/* 按钮根据是否有 filePath 变化 */}
+            <div className="mt-auto pt-4 border-t border-stone-100 flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors">
+                <span className="font-semibold">{item.filePath ? "View Code" : "Open Tool"}</span>
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-16">
+                <h2 className="text-4xl font-serif font-bold text-stone-900">Workbench</h2>
+                <div className="h-px bg-stone-200 flex-grow"></div>
+            </div>
+
+            {/* Section 1: LaTeX Templates */}
+            <div className="mb-20">
+                <div className="flex items-center gap-2 mb-8">
+                    <Icon name="file-code" size={20} className="text-blue-900"/>
+                    <h3 className="text-xl font-bold text-stone-800 font-serif">LaTeX Templates</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {latexTemplates.length > 0 ? latexTemplates.map(t => (
+                        <ToolCard key={t.id} item={t} />
+                    )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">No templates loaded. Check latex_templates.json</div>}
                 </div>
             </div>
-        );
+
+            {/* Section 2: General Utilities */}
+            <div>
+                <div className="flex items-center gap-2 mb-8">
+                    <Icon name="box" size={20} className="text-stone-400"/>
+                    <h3 className="text-xl font-bold text-stone-400 font-serif">General Utilities</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {generalTools.length > 0 ? generalTools.map(t => (
+                        <ToolCard key={t.id} item={t} />
+                    )) : <div className="text-stone-400">No general tools loaded.</div>}
+                </div>
+            </div>
+        </div>
+    );
+};
 
         // --- Community ---
         const Community = () => (
