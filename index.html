@@ -864,7 +864,7 @@ const Tools = ({ data, onRead }) => {
                 safeFetch('public/data/lab.json'),
                 safeFetch('public/data/post.json'),
                 safeFetch('public/data/tools.json'),
-                safeFetch('public/data/latex_template.json') 
+                safeFetch('public/data/latex_templates.json') 
   ]).then(([library, papers, lab, posts, tools, latexTemplates]) => {
       setDb(prev => ({
           library: library || prev.library,
