@@ -42,7 +42,7 @@ tags: [LaTeX, TColorBox, Cheatsheet, Minimalist]
 \usepackage{geometry}
 \usepackage{xcolor}
 \usepackage{titlesec}
-\usepackage[fontset=mac]{ctex} % Windows users: change to [fontset=windows]
+\usepackage[fontset=fandol]{ctex}
 \usepackage{tikz,eso-pic}
 \usetikzlibrary{positioning,calc,shadows,shapes.misc}
 \usepackage{fancyhdr}
@@ -149,7 +149,7 @@ tags: [LaTeX, TColorBox, Cheatsheet, Minimalist]
 % 2. Generate Header (Title, Subtitle, Tags)
 \MakeShortHeader
   {Fisher Information}
-  {Regularity, Asymptotic Normality & Geometry}
+  {Regularity, Asymptotic Normality \& Geometry}
   {Statistics, Geometry, MLE}
 
 % 3. Use Pre-defined Environments
