@@ -134,3 +134,45 @@ tags: [LaTeX, TColorBox, Cheatsheet, Minimalist]
 % --- 8. Macros ---
 \newcommand{\Term}[1]{\textcolor{termblue}{\textbf{#1}}}
 \fancyhf{} \renewcommand{\headrulewidth}{0pt} \fancyfoot[C]{\footnotesize\color{brand!50} · \thepage \ ·} \pagestyle{fancy}
+```
+✍️ Step 2: Write Your Content (编写内容)
+
+新建 main.tex，使用 \input 导入样式，然后专注于写作。
+```latex
+\documentclass[12pt]{article}
+
+% 1. Import the style template
+\input{short-template.tex}
+
+\begin{document}
+
+% 2. Generate Header (Title, Subtitle, Tags)
+\MakeShortHeader
+  {Fisher Information}
+  {Regularity, Asymptotic Normality & Geometry}
+  {Statistics, Geometry, MLE}
+
+% 3. Use Pre-defined Environments
+\begin{KeyBox}
+    Fisher Information is not just the variance bound; it is the intrinsic \Term{Riemannian Metric} of the parameter space.
+\end{KeyBox}
+
+\section{Core Concepts}
+
+\begin{Definition}[Score Function]
+    The gradient of the log-likelihood: $\mathbf{s}(\theta) = \nabla_\theta \log p(x;\theta)$.
+    It has the property $\mathbb{E}[\mathbf{s}(\theta)] = 0$.
+\end{Definition}
+
+\begin{Theorem}[Cramér-Rao Lower Bound]
+    For any unbiased estimator $\hat{\theta}$:
+    \[ \text{Var}(\hat{\theta}) \ge \mathcal{I}(\theta)^{-1} \]
+\end{Theorem}
+
+\begin{Takeaway}
+    In high-dimensional spaces, the curvature of the log-likelihood (Fisher Info) determines the convergence speed of SGD.
+\end{Takeaway}
+
+\end{document}
+```
+
