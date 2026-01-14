@@ -912,16 +912,16 @@ const Tools = ({ data, onRead }) => {
           }, [activeTab, readingItem]);
 
           useEffect(() => {
-            const safeFetch = async (url) => {
-                try {
-                    const res = await fetch(url);
-                    if (!res.ok) throw new Error(res.statusText);
-                    return await res.json();
-                } catch (e) {
-                    console.log(`Failed to load ${url}, using default.`);
-                    return null;
-                }
-            };
+    const safeFetch = async (url) => {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(res.statusText);
+            return await res.json();
+        } catch (e) {
+            console.error(`Load failed: ${url}`, e);
+            return null; // 失败返回 null
+        }
+    };
 
             Promise.all([
                 safeFetch('public/data/library.json'),
@@ -930,23 +930,22 @@ const Tools = ({ data, onRead }) => {
                 safeFetch('public/data/post.json'),
                 safeFetch('public/data/tools.json'),
                 safeFetch('public/data/latex_templates.json') 
-  ]).then(([library, papers, lab, posts, tools, latexTemplates]) => {
-      setDb(prev => ({
-          library: library || prev.library,
-          papers: papers || prev.papers,
-          lab: lab || prev.lab,
-          posts: posts || prev.posts,
-          // [修改] 将通用工具和模板分开存，或者存为一个对象
-          tools: {
-            // 如果 fetch 成功则用 fetch 的，否则用默认数据的 general 字段
-            general: tools || prev.tools.general || [], 
-            // 如果 fetch 成功则用 fetch 的，否则用默认数据的 latex 字段
-            latex: latexTemplates || prev.tools.latex || [] 
-        }
-      }));
-                setLoading(false);
-            });
-          }, []);
+  ]).then(([library, papers, lab, posts, toolsData, latexData]) => {
+        
+        setDb(prev => ({
+            library: library || prev.library,
+            papers: papers || prev.papers,
+            lab: lab || prev.lab,
+            posts: posts || prev.posts,
+            // [核心修改] 将两个 fetch 结果合并到一个对象中
+            tools: {
+                general: toolsData || [],      // 来自 tools.json
+                latex: latexData || []         // 来自 latex_templates.json
+            }
+        }));
+        setLoading(false);
+    });
+}, []);
 
           const renderContent = () => {
             if (readingItem) return <ArticleReader item={readingItem} onBack={() => setReadingItem(null)} />;
