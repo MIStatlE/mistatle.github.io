@@ -226,7 +226,10 @@
                         </div>
                         
                         <div className="hidden lg:flex items-center gap-4">
-                            <button onClick={() => setActiveTab('community')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">ABOUT</button>
+    {/* 修改这里：onClick 传入 'about' */}
+                             <button onClick={() => setActiveTab('about')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">
+                                 ABOUT
+                             </button>
                         </div>
 
                         {/* 移动端汉堡按钮 */}
@@ -683,6 +686,55 @@
             </div>
         );
 
+        // --- [NEW] About Component ---
+// 专门用于右上角 "ABOUT" 点击后的自我介绍
+const About = () => (
+    <div className="max-w-3xl mx-auto px-6 py-32 fade-in min-h-screen flex flex-col justify-center items-center text-center">
+        
+        {/* 1. 抽象符号：莫比乌斯环 (象征无限循环与迭代) */}
+        <div className="mb-16 text-stone-300">
+            <svg width="60" height="30" viewBox="0 0 120 60" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M10 30 C 10 10, 40 10, 60 30 S 110 50, 110 30 S 80 10, 60 30 S 10 50, 10 30 Z" />
+            </svg>
+        </div>
+
+        {/* 2. 模糊的身份定义 */}
+        <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-12 tracking-tight">
+            The Archivist & The Builder
+        </h1>
+
+        <div className="max-w-xl text-lg md:text-xl text-stone-600 font-serif leading-loose space-y-8 font-light">
+            <p>
+                I am a Ph.D. student exploring the theoretical boundaries of <span className="text-stone-900 font-normal">Machine Intelligence</span>.
+            </p>
+            
+            <p>
+                My work lies at the intersection of <span className="italic">High-Dimensional Probability</span>, <span className="italic">Optimization</span>, and <span className="italic">Generative Models</span>.
+            </p>
+
+            <div className="w-8 h-px bg-stone-200 mx-auto my-8"></div>
+
+            <p>
+                An <strong>INFP</strong> driven by logic. <br/>
+                Building systems to bridge the gap between abstract axioms and concrete reality.
+            </p>
+        </div>
+
+        {/* 3. 兴趣关键词 (Tags) */}
+        <div className="mt-16 flex flex-wrap justify-center gap-3">
+            {['Math Theory', 'Deep Learning', 'Photography', 'Long-termism'].map(tag => (
+                <span key={tag} className="px-3 py-1 border border-stone-200 text-stone-400 text-[10px] font-mono uppercase tracking-widest rounded-full">
+                    {tag}
+                </span>
+            ))}
+        </div>
+
+        {/* 4. 签名/日期 */}
+        <div className="mt-24 text-xs font-mono text-stone-300 uppercase tracking-widest">
+            Shanghai · {new Date().getFullYear()}
+        </div>
+    </div>
+);
         // --- Posts ---
         const Posts = ({ data, onRead }) => (
             <div className="max-w-4xl mx-auto px-6 py-20 fade-in min-h-screen">
@@ -894,6 +946,7 @@ const Tools = ({ data, onRead }) => {
               case 'posts': return <Posts data={db.posts} onRead={setReadingItem} />;
               case 'tools': return <Tools data={db.tools} onRead={setReadingItem} />;
               case 'community': return <Community />;
+              case 'about': return <About />;
               default: return <Hero setActiveTab={setActiveTab} />;
             }
           };
