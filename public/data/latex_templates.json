@@ -5,7 +5,7 @@
     "desc": "极简模板，融合了小红书卡片美学与 Notion 风格。",
     "icon": "file-text", 
     "tags": ["Cheatsheet", "TColorBox"],
-    "filePath": "data/templates/short_note.md",
+    "filePath": "public/data/templates/short_note.md",
     "link": null
   }
 ]
