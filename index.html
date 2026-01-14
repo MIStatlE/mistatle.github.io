@@ -128,9 +128,22 @@
                 { id: "math-intuition", date: "Nov 10, 2024", category: "PHILOSOPHY", title: "在数学的严谨与直觉之间", desc: "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在AI研究中发挥作用。", filePath: "data/posts/math_intuition.md" },
                 { id: "why-entropy", date: "Oct 24, 2024", category: "INFORMATION THEORY", title: "熵：不仅仅是混乱度", desc: "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。", filePath: "data/posts/entropy.md" }
             ],
-            tools: [
-                { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/", filePath: "" }
-            ]
+            tools: {
+        general: [
+            { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/", filePath: "" }
+        ],
+        latex: [
+            // 这里可以放一个硬编码的模板作为兜底，确认代码逻辑没问题
+            { 
+                id: "demo-template", 
+                title: "Template Placeholder", 
+                desc: "If you see this, the code logic is correct but fetch failed.", 
+                icon: "layout", 
+                tags: ["Debug"], 
+                filePath: "" 
+            }
+        ]
+    }
         };
 
         // --- 工具组件 (修复版：更稳定的 Icon 渲染) ---
@@ -688,50 +701,50 @@
 
         // --- [NEW] About Component ---
 // 专门用于右上角 "ABOUT" 点击后的自我介绍
+// --- [Redesigned] About Component ---
 const About = () => (
-    <div className="max-w-3xl mx-auto px-6 py-32 fade-in min-h-screen flex flex-col justify-center items-center text-center">
+    <div className="max-w-2xl mx-auto px-6 py-40 fade-in min-h-screen flex flex-col items-center justify-center text-center">
         
-        {/* 1. 抽象符号：莫比乌斯环 (象征无限循环与迭代) */}
-        <div className="mb-16 text-stone-300">
-            <svg width="60" height="30" viewBox="0 0 120 60" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M10 30 C 10 10, 40 10, 60 30 S 110 50, 110 30 S 80 10, 60 30 S 10 50, 10 30 Z" />
-            </svg>
+        {/* 1. 核心图腾：极简的奇点/原点 */}
+        <div className="relative mb-16 group">
+            <div className="absolute -inset-4 bg-blue-100 rounded-full opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-700"></div>
+            <div className="relative text-stone-800 font-serif text-6xl">
+                ∞
+            </div>
         </div>
 
-        {/* 2. 模糊的身份定义 */}
-        <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-12 tracking-tight">
-            The Archivist & The Builder
+        {/* 2. 身份定义 (The Persona) */}
+        <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 mb-6 tracking-tight">
+            Theorist <span className="text-stone-300 font-light mx-2">&</span> Builder
         </h1>
 
-        <div className="max-w-xl text-lg md:text-xl text-stone-600 font-serif leading-loose space-y-8 font-light">
+        <p className="font-mono text-xs text-stone-400 uppercase tracking-[0.4em] mb-16">
+            INFP · Researcher · Idealist
+        </p>
+
+        {/* 3. 宣言 (The Manifesto) - 少即是多 */}
+        <div className="space-y-8 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
             <p>
-                I am a Ph.D. student exploring the theoretical boundaries of <span className="text-stone-900 font-normal">Machine Intelligence</span>.
+                Seeking the <span className="text-stone-900 font-normal">Geometry</span> hidden in the noise.
             </p>
             
             <p>
-                My work lies at the intersection of <span className="italic">High-Dimensional Probability</span>, <span className="italic">Optimization</span>, and <span className="italic">Generative Models</span>.
+                Bridging the chasm between <br/>
+                <span className="italic">Abstract Axioms</span> and <span className="italic">Concrete Reality</span>.
             </p>
 
-            <div className="w-8 h-px bg-stone-200 mx-auto my-8"></div>
+            <div className="w-px h-12 bg-stone-200 mx-auto my-8"></div>
 
-            <p>
-                An <strong>INFP</strong> driven by logic. <br/>
-                Building systems to bridge the gap between abstract axioms and concrete reality.
+            <p className="text-base text-stone-500">
+                Writing the code for intelligence,<br/> 
+                one theorem at a time.
             </p>
         </div>
 
-        {/* 3. 兴趣关键词 (Tags) */}
-        <div className="mt-16 flex flex-wrap justify-center gap-3">
-            {['Math Theory', 'Deep Learning', 'Photography', 'Long-termism'].map(tag => (
-                <span key={tag} className="px-3 py-1 border border-stone-200 text-stone-400 text-[10px] font-mono uppercase tracking-widest rounded-full">
-                    {tag}
-                </span>
-            ))}
-        </div>
-
-        {/* 4. 签名/日期 */}
-        <div className="mt-24 text-xs font-mono text-stone-300 uppercase tracking-widest">
-            Shanghai · {new Date().getFullYear()}
+        {/* 4. 极简页脚 */}
+        <div className="mt-32 pt-8 border-t border-stone-100 w-full max-w-xs flex justify-between text-[10px] font-mono text-stone-300 uppercase tracking-widest">
+            <span>Shanghai</span>
+            <span>Est. 2025</span>
         </div>
     </div>
 );
@@ -925,9 +938,11 @@ const Tools = ({ data, onRead }) => {
           posts: posts || prev.posts,
           // [修改] 将通用工具和模板分开存，或者存为一个对象
           tools: {
-              general: tools || prev.tools,
-              latex: latexTemplates || [] 
-          }
+            // 如果 fetch 成功则用 fetch 的，否则用默认数据的 general 字段
+            general: tools || prev.tools.general || [], 
+            // 如果 fetch 成功则用 fetch 的，否则用默认数据的 latex 字段
+            latex: latexTemplates || prev.tools.latex || [] 
+        }
       }));
                 setLoading(false);
             });
