@@ -1,5 +1,14 @@
 [
   {
+    "id": "short-note",
+    "title": "Short Note",
+    "desc": "极简模板，融合了小红书卡片美学与 Notion 风格。",
+    "icon": "file-text", 
+    "tags": ["Cheatsheet", "TColorBox"],
+    "filePath": "data/templates/short_note.md",
+    "link": null
+  }
+  {
     "id": "cover-v7",
     "title": "Academic Light Cover (V7)",
     "desc": "极简学术风格封面，包含流形可视化与神经网络拓扑图，适合博士论文或讲义。",
