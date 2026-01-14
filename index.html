@@ -812,15 +812,20 @@
                 safeFetch('public/data/papers.json'),
                 safeFetch('public/data/lab.json'),
                 safeFetch('public/data/post.json'),
-                safeFetch('public/data/tools.json')
-            ]).then(([library, papers, lab, posts, tools]) => {
-                setDb(prev => ({
-                    library: library || prev.library,
-                    papers: papers || prev.papers,
-                    lab: lab || prev.lab,
-                    posts: posts || prev.posts,
-                    tools: tools || prev.tools
-                }));
+                safeFetch('public/data/tools.json'),
+                safeFetch('public/data/latex_templates.json') 
+  ]).then(([library, papers, lab, posts, tools, latexTemplates]) => {
+      setDb(prev => ({
+          library: library || prev.library,
+          papers: papers || prev.papers,
+          lab: lab || prev.lab,
+          posts: posts || prev.posts,
+          // [修改] 将通用工具和模板分开存，或者存为一个对象
+          tools: {
+              general: tools || prev.tools,
+              latex: latexTemplates || [] 
+          }
+      }));
                 setLoading(false);
             });
           }, []);
