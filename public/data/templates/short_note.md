@@ -135,7 +135,7 @@ tags: [LaTeX, TColorBox, Cheatsheet, Minimalist]
 \newcommand{\Term}[1]{\textcolor{termblue}{\textbf{#1}}}
 \fancyhf{} \renewcommand{\headrulewidth}{0pt} \fancyfoot[C]{\footnotesize\color{brand!50} · \thepage \ ·} \pagestyle{fancy}
 ```
-✍️ Step 2: Write Your Content (编写内容)
+### ✍️ Step 2: Write Your Content (编写内容)
 
 新建 main.tex，使用 \input 导入样式，然后专注于写作。
 ```latex
