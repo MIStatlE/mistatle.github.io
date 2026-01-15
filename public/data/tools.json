@@ -22,14 +22,5 @@
     "desc": "云端 LaTeX 的高效模版与团队协作最佳实践。",
     "link": "https://www.overleaf.com/",
     "filePath": "data/posts/tool_overleaf.md"
-  },
-  {
-    "id": "short-note",
-    "title": "Short Note",
-    "desc": "极简模板，融合了小红书卡片美学与 Notion 风格。",
-    "icon": "file-text", 
-    "tags": ["Cheatsheet", "TColorBox"],
-    "filePath": "data/templates/short_note.md",
-    "link": null
   }
 ]
