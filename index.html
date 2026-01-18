@@ -506,68 +506,97 @@
         );
 
         // --- Library ---
+// --- Library 组件 (修改后) ---
         const Library = ({ onRead, data }) => {
-          const [selectedDiscipline, setSelectedDiscipline] = useState(null);
-          
-          if (!data || !data.disciplines || data.disciplines.length === 0) {
-            return <div className="p-12 text-center text-stone-400">Library data is empty.</div>;
-          }
+            const [selectedDiscipline, setSelectedDiscipline] = useState(null);
+            
+            // [新增] 点击处理逻辑：区分 Markdown 笔记和 HTML 书籍
+            const handleLessonSelect = (lesson) => {
+                // 如果定义了 type='book' 或者 link 属性包含 .html，则视为独立书籍
+                if (lesson.type === 'book' || (lesson.link && lesson.link.endsWith('.html'))) {
+                    // 在新标签页打开 Quarto 生成的 HTML 书籍
+                    window.open(lesson.link, '_blank'); 
+                } else {
+                    // 否则视为 Markdown 笔记，在当前页面的阅读器中打开
+                    onRead(lesson); 
+                }
+            };
 
-          if (!selectedDiscipline) {
+            if (!data || !data.disciplines || data.disciplines.length === 0) {
+                return <div className="p-12 text-center text-stone-400">Library data is empty.</div>;
+            }
+
+            if (!selectedDiscipline) {
+                return (
+                    <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
+                        <h2 className="text-4xl font-serif font-bold mb-6 text-stone-900">Library</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                            {data.disciplines.map(d => (
+                                <div key={d.id} onClick={() => setSelectedDiscipline(d.id)} className="group p-8 bg-white border border-stone-200 hover:border-blue-900/50 hover:shadow-xl transition-all cursor-pointer rounded-xl relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-24 bg-stone-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
+                                    <div className="relative z-10">
+                                        <div className="w-12 h-12 bg-stone-100 text-stone-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-900 group-hover:text-white transition-colors"><Icon name={d.icon} size={24} /></div>
+                                        <h3 className="text-2xl font-bold text-stone-900 mb-2 font-serif">{d.title}</h3>
+                                        <p className="text-stone-500 mb-6">{d.desc}</p>
+                                        <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider"><Icon name="book-open" size={12} className="mr-2"/> {d.count} <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            const courses = data.courses[selectedDiscipline] || []; 
+            const currentInfo = data.disciplines.find(d => d.id === selectedDiscipline);
+
             return (
-                <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <h2 className="text-4xl font-serif font-bold mb-6 text-stone-900">Library</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-                        {data.disciplines.map(d => (
-                            <div key={d.id} onClick={() => setSelectedDiscipline(d.id)} className="group p-8 bg-white border border-stone-200 hover:border-blue-900/50 hover:shadow-xl transition-all cursor-pointer rounded-xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-24 bg-stone-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
-                                <div className="relative z-10">
-                                    <div className="w-12 h-12 bg-stone-100 text-stone-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-900 group-hover:text-white transition-colors"><Icon name={d.icon} size={24} /></div>
-                                    <h3 className="text-2xl font-bold text-stone-900 mb-2 font-serif">{d.title}</h3>
-                                    <p className="text-stone-500 mb-6">{d.desc}</p>
-                                    <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider"><Icon name="book-open" size={12} className="mr-2"/> {d.count} <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span></div>
+                <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
+                    <button onClick={() => setSelectedDiscipline(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-8 font-mono text-xs uppercase tracking-widest transition-colors group"><span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Disciplines</button>
+                    <div className="flex items-center gap-4 mb-12">
+                        <div className="w-16 h-16 bg-blue-900 text-white rounded-xl flex items-center justify-center shadow-lg"><Icon name={currentInfo.icon} size={32} /></div>
+                        <div><h2 className="text-4xl font-serif font-bold text-stone-900">{currentInfo.title}</h2><p className="text-stone-500 mt-1">{currentInfo.desc}</p></div>
+                    </div>
+                    <div className="space-y-12">
+                        {courses.length > 0 ? courses.map((course, idx) => (
+                            <div key={idx} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                                <div className="bg-stone-50 px-8 py-6 border-b border-stone-100 flex justify-between items-center"><h3 className="font-bold text-xl text-stone-800">{course.title}</h3><span className="text-xs font-mono bg-white border border-stone-200 px-2 py-1 rounded text-stone-500">COURSE {idx + 1}</span></div>
+                                <div className="p-8">
+                                    {course.chapters.map((chapter, cIdx) => (
+                                        <div key={cIdx} className="mb-8 last:mb-0">
+                                            <h4 className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-4 pl-2 border-l-2 border-blue-900">{chapter.title}</h4>
+                                            <div className="grid gap-2">
+                                                {chapter.lessons.map(lesson => (
+                                                    <div 
+                                                        key={lesson.id} 
+                                                        onClick={() => handleLessonSelect(lesson)} // [修改] 使用新的处理函数
+                                                        className="flex items-center justify-between p-3 hover:bg-stone-50 rounded-lg cursor-pointer group transition-colors border border-transparent hover:border-stone-100"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            {/* [修改] 根据类型显示不同图标 (Note vs Book) */}
+                                                            <Icon 
+                                                                name={lesson.type === 'book' ? "book" : "file-text"} 
+                                                                size={18} 
+                                                                className={lesson.highlight ? "text-blue-600" : "text-stone-300"}
+                                                            />
+                                                            <span className={`text-sm ${lesson.highlight ? "font-bold text-stone-900" : "text-stone-600"}`}>{lesson.title}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            {lesson.highlight && <span className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-full">ESSENTIAL</span>}
+                                                            {/* [修改] 如果是书，显示跳转图标 */}
+                                                            {lesson.type === 'book' && <Icon name="external-link" size={14} className="text-stone-300 group-hover:text-blue-900 transition-colors"/>}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
-                        ))}
+                        )) : <div className="p-12 text-center border border-dashed border-stone-300 text-stone-400">Construction in progress...</div>}
                     </div>
                 </div>
             );
-          }
-
-          const courses = data.courses[selectedDiscipline] || []; 
-          const currentInfo = data.disciplines.find(d => d.id === selectedDiscipline);
-
-          return (
-              <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
-                  <button onClick={() => setSelectedDiscipline(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-8 font-mono text-xs uppercase tracking-widest transition-colors group"><span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Disciplines</button>
-                  <div className="flex items-center gap-4 mb-12">
-                    <div className="w-16 h-16 bg-blue-900 text-white rounded-xl flex items-center justify-center shadow-lg"><Icon name={currentInfo.icon} size={32} /></div>
-                    <div><h2 className="text-4xl font-serif font-bold text-stone-900">{currentInfo.title}</h2><p className="text-stone-500 mt-1">{currentInfo.desc}</p></div>
-                  </div>
-                  <div className="space-y-12">
-                      {courses.length > 0 ? courses.map((course, idx) => (
-                          <div key={idx} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
-                              <div className="bg-stone-50 px-8 py-6 border-b border-stone-100 flex justify-between items-center"><h3 className="font-bold text-xl text-stone-800">{course.title}</h3><span className="text-xs font-mono bg-white border border-stone-200 px-2 py-1 rounded text-stone-500">COURSE {idx + 1}</span></div>
-                              <div className="p-8">
-                                  {course.chapters.map((chapter, cIdx) => (
-                                      <div key={cIdx} className="mb-8 last:mb-0">
-                                          <h4 className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-4 pl-2 border-l-2 border-blue-900">{chapter.title}</h4>
-                                          <div className="grid gap-2">
-                                              {chapter.lessons.map(lesson => (
-                                                  <div key={lesson.id} onClick={() => onRead(lesson)} className="flex items-center justify-between p-3 hover:bg-stone-50 rounded-lg cursor-pointer group transition-colors border border-transparent hover:border-stone-100">
-                                                      <div className="flex items-center gap-3"><Icon name="file-text" size={18} className={lesson.highlight ? "text-blue-600" : "text-stone-300"}/><span className={`text-sm ${lesson.highlight ? "font-bold text-stone-900" : "text-stone-600"}`}>{lesson.title}</span></div>
-                                                      {lesson.highlight && <span className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-full">ESSENTIAL</span>}
-                                                  </div>
-                                              ))}
-                                          </div>
-                                      </div>
-                                  ))}
-                              </div>
-                          </div>
-                      )) : <div className="p-12 text-center border border-dashed border-stone-300 text-stone-400">Construction in progress...</div>}
-                  </div>
-              </div>
-          );
         };
 
         // --- Papers ---
