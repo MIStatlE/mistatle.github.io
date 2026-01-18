@@ -1,1012 +1,983 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIStatlE | Math & Intelligence</title>
-    <meta name="description" content="Bridging the gap between Abstract Theory & Concrete Reality.">
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIStatlE | Math & Intelligence</title>
+    <meta name="description" content="Bridging the gap between Abstract Theory & Concrete Reality.">
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --font-serif: 'Playfair Display', 'Cinzel', serif;
-            --font-sans: 'Inter', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --color-accent: #0f172a;
-        }
-        body {
-            font-family: var(--font-sans);
-            background-color: #fafaf9;
-            color: #1c1917;
-            background-image: radial-gradient(#e7e5e4 1px, transparent 1px);
-            background-size: 32px 32px;
-        }
-        h1, h2, h3, h4, .serif { font-family: var(--font-serif); }
-        .mono { font-family: var(--font-mono); }
-        
-        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .glass-nav {
-            background: rgba(250, 250, 249, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        /* 交互微动画 */
-        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
+    <style>
+        :root {
+            --font-serif: 'Playfair Display', 'Cinzel', serif;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --color-accent: #0f172a;
+        }
+        body {
+            font-family: var(--font-sans);
+            background-color: #fafaf9;
+            color: #1c1917;
+            background-image: radial-gradient(#e7e5e4 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        h1, h2, h3, h4, .serif { font-family: var(--font-serif); }
+        .mono { font-family: var(--font-mono); }
+        
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .glass-nav {
+            background: rgba(250, 250, 249, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        /* 交互微动画 */
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #a8a29e; border-radius: 3px; }
-        
-        /* Markdown 样式 */
-        .prose h1 { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 2rem; margin-bottom: 1.5rem; color: #1c1917; font-weight: 700; }
-        .prose h2 { font-family: var(--font-serif); font-size: 1.8rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #1c1917; font-weight: 600; border-bottom: 1px solid #e7e5e4; padding-bottom: 0.5rem; }
-        .prose h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-top: 2rem; margin-bottom: 0.8rem; color: #1c1917; font-weight: 600; }
-        .prose p { margin-bottom: 1.25rem; line-height: 1.75; color: #44403c; }
-        .prose blockquote { border-left: 4px solid #1e3a8a; padding-left: 1rem; font-style: italic; background: #f0f9ff; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1.5rem 0; }
-        .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
-        .prose li { margin-bottom: 0.5rem; }
-        
-        /* 公式滚动优化 */
-        .katex-display { 
-            overflow-x: auto; 
-            overflow-y: hidden; 
-            padding: 1rem 0; 
-            -webkit-overflow-scrolling: touch;
-        }
-        .katex-display > .katex {
-            white-space: normal;
-            max-width: 100%;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #a8a29e; border-radius: 3px; }
+        
+        /* Markdown 样式 */
+        .prose h1 { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 2rem; margin-bottom: 1.5rem; color: #1c1917; font-weight: 700; }
+        .prose h2 { font-family: var(--font-serif); font-size: 1.8rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #1c1917; font-weight: 600; border-bottom: 1px solid #e7e5e4; padding-bottom: 0.5rem; }
+        .prose h3 { font-family: var(--font-serif); font-size: 1.4rem; margin-top: 2rem; margin-bottom: 0.8rem; color: #1c1917; font-weight: 600; }
+        .prose p { margin-bottom: 1.25rem; line-height: 1.75; color: #44403c; }
+        .prose blockquote { border-left: 4px solid #1e3a8a; padding-left: 1rem; font-style: italic; background: #f0f9ff; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1.5rem 0; }
+        .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+        .prose li { margin-bottom: 0.5rem; }
+        
+        /* 公式滚动优化 */
+        .katex-display { 
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            padding: 1rem 0; 
+            -webkit-overflow-scrolling: touch;
+        }
+        .katex-display > .katex {
+            white-space: normal;
+            max-width: 100%;
+        }
 
-        pre[class*="language-"] { border-radius: 8px; margin: 1.5em 0; font-size: 0.85em; padding: 1.5em !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        
-        /* 移动端菜单动画 */
-        .slide-down { animation: slideDown 0.3s ease-out forwards; transform-origin: top; }
-        @keyframes slideDown { from { opacity: 0; transform: scaleY(0.95); } to { opacity: 1; transform: scaleY(1); } }
-    </style>
+        pre[class*="language-"] { border-radius: 8px; margin: 1.5em 0; font-size: 0.85em; padding: 1.5em !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        
+        /* 移动端菜单动画 */
+        .slide-down { animation: slideDown 0.3s ease-out forwards; transform-origin: top; }
+        @keyframes slideDown { from { opacity: 0; transform: scaleY(0.95); } to { opacity: 1; transform: scaleY(1); } }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-        // --- 默认回退数据 (Backup Data) ---
-        const DEFAULT_DB = {
-            library: {
-                disciplines: [
-                    { id: "dl", title: "Deep Learning", icon: "network", desc: "从反向传播到大模型的数学原理。", count: "2 Courses" },
-                    { id: "prob", title: "Probability & Stats", icon: "sigma", desc: "随机过程、贝叶斯推断与信息论。", count: "3 Courses" },
-                    { id: "opt", title: "Optimization", icon: "layers", desc: "凸优化、KKT条件与数值计算方法。", count: "1 Course" },
-                    { id: "math-base", title: "Math Foundation", icon: "infinity", desc: "线性代数、微积分与泛函分析基础。", count: "4 Courses" }
-                ],
-                courses: {
-                    "dl": [{ title: "Diffusion Models: Theory to Practice", chapters: [{ title: "Foundations", lessons: [{ id: "diff_01", title: "VAE & ELBO", type: "note", filePath: "" }] }] }]
-                }
-            },
-            papers: {
-                themes: [
-                    { id: "gen-ai", title: "Generative AI", count: 12, desc: "Diffusion, GANs, VAEs." },
-                    { id: "opt", title: "Optimization", count: 8, desc: "Gradient Descent variants." }
-                ],
-                lists: {
-                    "gen-ai": [
-                        { title: "Denoising Diffusion Probabilistic Models", authors: "Ho et al., 2020", tags: ["Foundation", "Generative"], read: true, filePath: "" },
-                        { title: "Score-Based Generative Modeling through SDEs", authors: "Song et al., 2021", tags: ["SDE", "Theory"], filePath: "" }
-                    ],
-                    "opt": []
-                }
-            },
-            lab: [
-                { id: "micro-diff", language: "PYTHON", stack: ["PyTorch", "NumPy"], title: "micro-diffusion", desc: "200行代码实现的极简 Diffusion Model，基于 PyTorch 的从零实现。", link: "#", featured: true },
-                { id: "bayes-opt", language: "MATLAB", stack: ["GPOps", "Viz"], title: "Bayesian Optimization Viz", desc: "高斯过程可视化交互演示，探索采集函数与后验分布。", link: "#", featured: false }
-            ],
-            posts: [
-                { id: "math-intuition", date: "Nov 10, 2024", category: "PHILOSOPHY", title: "在数学的严谨与直觉之间", desc: "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在AI研究中发挥作用。", filePath: "data/posts/math_intuition.md" },
-                { id: "why-entropy", date: "Oct 24, 2024", category: "INFORMATION THEORY", title: "熵：不仅仅是混乱度", desc: "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。", filePath: "data/posts/entropy.md" }
-            ],
-            tools: {
-        general: [
-            { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/", filePath: "" }
-        ],
-        latex: [
-            // 这里可以放一个硬编码的模板作为兜底，确认代码逻辑没问题
-            { 
-                id: "demo-template", 
-                title: "Template Placeholder", 
-                desc: "If you see this, the code logic is correct but fetch failed.", 
-                icon: "layout", 
-                tags: ["Debug"], 
-                filePath: "" 
-            }
-        ]
-    }
-        };
+        // --- 默认回退数据 (Backup Data) ---
+        const DEFAULT_DB = {
+            library: {
+                disciplines: [
+                    { id: "dl", title: "Deep Learning", icon: "network", desc: "从反向传播到大模型的数学原理。", count: "2 Courses" },
+                    { id: "prob", title: "Probability & Stats", icon: "sigma", desc: "随机过程、贝叶斯推断与信息论。", count: "3 Courses" },
+                    { id: "opt", title: "Optimization", icon: "layers", desc: "凸优化、KKT条件与数值计算方法。", count: "1 Course" },
+                    { id: "math-base", title: "Math Foundation", icon: "infinity", desc: "线性代数、微积分与泛函分析基础。", count: "4 Courses" }
+                ],
+                courses: {
+                    "dl": [{ title: "Diffusion Models: Theory to Practice", chapters: [{ title: "Foundations", lessons: [{ id: "diff_01", title: "VAE & ELBO", type: "note", filePath: "" }] }] }]
+                }
+            },
+            papers: {
+                themes: [
+                    { id: "gen-ai", title: "Generative AI", count: 12, desc: "Diffusion, GANs, VAEs." },
+                    { id: "opt", title: "Optimization", count: 8, desc: "Gradient Descent variants." }
+                ],
+                lists: {
+                    "gen-ai": [
+                        { title: "Denoising Diffusion Probabilistic Models", authors: "Ho et al., 2020", tags: ["Foundation", "Generative"], read: true, filePath: "" },
+                        { title: "Score-Based Generative Modeling through SDEs", authors: "Song et al., 2021", tags: ["SDE", "Theory"], filePath: "" }
+                    ],
+                    "opt": []
+                }
+            },
+            lab: [
+                { id: "micro-diff", language: "PYTHON", stack: ["PyTorch", "NumPy"], title: "micro-diffusion", desc: "200行代码实现的极简 Diffusion Model，基于 PyTorch 的从零实现。", link: "#", featured: true },
+                { id: "bayes-opt", language: "MATLAB", stack: ["GPOps", "Viz"], title: "Bayesian Optimization Viz", desc: "高斯过程可视化交互演示，探索采集函数与后验分布。", link: "#", featured: false }
+            ],
+            posts: [
+                { id: "math-intuition", date: "Nov 10, 2024", category: "PHILOSOPHY", title: "在数学的严谨与直觉之间", desc: "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在AI研究中发挥作用。", filePath: "data/posts/math_intuition.md" },
+                { id: "why-entropy", date: "Oct 24, 2024", category: "INFORMATION THEORY", title: "熵：不仅仅是混乱度", desc: "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。", filePath: "data/posts/entropy.md" }
+            ],
+            tools: {
+        general: [
+            { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/", filePath: "" }
+        ],
+        latex: [
+            // 这里可以放一个硬编码的模板作为兜底，确认代码逻辑没问题
+            { 
+                id: "demo-template", 
+                title: "Template Placeholder", 
+                desc: "If you see this, the code logic is correct but fetch failed.", 
+                icon: "layout", 
+                tags: ["Debug"], 
+                filePath: "" 
+            }
+        ]
+    }
+        };
 
-        // --- 工具组件 (修复版：更稳定的 Icon 渲染) ---
-        const Icon = ({ name, size = 20, className, ...props }) => {
-            const iconRef = useRef(null);
-            
-            useEffect(() => {
-                if (window.lucide && iconRef.current) {
-                    // 先清空避免重复
-                    iconRef.current.innerHTML = `<i data-lucide="${name}"></i>`;
-                    window.lucide.createIcons({
-                        root: iconRef.current,
-                        attrs: { width: size, height: size, class: className || '' }
-                    });
-                }
-            }, [name, size, className]);
+        // --- 工具组件 (修复版：更稳定的 Icon 渲染) ---
+        const Icon = ({ name, size = 20, className, ...props }) => {
+            const iconRef = useRef(null);
+            
+            useEffect(() => {
+                if (window.lucide && iconRef.current) {
+                    // 先清空避免重复
+                    iconRef.current.innerHTML = `<i data-lucide="${name}"></i>`;
+                    window.lucide.createIcons({
+                        root: iconRef.current,
+                        attrs: { width: size, height: size, class: className || '' }
+                    });
+                }
+            }, [name, size, className]);
 
-            return <span ref={iconRef} style={{ display: 'inline-flex', verticalAlign: 'middle' }} {...props}></span>;
-        };
+            return <span ref={iconRef} style={{ display: 'inline-flex', verticalAlign: 'middle' }} {...props}></span>;
+        };
 
-        // --- 统一的 "Action Button" ---
-        const ActionButton = ({ text, onClick, href }) => {
-            const Content = () => (
-                <div className="flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors mt-auto pt-4 border-t border-stone-100 group-hover:border-blue-900/20">
-                    <span className="font-semibold">{text}</span>
-                    <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
-                </div>
-            );
+        // --- 统一的 "Action Button" ---
+        const ActionButton = ({ text, onClick, href }) => {
+            const Content = () => (
+                <div className="flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors mt-auto pt-4 border-t border-stone-100 group-hover:border-blue-900/20">
+                    <span className="font-semibold">{text}</span>
+                    <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
+                </div>
+            );
 
-            if (href) {
-                return <a href={href} target="_blank" onClick={(e) => e.stopPropagation()} className="no-underline"><Content /></a>;
-            }
-            return <div onClick={onClick}><Content /></div>;
-        };
+            if (href) {
+                return <a href={href} target="_blank" onClick={(e) => e.stopPropagation()} className="no-underline"><Content /></a>;
+            }
+            return <div onClick={onClick}><Content /></div>;
+        };
 
-        // --- Logo 组件 ---
-        const Logo = () => (
-          <div className="flex items-center gap-3 select-none group cursor-pointer">
-            <div className="relative w-10 h-10 flex items-center justify-center bg-white border border-stone-200 shadow-sm rounded-sm group-hover:shadow-md transition-all duration-300 overflow-hidden">
-                <svg width="40" height="40" viewBox="0 0 40 40" className="opacity-90">
-                    <line x1="10" y1="0" x2="10" y2="40" stroke="#f5f5f4" strokeWidth="1" />
-                    <line x1="30" y1="0" x2="30" y2="40" stroke="#f5f5f4" strokeWidth="1" />
-                    <line x1="0" y1="20" x2="40" y2="20" stroke="#f5f5f4" strokeWidth="1" />
-                    <path d="M8 32 C 15 32, 15 8, 32 8" stroke="#1e3a8a" strokeWidth="2" fill="none" strokeLinecap="round" className="group-hover:stroke-blue-600 transition-colors duration-500" />
-                    <circle cx="8" cy="32" r="2.5" fill="#1c1917" className="group-hover:fill-blue-900 transition-colors" />
-                    <circle cx="32" cy="8" r="2.5" fill="#1c1917" className="group-hover:fill-blue-900 transition-colors" />
-                </svg>
-            </div>
-            <div className="flex flex-col justify-center">
-                <div className="font-serif text-lg font-bold tracking-tight leading-none" style={{
-                    background: 'linear-gradient(to right, #1e3a8a, #2563eb)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                }}>
-                    MIStatlE
-                </div>
-            </div>
-          </div>
-        );
+        // --- Logo 组件 ---
+        const Logo = () => (
+          <div className="flex items-center gap-3 select-none group cursor-pointer">
+            <div className="relative w-10 h-10 flex items-center justify-center bg-white border border-stone-200 shadow-sm rounded-sm group-hover:shadow-md transition-all duration-300 overflow-hidden">
+                <svg width="40" height="40" viewBox="0 0 40 40" className="opacity-90">
+                    <line x1="10" y1="0" x2="10" y2="40" stroke="#f5f5f4" strokeWidth="1" />
+                    <line x1="30" y1="0" x2="30" y2="40" stroke="#f5f5f4" strokeWidth="1" />
+                    <line x1="0" y1="20" x2="40" y2="20" stroke="#f5f5f4" strokeWidth="1" />
+                    <path d="M8 32 C 15 32, 15 8, 32 8" stroke="#1e3a8a" strokeWidth="2" fill="none" strokeLinecap="round" className="group-hover:stroke-blue-600 transition-colors duration-500" />
+                    <circle cx="8" cy="32" r="2.5" fill="#1c1917" className="group-hover:fill-blue-900 transition-colors" />
+                    <circle cx="32" cy="8" r="2.5" fill="#1c1917" className="group-hover:fill-blue-900 transition-colors" />
+                </svg>
+            </div>
+            <div className="flex flex-col justify-center">
+                <div className="font-serif text-lg font-bold tracking-tight leading-none" style={{
+                    background: 'linear-gradient(to right, #1e3a8a, #2563eb)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                }}>
+                    MIStatlE
+                </div>
+            </div>
+          </div>
+        );
 
-        // --- 社交链接组件 ---
-        const SocialLink = ({ icon, label, href, colorClass }) => (
-            <a href={href} target="_blank" className={`group flex flex-col items-center gap-2 transition-transform hover:-translate-y-1`}>
-                <div className={`w-10 h-10 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all ${colorClass}`}>
-                    <Icon name={icon} size={18} />
-                </div>
-                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 whitespace-nowrap">{label}</span>
-            </a>
-        );
+        // --- 社交链接组件 ---
+        const SocialLink = ({ icon, label, href, colorClass }) => (
+            <a href={href} target="_blank" className={`group flex flex-col items-center gap-2 transition-transform hover:-translate-y-1`}>
+                <div className={`w-10 h-10 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all ${colorClass}`}>
+                    <Icon name={icon} size={18} />
+                </div>
+                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 whitespace-nowrap">{label}</span>
+            </a>
+        );
 
-        // --- 导航栏 (Navbar) - 修复移动端交互 ---
-        const Navbar = ({ activeTab, setActiveTab }) => {
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
+        // --- 导航栏 (Navbar) - 修复移动端交互 ---
+        const Navbar = ({ activeTab, setActiveTab }) => {
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-            const handleTabClick = (tab) => {
-                setActiveTab(tab);
-                setIsMenuOpen(false); // 点击后关闭菜单
-            };
+            const handleTabClick = (tab) => {
+                setActiveTab(tab);
+                setIsMenuOpen(false); // 点击后关闭菜单
+            };
 
-            return (
-                <nav className="sticky top-0 z-50 glass-nav transition-all duration-300">
-                    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                        <div onClick={() => handleTabClick('home')}><Logo /></div>
-                        
-                        {/* 桌面端导航 */}
-                        <div className="hidden lg:flex items-center gap-1 bg-stone-100/50 p-1 rounded-full border border-stone-200/50">
-                            {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
-                                <button key={item} onClick={() => setActiveTab(item)} 
-                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}>
-                                    {item.charAt(0).toUpperCase() + item.slice(1)}
-                                </button>
-                            ))}
-                        </div>
-                        
-                        <div className="hidden lg:flex items-center gap-4">
-    {/* 修改这里：onClick 传入 'about' */}
-                             <button onClick={() => setActiveTab('about')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">
-                                 ABOUT
-                             </button>
-                        </div>
+            return (
+                <nav className="sticky top-0 z-50 glass-nav transition-all duration-300">
+                    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                        <div onClick={() => handleTabClick('home')}><Logo /></div>
+                        
+                        {/* 桌面端导航 */}
+                        <div className="hidden lg:flex items-center gap-1 bg-stone-100/50 p-1 rounded-full border border-stone-200/50">
+                            {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
+                                <button key={item} onClick={() => setActiveTab(item)} 
+                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}>
+                                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+                        
+                        <div className="hidden lg:flex items-center gap-4">
+    {/* 修改这里：onClick 传入 'about' */}
+                             <button onClick={() => setActiveTab('about')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">
+                                 ABOUT
+                             </button>
+                        </div>
 
-                        {/* 移动端汉堡按钮 */}
-                        <div className="lg:hidden cursor-pointer p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                            <Icon name={isMenuOpen ? "x" : "menu"} className="text-stone-800" />
-                        </div>
-                    </div>
+                        {/* 移动端汉堡按钮 */}
+                        <div className="lg:hidden cursor-pointer p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                            <Icon name={isMenuOpen ? "x" : "menu"} className="text-stone-800" />
+                        </div>
+                    </div>
 
-                    {/* 移动端下拉菜单 */}
-                    {isMenuOpen && (
-                        <div className="lg:hidden absolute top-20 left-0 w-full bg-[#fafaf9] border-b border-stone-200 shadow-xl p-4 flex flex-col gap-2 slide-down">
-                            {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
-                                <button key={item} onClick={() => handleTabClick(item)} 
-                                    className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}>
-                                    {item.toUpperCase()}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </nav>
-            );
-        };
+                    {/* 移动端下拉菜单 */}
+                    {isMenuOpen && (
+                        <div className="lg:hidden absolute top-20 left-0 w-full bg-[#fafaf9] border-b border-stone-200 shadow-xl p-4 flex flex-col gap-2 slide-down">
+                            {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
+                                <button key={item} onClick={() => handleTabClick(item)} 
+                                    className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}>
+                                    {item.toUpperCase()}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </nav>
+            );
+        };
 
-        // --- ArticleReader ---
-        const ArticleReader = ({ item, onBack }) => {
-            const [state, setState] = useState({ 
-                content: '', 
-                frontmatter: null, 
-                loading: true, 
-                error: null 
-            });
-            const contentRef = useRef(null);
+        // --- ArticleReader ---
+        const ArticleReader = ({ item, onBack }) => {
+            const [state, setState] = useState({ 
+                content: '', 
+                frontmatter: null, 
+                loading: true, 
+                error: null 
+            });
+            const contentRef = useRef(null);
 
-            // 1. 解析 Frontmatter
-            const parseMetadata = (text) => {
-                const pattern = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-                const match = text.match(pattern);
-                if (!match) return { meta: null, body: text };
+            // 1. 解析 Frontmatter
+            const parseMetadata = (text) => {
+                const pattern = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
+                const match = text.match(pattern);
+                if (!match) return { meta: null, body: text };
 
-                const yamlBlock = match[1];
-                const body = match[2];
-                const meta = {};
+                const yamlBlock = match[1];
+                const body = match[2];
+                const meta = {};
 
-                yamlBlock.split('\n').forEach(line => {
-                    const parts = line.split(':');
-                    if (parts.length >= 2) {
-                        const key = parts[0].trim();
-                        let value = parts.slice(1).join(':').trim().replace(/^['"](.*)['"]$/, '$1');
-                        if (value.startsWith('[') && value.endsWith(']')) {
-                            value = value.slice(1, -1).split(',').map(v => v.trim().replace(/^['"](.*)['"]$/, '$1'));
-                        }
-                        meta[key] = value;
-                    }
-                });
-                return { meta, body };
-            };
+                yamlBlock.split('\n').forEach(line => {
+                    const parts = line.split(':');
+                    if (parts.length >= 2) {
+                        const key = parts[0].trim();
+                        let value = parts.slice(1).join(':').trim().replace(/^['"](.*)['"]$/, '$1');
+                        if (value.startsWith('[') && value.endsWith(']')) {
+                            value = value.slice(1, -1).split(',').map(v => v.trim().replace(/^['"](.*)['"]$/, '$1'));
+                        }
+                        meta[key] = value;
+                    }
+                });
+                return { meta, body };
+            };
 
-            useEffect(() => {
-                let ignore = false;
-                setState(s => ({ ...s, loading: true, error: null }));
+            useEffect(() => {
+                let ignore = false;
+                setState(s => ({ ...s, loading: true, error: null }));
 
-                if (!item.filePath) {
-                    setState({ content: '', frontmatter: null, loading: false, error: 'No file path specified.' });
-                    return;
-                }
+                if (!item.filePath) {
+                    setState({ content: '', frontmatter: null, loading: false, error: 'No file path specified.' });
+                    return;
+                }
 
-                fetch(item.filePath)
-                    .then(res => {
-                        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-                        return res.text();
-                    })
-                    .then(text => {
-                        if (ignore) return;
+                fetch(item.filePath)
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                        return res.text();
+                    })
+                    .then(text => {
+                        if (ignore) return;
 
-                        const { meta, body } = parseMetadata(text);
-                        const renderer = new marked.Renderer();
-                        
-                        // 兼容新旧版本的代码高亮参数
-                        renderer.code = function(entry, langStr) {
-                            let codeContent = '';
-                            let codeLang = '';
+                        const { meta, body } = parseMetadata(text);
+                        const renderer = new marked.Renderer();
+                        
+                        // 兼容新旧版本的代码高亮参数
+                        renderer.code = function(entry, langStr) {
+                            let codeContent = '';
+                            let codeLang = '';
 
-                            if (typeof entry === 'object') {
-                                codeContent = entry.text || '';
-                                codeLang = entry.lang || 'text';
-                            } else {
-                                codeContent = entry || '';
-                                codeLang = langStr || 'text';
-                            }
+                            if (typeof entry === 'object') {
+                                codeContent = entry.text || '';
+                                codeLang = entry.lang || 'text';
+                            } else {
+                                codeContent = entry || '';
+                                codeLang = langStr || 'text';
+                            }
 
-                            const validLang = (codeLang || 'text').toLowerCase();
-                            
-                            const buttonData = encodeURIComponent(codeContent);
-                            const displayCode = codeContent
-                                .replace(/&/g, '&amp;')
-                                .replace(/</g, '&lt;')
-                                .replace(/>/g, '&gt;')
-                                .replace(/"/g, '&quot;')
-                                .replace(/'/g, '&#039;');
-                            
-                            return `
-                                <div class="relative group my-8 rounded-lg bg-[#2d2d2d] overflow-hidden shadow-xl border border-stone-700">
-                                    <div class="flex justify-between items-center px-4 py-2 bg-[#383838] border-b border-stone-600 select-none">
-                                        <span class="text-xs font-mono text-stone-400 uppercase">${validLang}</span>
-                                        <button class="copy-btn text-xs font-mono text-stone-400 hover:text-white transition-colors cursor-pointer" data-code="${buttonData}">
-                                            Copy
-                                        </button>
-                                    </div>
-                                    <pre class="!m-0 !p-4 overflow-x-auto !bg-[#2d2d2d]"><code class="language-${validLang} !text-gray-200 !font-mono !text-sm">${displayCode}</code></pre>
-                                </div>
-                            `;
-                        };
+                            const validLang = (codeLang || 'text').toLowerCase();
+                            
+                            const buttonData = encodeURIComponent(codeContent);
+                            const displayCode = codeContent
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                                .replace(/'/g, '&#039;');
+                            
+                            return `
+                                <div class="relative group my-8 rounded-lg bg-[#2d2d2d] overflow-hidden shadow-xl border border-stone-700">
+                                    <div class="flex justify-between items-center px-4 py-2 bg-[#383838] border-b border-stone-600 select-none">
+                                        <span class="text-xs font-mono text-stone-400 uppercase">${validLang}</span>
+                                        <button class="copy-btn text-xs font-mono text-stone-400 hover:text-white transition-colors cursor-pointer" data-code="${buttonData}">
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <pre class="!m-0 !p-4 overflow-x-auto !bg-[#2d2d2d]"><code class="language-${validLang} !text-gray-200 !font-mono !text-sm">${displayCode}</code></pre>
+                                </div>
+                            `;
+                        };
 
-                        const html = marked.parse(body, { renderer });
-                        setState({ content: html, frontmatter: meta, loading: false, error: null });
-                    })
-                    .catch(err => {
-                        if (!ignore) setState({ content: '', frontmatter: null, loading: false, error: err.message });
-                    });
+                        const html = marked.parse(body, { renderer });
+                        setState({ content: html, frontmatter: meta, loading: false, error: null });
+                    })
+                    .catch(err => {
+                        if (!ignore) setState({ content: '', frontmatter: null, loading: false, error: err.message });
+                    });
 
-                return () => { ignore = true; };
-            }, [item]);
+                return () => { ignore = true; };
+            }, [item]);
 
-            // --- 副作用处理 ---
-            useEffect(() => {
-                if (!state.loading && state.content && contentRef.current) {
-                    // 1. 渲染公式
-                    if (window.renderMathInElement) {
-                        window.renderMathInElement(contentRef.current, {
-                            delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}],
-                            throwOnError: false
-                        });
-                    }
-                    // 2. 高亮代码
-                    if (window.Prism) {
-                        window.Prism.highlightAllUnder(contentRef.current);
-                    }
+            // --- 副作用处理 ---
+            useEffect(() => {
+                if (!state.loading && state.content && contentRef.current) {
+                    // 1. 渲染公式
+                    if (window.renderMathInElement) {
+                        window.renderMathInElement(contentRef.current, {
+                            delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}],
+                            throwOnError: false
+                        });
+                    }
+                    // 2. 高亮代码
+                    if (window.Prism) {
+                        window.Prism.highlightAllUnder(contentRef.current);
+                    }
 
-                    // 3. 绑定复制按钮
-                    const buttons = contentRef.current.querySelectorAll('.copy-btn');
-                    buttons.forEach(btn => {
-                        btn.onclick = () => {
-                            try {
-                                const code = decodeURIComponent(btn.getAttribute('data-code'));
-                                navigator.clipboard.writeText(code).then(() => {
-                                    const originalText = btn.innerText;
-                                    btn.innerText = 'Copied!';
-                                    btn.classList.add('text-emerald-400');
-                                    setTimeout(() => {
-                                        btn.innerText = originalText;
-                                        btn.classList.remove('text-emerald-400');
-                                    }, 2000);
-                                });
-                            } catch (e) { console.error('Copy failed', e); }
-                        };
-                    });
-                }
-            }, [state.content, state.loading]);
+                    // 3. 绑定复制按钮
+                    const buttons = contentRef.current.querySelectorAll('.copy-btn');
+                    buttons.forEach(btn => {
+                        btn.onclick = () => {
+                            try {
+                                const code = decodeURIComponent(btn.getAttribute('data-code'));
+                                navigator.clipboard.writeText(code).then(() => {
+                                    const originalText = btn.innerText;
+                                    btn.innerText = 'Copied!';
+                                    btn.classList.add('text-emerald-400');
+                                    setTimeout(() => {
+                                        btn.innerText = originalText;
+                                        btn.classList.remove('text-emerald-400');
+                                    }, 2000);
+                                });
+                            } catch (e) { console.error('Copy failed', e); }
+                        };
+                    });
+                }
+            }, [state.content, state.loading]);
 
-            return (
-                <div className="max-w-5xl mx-auto px-6 py-12 min-h-screen">
-                    <button onClick={onBack} className="group flex items-center text-sm text-stone-400 hover:text-blue-900 mb-10 font-mono uppercase tracking-wider transition-colors">
-                        <span className="mr-2 inline-block transition-transform group-hover:-translate-x-1">←</span> Back to List
-                    </button>
-                    
-                    {state.loading && (
-                        <div className="flex flex-col items-center py-20 space-y-4">
-                            <div className="w-8 h-8 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
-                            <p className="text-stone-400 font-mono text-xs animate-pulse">Loading...</p>
-                        </div>
-                    )}
+            return (
+                <div className="max-w-5xl mx-auto px-6 py-12 min-h-screen">
+                    <button onClick={onBack} className="group flex items-center text-sm text-stone-400 hover:text-blue-900 mb-10 font-mono uppercase tracking-wider transition-colors">
+                        <span className="mr-2 inline-block transition-transform group-hover:-translate-x-1">←</span> Back to List
+                    </button>
+                    
+                    {state.loading && (
+                        <div className="flex flex-col items-center py-20 space-y-4">
+                            <div className="w-8 h-8 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-stone-400 font-mono text-xs animate-pulse">Loading...</p>
+                        </div>
+                    )}
 
-                    {state.error && (
-                        <div className="p-6 border border-red-200 bg-red-50 rounded-lg text-red-800">
-                            <h3 className="font-bold mb-2">Error</h3>
-                            <p className="font-mono text-sm">{state.error}</p>
-                        </div>
-                    )}
-                    
-                    {!state.loading && !state.error && (
-                        <article className="fade-in">
-                            {/* Header */}
-                            <header className="mb-12 pb-8 border-b border-stone-200">
-                                <div className="flex flex-wrap gap-3 mb-4 text-xs font-mono uppercase tracking-widest text-stone-500">
-                                    {state.frontmatter?.categories && (
-                                        <span className="text-blue-900 font-bold">{Array.isArray(state.frontmatter.categories) ? state.frontmatter.categories[0] : state.frontmatter.categories}</span>
-                                    )}
-                                    {state.frontmatter?.date && <span>• {state.frontmatter.date}</span>}
-                                </div>
-                                
-                                <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-6 leading-tight">
-                                    {state.frontmatter?.title || item.title}
-                                </h1>
-                                
-                                {state.frontmatter?.description && (
-                                    <p className="text-xl text-stone-600 font-serif italic font-light leading-relaxed">
-                                        {state.frontmatter.description}
-                                    </p>
-                                )}
+                    {state.error && (
+                        <div className="p-6 border border-red-200 bg-red-50 rounded-lg text-red-800">
+                            <h3 className="font-bold mb-2">Error</h3>
+                            <p className="font-mono text-sm">{state.error}</p>
+                        </div>
+                    )}
+                    
+                    {!state.loading && !state.error && (
+                        <article className="fade-in">
+                            {/* Header */}
+                            <header className="mb-12 pb-8 border-b border-stone-200">
+                                <div className="flex flex-wrap gap-3 mb-4 text-xs font-mono uppercase tracking-widest text-stone-500">
+                                    {state.frontmatter?.categories && (
+                                        <span className="text-blue-900 font-bold">{Array.isArray(state.frontmatter.categories) ? state.frontmatter.categories[0] : state.frontmatter.categories}</span>
+                                    )}
+                                    {state.frontmatter?.date && <span>• {state.frontmatter.date}</span>}
+                                </div>
+                                
+                                <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-6 leading-tight">
+                                    {state.frontmatter?.title || item.title}
+                                </h1>
+                                
+                                {state.frontmatter?.description && (
+                                    <p className="text-xl text-stone-600 font-serif italic font-light leading-relaxed">
+                                        {state.frontmatter.description}
+                                    </p>
+                                )}
 
-                                {state.frontmatter?.tags && (
-                                    <div className="flex flex-wrap gap-2 mt-6">
-                                        {(Array.isArray(state.frontmatter.tags) ? state.frontmatter.tags : [state.frontmatter.tags]).map((tag, i) => (
-                                            <span key={i} className="px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-mono uppercase rounded border border-stone-200">
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </header>
+                                {state.frontmatter?.tags && (
+                                    <div className="flex flex-wrap gap-2 mt-6">
+                                        {(Array.isArray(state.frontmatter.tags) ? state.frontmatter.tags : [state.frontmatter.tags]).map((tag, i) => (
+                                            <span key={i} className="px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-mono uppercase rounded border border-stone-200">
+                                                #{tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </header>
 
-                            {/* Body */}
-                            <div 
-                                ref={contentRef}
-                                className="prose prose-stone prose-lg prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900" 
-                                dangerouslySetInnerHTML={{ __html: state.content }}
-                            ></div>
-                        </article>
-                    )}
-                </div>
-            );
-        };
+                            {/* Body */}
+                            <div 
+                                ref={contentRef}
+                                className="prose prose-stone prose-lg prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900" 
+                                dangerouslySetInnerHTML={{ __html: state.content }}
+                            ></div>
+                        </article>
+                    )}
+                </div>
+            );
+        };
 
-        // --- Hero ---
-        const Hero = ({ setActiveTab }) => (
-          <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[75vh] relative">
-            <div className="absolute right-0 top-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
-            <div className="absolute left-10 bottom-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-stone-900 hidden md:block">∑</div>
-            
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 shadow-sm text-stone-500 text-xs font-mono mb-8 w-fit self-start">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span className="tracking-wider">LONG-TERM RESEARCH</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-8xl font-bold text-stone-900 leading-[1.1] mb-8 font-serif tracking-tight">Bridging <br/><span className="text-stone-300">Abstract</span> & <span className="italic text-blue-900">Reality</span>.</h1>
-            <p className="text-xl md:text-2xl text-stone-500 leading-relaxed max-w-2xl mb-16 font-serif italic"> “推导，直到直觉显现。”</p>
-            
-            <div className="flex flex-wrap gap-6 mb-16">
-              <button onClick={() => setActiveTab('library')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE LIBRARY <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
-              <button onClick={() => setActiveTab('community')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">JOIN COMMUNITY</button>
-            </div>
+        // --- Hero ---
+        const Hero = ({ setActiveTab }) => (
+          <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[75vh] relative">
+            <div className="absolute right-0 top-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
+            <div className="absolute left-10 bottom-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-stone-900 hidden md:block">∑</div>
+            
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 shadow-sm text-stone-500 text-xs font-mono mb-8 w-fit self-start">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+              <span className="tracking-wider">LONG-TERM RESEARCH</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-8xl font-bold text-stone-900 leading-[1.1] mb-8 font-serif tracking-tight">Bridging <br/><span className="text-stone-300">Abstract</span> & <span className="italic text-blue-900">Reality</span>.</h1>
+            <p className="text-xl md:text-2xl text-stone-500 leading-relaxed max-w-2xl mb-16 font-serif italic"> “推导，直到直觉显现。”</p>
+            
+            <div className="flex flex-wrap gap-6 mb-16">
+              <button onClick={() => setActiveTab('library')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE LIBRARY <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
+              <button onClick={() => setActiveTab('community')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">JOIN COMMUNITY</button>
+            </div>
 
-            <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
-                <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">FOLLOW US:</span>
-                <div className="flex gap-4">
-                    <SocialLink icon="tv-2" label="Bilibili" href="#" colorClass="group-hover:text-[#00AEEC] group-hover:border-[#00AEEC]" />
-                    <SocialLink icon="youtube" label="YouTube" href="#" colorClass="group-hover:text-[#FF0000] group-hover:border-[#FF0000]" />
-                    <SocialLink icon="github" label="GitHub" href="#" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
-                    <SocialLink icon="heart" label="小红书" href="#" colorClass="group-hover:text-[#FF2442] group-hover:border-[#FF2442]" />
-                    <SocialLink icon="compass" label="知乎" href="#" colorClass="group-hover:text-[#0084FF] group-hover:border-[#0084FF]" />
-                    <SocialLink icon="message-circle" label="公众号" href="#" colorClass="group-hover:text-[#07C160] group-hover:border-[#07C160]" />
-                </div>
-            </div>
-            
-            <div className="mt-8 flex justify-between text-xs font-mono text-stone-400 uppercase tracking-widest">
-                <span>Est. 2025</span>
-                <span>Artificial Intelligence</span>
-                <span>Shanghai</span>
-            </div>
-          </div>
-        );
+            <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
+                <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">FOLLOW US:</span>
+                <div className="flex gap-4">
+                    <SocialLink icon="tv-2" label="Bilibili" href="#" colorClass="group-hover:text-[#00AEEC] group-hover:border-[#00AEEC]" />
+                    <SocialLink icon="youtube" label="YouTube" href="#" colorClass="group-hover:text-[#FF0000] group-hover:border-[#FF0000]" />
+                    <SocialLink icon="github" label="GitHub" href="#" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
+                    <SocialLink icon="heart" label="小红书" href="#" colorClass="group-hover:text-[#FF2442] group-hover:border-[#FF2442]" />
+                    <SocialLink icon="compass" label="知乎" href="#" colorClass="group-hover:text-[#0084FF] group-hover:border-[#0084FF]" />
+                    <SocialLink icon="message-circle" label="公众号" href="#" colorClass="group-hover:text-[#07C160] group-hover:border-[#07C160]" />
+                </div>
+            </div>
+            
+            <div className="mt-8 flex justify-between text-xs font-mono text-stone-400 uppercase tracking-widest">
+                <span>Est. 2025</span>
+                <span>Artificial Intelligence</span>
+                <span>Shanghai</span>
+            </div>
+          </div>
+        );
 
-        // --- Library ---
-// --- Library 组件 (修改后) ---
-        const Library = ({ onRead, data }) => {
-            const [selectedDiscipline, setSelectedDiscipline] = useState(null);
-            
-            // [新增] 点击处理逻辑：区分 Markdown 笔记和 HTML 书籍
-            const handleLessonSelect = (lesson) => {
-                // 如果定义了 type='book' 或者 link 属性包含 .html，则视为独立书籍
-                if (lesson.type === 'book' || (lesson.link && lesson.link.endsWith('.html'))) {
-                    // 在新标签页打开 Quarto 生成的 HTML 书籍
-                    window.open(lesson.link, '_blank'); 
-                } else {
-                    // 否则视为 Markdown 笔记，在当前页面的阅读器中打开
-                    onRead(lesson); 
-                }
-            };
+        // --- Library ---
+        const Library = ({ onRead, data }) => {
+          const [selectedDiscipline, setSelectedDiscipline] = useState(null);
+          
+          if (!data || !data.disciplines || data.disciplines.length === 0) {
+            return <div className="p-12 text-center text-stone-400">Library data is empty.</div>;
+          }
 
-            if (!data || !data.disciplines || data.disciplines.length === 0) {
-                return <div className="p-12 text-center text-stone-400">Library data is empty.</div>;
-            }
+          if (!selectedDiscipline) {
+            return (
+                <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
+                    <h2 className="text-4xl font-serif font-bold mb-6 text-stone-900">Library</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                        {data.disciplines.map(d => (
+                            <div key={d.id} onClick={() => setSelectedDiscipline(d.id)} className="group p-8 bg-white border border-stone-200 hover:border-blue-900/50 hover:shadow-xl transition-all cursor-pointer rounded-xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-24 bg-stone-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
+                                <div className="relative z-10">
+                                    <div className="w-12 h-12 bg-stone-100 text-stone-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-900 group-hover:text-white transition-colors"><Icon name={d.icon} size={24} /></div>
+                                    <h3 className="text-2xl font-bold text-stone-900 mb-2 font-serif">{d.title}</h3>
+                                    <p className="text-stone-500 mb-6">{d.desc}</p>
+                                    <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider"><Icon name="book-open" size={12} className="mr-2"/> {d.count} <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+          }
 
-            if (!selectedDiscipline) {
-                return (
-                    <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-                        <h2 className="text-4xl font-serif font-bold mb-6 text-stone-900">Library</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-                            {data.disciplines.map(d => (
-                                <div key={d.id} onClick={() => setSelectedDiscipline(d.id)} className="group p-8 bg-white border border-stone-200 hover:border-blue-900/50 hover:shadow-xl transition-all cursor-pointer rounded-xl relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-24 bg-stone-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
-                                    <div className="relative z-10">
-                                        <div className="w-12 h-12 bg-stone-100 text-stone-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-900 group-hover:text-white transition-colors"><Icon name={d.icon} size={24} /></div>
-                                        <h3 className="text-2xl font-bold text-stone-900 mb-2 font-serif">{d.title}</h3>
-                                        <p className="text-stone-500 mb-6">{d.desc}</p>
-                                        <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider"><Icon name="book-open" size={12} className="mr-2"/> {d.count} <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span></div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-            }
+          const courses = data.courses[selectedDiscipline] || []; 
+          const currentInfo = data.disciplines.find(d => d.id === selectedDiscipline);
 
-            const courses = data.courses[selectedDiscipline] || []; 
-            const currentInfo = data.disciplines.find(d => d.id === selectedDiscipline);
+          return (
+              <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
+                  <button onClick={() => setSelectedDiscipline(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-8 font-mono text-xs uppercase tracking-widest transition-colors group"><span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Disciplines</button>
+                  <div className="flex items-center gap-4 mb-12">
+                    <div className="w-16 h-16 bg-blue-900 text-white rounded-xl flex items-center justify-center shadow-lg"><Icon name={currentInfo.icon} size={32} /></div>
+                    <div><h2 className="text-4xl font-serif font-bold text-stone-900">{currentInfo.title}</h2><p className="text-stone-500 mt-1">{currentInfo.desc}</p></div>
+                  </div>
+                  <div className="space-y-12">
+                      {courses.length > 0 ? courses.map((course, idx) => (
+                          <div key={idx} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                              <div className="bg-stone-50 px-8 py-6 border-b border-stone-100 flex justify-between items-center"><h3 className="font-bold text-xl text-stone-800">{course.title}</h3><span className="text-xs font-mono bg-white border border-stone-200 px-2 py-1 rounded text-stone-500">COURSE {idx + 1}</span></div>
+                              <div className="p-8">
+                                  {course.chapters.map((chapter, cIdx) => (
+                                      <div key={cIdx} className="mb-8 last:mb-0">
+                                          <h4 className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-4 pl-2 border-l-2 border-blue-900">{chapter.title}</h4>
+                                          <div className="grid gap-2">
+                                              {chapter.lessons.map(lesson => (
+                                                  <div key={lesson.id} onClick={() => onRead(lesson)} className="flex items-center justify-between p-3 hover:bg-stone-50 rounded-lg cursor-pointer group transition-colors border border-transparent hover:border-stone-100">
+                                                      <div className="flex items-center gap-3"><Icon name="file-text" size={18} className={lesson.highlight ? "text-blue-600" : "text-stone-300"}/><span className={`text-sm ${lesson.highlight ? "font-bold text-stone-900" : "text-stone-600"}`}>{lesson.title}</span></div>
+                                                      {lesson.highlight && <span className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-full">ESSENTIAL</span>}
+                                                  </div>
+                                              ))}
+                                          </div>
+                                      </div>
+                                  ))}
+                              </div>
+                          </div>
+                      )) : <div className="p-12 text-center border border-dashed border-stone-300 text-stone-400">Construction in progress...</div>}
+                  </div>
+              </div>
+          );
+        };
 
-            return (
-                <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <button onClick={() => setSelectedDiscipline(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-8 font-mono text-xs uppercase tracking-widest transition-colors group"><span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Disciplines</button>
-                    <div className="flex items-center gap-4 mb-12">
-                        <div className="w-16 h-16 bg-blue-900 text-white rounded-xl flex items-center justify-center shadow-lg"><Icon name={currentInfo.icon} size={32} /></div>
-                        <div><h2 className="text-4xl font-serif font-bold text-stone-900">{currentInfo.title}</h2><p className="text-stone-500 mt-1">{currentInfo.desc}</p></div>
-                    </div>
-                    <div className="space-y-12">
-                        {courses.length > 0 ? courses.map((course, idx) => (
-                            <div key={idx} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
-                                <div className="bg-stone-50 px-8 py-6 border-b border-stone-100 flex justify-between items-center"><h3 className="font-bold text-xl text-stone-800">{course.title}</h3><span className="text-xs font-mono bg-white border border-stone-200 px-2 py-1 rounded text-stone-500">COURSE {idx + 1}</span></div>
-                                <div className="p-8">
-                                    {course.chapters.map((chapter, cIdx) => (
-                                        <div key={cIdx} className="mb-8 last:mb-0">
-                                            <h4 className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-4 pl-2 border-l-2 border-blue-900">{chapter.title}</h4>
-                                            <div className="grid gap-2">
-                                                {chapter.lessons.map(lesson => (
-                                                    <div 
-                                                        key={lesson.id} 
-                                                        onClick={() => handleLessonSelect(lesson)} // [修改] 使用新的处理函数
-                                                        className="flex items-center justify-between p-3 hover:bg-stone-50 rounded-lg cursor-pointer group transition-colors border border-transparent hover:border-stone-100"
-                                                    >
-                                                        <div className="flex items-center gap-3">
-                                                            {/* [修改] 根据类型显示不同图标 (Note vs Book) */}
-                                                            <Icon 
-                                                                name={lesson.type === 'book' ? "book" : "file-text"} 
-                                                                size={18} 
-                                                                className={lesson.highlight ? "text-blue-600" : "text-stone-300"}
-                                                            />
-                                                            <span className={`text-sm ${lesson.highlight ? "font-bold text-stone-900" : "text-stone-600"}`}>{lesson.title}</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            {lesson.highlight && <span className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-full">ESSENTIAL</span>}
-                                                            {/* [修改] 如果是书，显示跳转图标 */}
-                                                            {lesson.type === 'book' && <Icon name="external-link" size={14} className="text-stone-300 group-hover:text-blue-900 transition-colors"/>}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )) : <div className="p-12 text-center border border-dashed border-stone-300 text-stone-400">Construction in progress...</div>}
-                    </div>
-                </div>
-            );
-        };
+        // --- Papers ---
+        const Papers = ({ data, onRead }) => {
+            const [selectedTheme, setSelectedTheme] = useState(null);
+            
+            if (!data || !data.themes) return <div className="p-12 text-center text-stone-400">No papers data loaded.</div>;
 
-        // --- Papers ---
-        const Papers = ({ data, onRead }) => {
-            const [selectedTheme, setSelectedTheme] = useState(null);
-            
-            if (!data || !data.themes) return <div className="p-12 text-center text-stone-400">No papers data loaded.</div>;
+            if(!selectedTheme) return (
+                <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
+                    <h2 className="text-4xl font-serif font-bold mb-10 text-stone-900 border-l-4 border-stone-900 pl-6">Reading Collections</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {data.themes.map(t => (
+                            <div key={t.id} onClick={() => setSelectedTheme(t.id)} className="group bg-stone-50 p-8 border border-stone-200 hover:border-stone-400 cursor-pointer transition-all relative overflow-hidden">
+                                {/* Decorative "Book Spine" accent */}
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-stone-300 group-hover:bg-blue-900 transition-colors"></div>
+                                
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-blue-900 transition-colors z-10">{t.title}</h3>
+                                    <span className="font-mono text-xs text-stone-400 bg-white px-2 py-1 border border-stone-200 rounded">{t.count}</span>
+                                </div>
+                                <p className="text-sm text-stone-500 font-serif italic mb-8 z-10 relative">{t.desc}</p>
+                                
+                                <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors">
+                                    View Collection <span className="ml-2">→</span>
+                                </div>
+                                
+                                {/* Subtle background letter */}
+                                <div className="absolute -bottom-4 -right-4 text-9xl font-serif text-stone-200 opacity-20 pointer-events-none select-none group-hover:opacity-30 transition-opacity">
+                                    {t.title.charAt(0)}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+            
+            const list = data.lists[selectedTheme] || [];
+            return (
+                <div className="max-w-4xl mx-auto px-6 py-16 fade-in min-h-screen">
+                    <button onClick={() => setSelectedTheme(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-12 font-mono text-xs uppercase tracking-widest"><span className="mr-2">←</span> Return to Collections</button>
+                    
+                    <div className="mb-12 pb-6 border-b border-stone-200 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <span className="font-mono text-xs text-blue-900 uppercase tracking-widest mb-2 block">Selected Papers</span>
+                            <h2 className="text-4xl font-serif font-bold text-stone-900">{data.themes.find(t=>t.id===selectedTheme)?.title}</h2>
+                        </div>
+                        <div className="text-right hidden md:block">
+                            <span className="text-4xl font-serif text-stone-200 italic">&</span>
+                        </div>
+                    </div>
 
-            if(!selectedTheme) return (
-                <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <h2 className="text-4xl font-serif font-bold mb-10 text-stone-900 border-l-4 border-stone-900 pl-6">Reading Collections</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {data.themes.map(t => (
-                            <div key={t.id} onClick={() => setSelectedTheme(t.id)} className="group bg-stone-50 p-8 border border-stone-200 hover:border-stone-400 cursor-pointer transition-all relative overflow-hidden">
-                                {/* Decorative "Book Spine" accent */}
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-stone-300 group-hover:bg-blue-900 transition-colors"></div>
-                                
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-blue-900 transition-colors z-10">{t.title}</h3>
-                                    <span className="font-mono text-xs text-stone-400 bg-white px-2 py-1 border border-stone-200 rounded">{t.count}</span>
-                                </div>
-                                <p className="text-sm text-stone-500 font-serif italic mb-8 z-10 relative">{t.desc}</p>
-                                
-                                <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors">
-                                    View Collection <span className="ml-2">→</span>
-                                </div>
-                                
-                                {/* Subtle background letter */}
-                                <div className="absolute -bottom-4 -right-4 text-9xl font-serif text-stone-200 opacity-20 pointer-events-none select-none group-hover:opacity-30 transition-opacity">
-                                    {t.title.charAt(0)}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-            
-            const list = data.lists[selectedTheme] || [];
-            return (
-                <div className="max-w-4xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <button onClick={() => setSelectedTheme(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-12 font-mono text-xs uppercase tracking-widest"><span className="mr-2">←</span> Return to Collections</button>
-                    
-                    <div className="mb-12 pb-6 border-b border-stone-200 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div>
-                            <span className="font-mono text-xs text-blue-900 uppercase tracking-widest mb-2 block">Selected Papers</span>
-                            <h2 className="text-4xl font-serif font-bold text-stone-900">{data.themes.find(t=>t.id===selectedTheme)?.title}</h2>
-                        </div>
-                        <div className="text-right hidden md:block">
-                            <span className="text-4xl font-serif text-stone-200 italic">&</span>
-                        </div>
-                    </div>
+                    <div className="space-y-4">
+                        {list.length > 0 ? list.map((p, i) => (
+                            <div key={i} onClick={() => onRead(p)} className="group relative bg-white border border-transparent border-b-stone-100 hover:border-stone-200 hover:bg-stone-50/50 p-6 transition-all cursor-pointer">
+                                <div className="flex flex-col md:flex-row gap-4 justify-between">
+                                    <div className="flex-grow pr-8">
+                                        <h3 className="font-serif text-lg font-bold text-stone-800 group-hover:text-blue-900 transition-colors leading-snug mb-2">
+                                            {p.title}
+                                        </h3>
+                                        <p className="text-xs font-mono text-stone-500 mb-3">{p.authors}</p>
+                                        <div className="flex gap-2">
+                                             {p.tags && p.tags.map(tag => <span key={tag} className="text-[10px] text-stone-400 uppercase tracking-wider border border-stone-100 px-1.5 py-0.5">{tag}</span>)}
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-end justify-between min-w-[100px]">
+                                        {p.read ? (
+                                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full uppercase tracking-wider mb-2">Read</span>
+                                        ) : <span className="h-6 block"></span>}
+                                        
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-blue-900">
+                                            <Icon name="arrow-right" size={16} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )) : <div className="text-stone-400 italic py-12 text-center">No papers in this category yet.</div>}
+                    </div>
+                </div>
+            );
+        };
 
-                    <div className="space-y-4">
-                        {list.length > 0 ? list.map((p, i) => (
-                            <div key={i} onClick={() => onRead(p)} className="group relative bg-white border border-transparent border-b-stone-100 hover:border-stone-200 hover:bg-stone-50/50 p-6 transition-all cursor-pointer">
-                                <div className="flex flex-col md:flex-row gap-4 justify-between">
-                                    <div className="flex-grow pr-8">
-                                        <h3 className="font-serif text-lg font-bold text-stone-800 group-hover:text-blue-900 transition-colors leading-snug mb-2">
-                                            {p.title}
-                                        </h3>
-                                        <p className="text-xs font-mono text-stone-500 mb-3">{p.authors}</p>
-                                        <div className="flex gap-2">
-                                             {p.tags && p.tags.map(tag => <span key={tag} className="text-[10px] text-stone-400 uppercase tracking-wider border border-stone-100 px-1.5 py-0.5">{tag}</span>)}
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col items-end justify-between min-w-[100px]">
-                                        {p.read ? (
-                                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full uppercase tracking-wider mb-2">Read</span>
-                                        ) : <span className="h-6 block"></span>}
-                                        
-                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-blue-900">
-                                            <Icon name="arrow-right" size={16} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )) : <div className="text-stone-400 italic py-12 text-center">No papers in this category yet.</div>}
-                    </div>
-                </div>
-            );
-        };
+        // --- Lab ---
+        const Lab = ({ data }) => (
+            <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
+                <div className="flex items-end justify-between mb-12 border-b border-stone-200 pb-4">
+                    <h2 className="text-4xl font-serif font-bold text-stone-900">The Laboratory</h2>
+                    <span className="font-mono text-xs text-stone-400 uppercase tracking-widest hidden md:inline-block">Experimental Projects</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {data && data.length > 0 ? data.map((item, idx) => (
+                        <div key={item.id} className="bg-white border border-stone-300 hover:border-blue-900 transition-colors duration-300 flex flex-col group relative">
+                            {/* Technical Header */}
+                            <div className="flex items-center justify-between px-6 py-3 border-b border-stone-100 bg-stone-50">
+                                <div className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
+                                    EXP_NO.{String(idx + 1).padStart(2, '0')}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className={`w-2 h-2 rounded-full ${item.featured ? 'bg-blue-600 animate-pulse' : 'bg-stone-300'}`}></div>
+                                    <span className="font-mono text-[10px] font-bold text-stone-600 uppercase">{item.language}</span>
+                                </div>
+                            </div>
+                            
+                            {/* Content Body */}
+                            <div className="p-8 flex-grow flex flex-col">
+                                <h3 className="text-2xl font-serif font-bold text-stone-900 mb-3 group-hover:text-blue-900 transition-colors">
+                                    {item.title}
+                                </h3>
+                                <div className="flex gap-2 mb-6">
+                                    {item.stack && item.stack.map(tech => (
+                                        <span key={tech} className="px-2 py-0.5 bg-stone-100 text-stone-500 text-[10px] font-mono border border-stone-200">{tech}</span>
+                                    ))}
+                                </div>
+                                <p className="text-stone-600 text-sm leading-relaxed mb-8 font-light border-l-2 border-stone-200 pl-4">
+                                    {item.desc}
+                                </p>
+                                
+                                <div className="mt-auto">
+                                     <ActionButton text="View Project" href={item.link} />
+                                </div>
+                            </div>
+                            
+                            {/* Corner Accent */}
+                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-stone-200 group-hover:border-r-blue-900 transition-colors"></div>
+                        </div>
+                    )) : <div className="text-stone-400">No lab projects loaded.</div>}
+                </div>
+            </div>
+        );
 
-        // --- Lab ---
-        const Lab = ({ data }) => (
-            <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-                <div className="flex items-end justify-between mb-12 border-b border-stone-200 pb-4">
-                    <h2 className="text-4xl font-serif font-bold text-stone-900">The Laboratory</h2>
-                    <span className="font-mono text-xs text-stone-400 uppercase tracking-widest hidden md:inline-block">Experimental Projects</span>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {data && data.length > 0 ? data.map((item, idx) => (
-                        <div key={item.id} className="bg-white border border-stone-300 hover:border-blue-900 transition-colors duration-300 flex flex-col group relative">
-                            {/* Technical Header */}
-                            <div className="flex items-center justify-between px-6 py-3 border-b border-stone-100 bg-stone-50">
-                                <div className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
-                                    EXP_NO.{String(idx + 1).padStart(2, '0')}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className={`w-2 h-2 rounded-full ${item.featured ? 'bg-blue-600 animate-pulse' : 'bg-stone-300'}`}></div>
-                                    <span className="font-mono text-[10px] font-bold text-stone-600 uppercase">{item.language}</span>
-                                </div>
-                            </div>
-                            
-                            {/* Content Body */}
-                            <div className="p-8 flex-grow flex flex-col">
-                                <h3 className="text-2xl font-serif font-bold text-stone-900 mb-3 group-hover:text-blue-900 transition-colors">
-                                    {item.title}
-                                </h3>
-                                <div className="flex gap-2 mb-6">
-                                    {item.stack && item.stack.map(tech => (
-                                        <span key={tech} className="px-2 py-0.5 bg-stone-100 text-stone-500 text-[10px] font-mono border border-stone-200">{tech}</span>
-                                    ))}
-                                </div>
-                                <p className="text-stone-600 text-sm leading-relaxed mb-8 font-light border-l-2 border-stone-200 pl-4">
-                                    {item.desc}
-                                </p>
-                                
-                                <div className="mt-auto">
-                                     <ActionButton text="View Project" href={item.link} />
-                                </div>
-                            </div>
-                            
-                            {/* Corner Accent */}
-                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-stone-200 group-hover:border-r-blue-900 transition-colors"></div>
-                        </div>
-                    )) : <div className="text-stone-400">No lab projects loaded.</div>}
-                </div>
-            </div>
-        );
-
-        // --- [NEW] About Component ---
+        // --- [NEW] About Component ---
 // 专门用于右上角 "ABOUT" 点击后的自我介绍
 // --- [Redesigned] About Component ---
 const About = () => (
-    <div className="max-w-2xl mx-auto px-6 py-40 fade-in min-h-screen flex flex-col items-center justify-center text-center">
-        
-        {/* 1. 核心图腾：极简的奇点/原点 */}
-        <div className="relative mb-16 group">
-            <div className="absolute -inset-4 bg-blue-100 rounded-full opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-700"></div>
-            <div className="relative text-stone-800 font-serif text-6xl">
-                ∞
-            </div>
-        </div>
+    <div className="max-w-2xl mx-auto px-6 py-40 fade-in min-h-screen flex flex-col items-center justify-center text-center">
+        
+        {/* 1. 核心图腾：极简的奇点/原点 */}
+        <div className="relative mb-16 group">
+            <div className="absolute -inset-4 bg-blue-100 rounded-full opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-700"></div>
+            <div className="relative text-stone-800 font-serif text-6xl">
+                ∞
+            </div>
+        </div>
 
-        {/* 2. 身份定义 (The Persona) */}
-        <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 mb-6 tracking-tight">
-            Theorist <span className="text-stone-300 font-light mx-2">&</span> Builder
-        </h1>
+        {/* 2. 身份定义 (The Persona) */}
+        <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 mb-6 tracking-tight">
+            Theorist <span className="text-stone-300 font-light mx-2">&</span> Builder
+        </h1>
 
-        <p className="font-mono text-xs text-stone-400 uppercase tracking-[0.4em] mb-16">
-            INFP · Researcher · Idealist
-        </p>
+        <p className="font-mono text-xs text-stone-400 uppercase tracking-[0.4em] mb-16">
+            INFP · Researcher · Idealist
+        </p>
 
-        {/* 3. 宣言 (The Manifesto) - 少即是多 */}
-        <div className="space-y-8 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
-            <p>
-                Seeking the <span className="text-stone-900 font-normal">Geometry</span> hidden in the noise.
-            </p>
-            
-            <p>
-                Bridging the chasm between <br/>
-                <span className="italic">Abstract Axioms</span> and <span className="italic">Concrete Reality</span>.
-            </p>
+        {/* 3. 宣言 (The Manifesto) - 少即是多 */}
+        <div className="space-y-8 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
+            <p>
+                Seeking the <span className="text-stone-900 font-normal">Geometry</span> hidden in the noise.
+            </p>
+            
+            <p>
+                Bridging the chasm between <br/>
+                <span className="italic">Abstract Axioms</span> and <span className="italic">Concrete Reality</span>.
+            </p>
 
-            <div className="w-px h-12 bg-stone-200 mx-auto my-8"></div>
+            <div className="w-px h-12 bg-stone-200 mx-auto my-8"></div>
 
-            <p className="text-base text-stone-500">
-                Writing the code for intelligence,<br/> 
-                one theorem at a time.
-            </p>
-        </div>
+            <p className="text-base text-stone-500">
+                Writing the code for intelligence,<br/> 
+                one theorem at a time.
+            </p>
+        </div>
 
-        {/* 4. 极简页脚 */}
-        <div className="mt-32 pt-8 border-t border-stone-100 w-full max-w-xs flex justify-between text-[10px] font-mono text-stone-300 uppercase tracking-widest">
-            <span>Shanghai</span>
-            <span>Est. 2025</span>
-        </div>
-    </div>
+        {/* 4. 极简页脚 */}
+        <div className="mt-32 pt-8 border-t border-stone-100 w-full max-w-xs flex justify-between text-[10px] font-mono text-stone-300 uppercase tracking-widest">
+            <span>Shanghai</span>
+            <span>Est. 2025</span>
+        </div>
+    </div>
 );
-        // --- Posts ---
-        const Posts = ({ data, onRead }) => (
-            <div className="max-w-4xl mx-auto px-6 py-20 fade-in min-h-screen">
-                 <div className="text-center mb-20">
-                    <span className="font-mono text-xs text-stone-400 uppercase tracking-[0.3em] mb-4 block">Selected Writings</span>
-                    <h2 className="text-5xl font-serif font-bold text-stone-900">Journal</h2>
-                 </div>
-                 
-                 <div className="flex flex-col gap-16">
-                     {data && data.length > 0 ? data.map((post, idx) => (
-                         <article key={post.id} onClick={() => onRead(post)} className="group cursor-pointer flex flex-col md:flex-row gap-8 items-baseline border-t border-stone-200 pt-8 hover:border-stone-900 transition-colors duration-500">
-                             {/* Meta Info Column */}
-                             <div className="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-2">
-                                <span className="font-serif text-sm italic text-stone-500">{post.date}</span>
-                                <span className="font-mono text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">{post.category}</span>
-                             </div>
-                             
-                             {/* Content Column */}
-                             <div className="w-full md:w-3/4">
-                                 <h3 className="text-3xl font-serif font-bold text-stone-900 mb-4 leading-tight group-hover:text-blue-900 transition-colors">
-                                    {post.title}
-                                 </h3>
-                                 <p className="text-stone-600 font-light text-lg leading-relaxed mb-6 font-serif">
-                                     {post.desc}
-                                 </p>
-                                 <div className="inline-flex items-center text-xs font-mono font-bold text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors border-b border-transparent group-hover:border-stone-900 pb-0.5">
-                                     Read Essay <span className="ml-2 group-hover:ml-3 transition-all">→</span>
-                                 </div>
-                             </div>
-                         </article>
-                     )) : <div className="text-stone-400">No posts loaded.</div>}
-                 </div>
-                 
-                 <div className="mt-20 border-t border-stone-900 pt-2 text-center">
-                    <span className="text-2xl font-serif text-stone-300">❦</span>
-                 </div>
-            </div>
-        );
+        // --- Posts ---
+        const Posts = ({ data, onRead }) => (
+            <div className="max-w-4xl mx-auto px-6 py-20 fade-in min-h-screen">
+                 <div className="text-center mb-20">
+                    <span className="font-mono text-xs text-stone-400 uppercase tracking-[0.3em] mb-4 block">Selected Writings</span>
+                    <h2 className="text-5xl font-serif font-bold text-stone-900">Journal</h2>
+                 </div>
+                 
+                 <div className="flex flex-col gap-16">
+                     {data && data.length > 0 ? data.map((post, idx) => (
+                         <article key={post.id} onClick={() => onRead(post)} className="group cursor-pointer flex flex-col md:flex-row gap-8 items-baseline border-t border-stone-200 pt-8 hover:border-stone-900 transition-colors duration-500">
+                             {/* Meta Info Column */}
+                             <div className="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-2">
+                                <span className="font-serif text-sm italic text-stone-500">{post.date}</span>
+                                <span className="font-mono text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">{post.category}</span>
+                             </div>
+                             
+                             {/* Content Column */}
+                             <div className="w-full md:w-3/4">
+                                 <h3 className="text-3xl font-serif font-bold text-stone-900 mb-4 leading-tight group-hover:text-blue-900 transition-colors">
+                                    {post.title}
+                                 </h3>
+                                 <p className="text-stone-600 font-light text-lg leading-relaxed mb-6 font-serif">
+                                     {post.desc}
+                                 </p>
+                                 <div className="inline-flex items-center text-xs font-mono font-bold text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors border-b border-transparent group-hover:border-stone-900 pb-0.5">
+                                     Read Essay <span className="ml-2 group-hover:ml-3 transition-all">→</span>
+                                 </div>
+                             </div>
+                         </article>
+                     )) : <div className="text-stone-400">No posts loaded.</div>}
+                 </div>
+                 
+                 <div className="mt-20 border-t border-stone-900 pt-2 text-center">
+                    <span className="text-2xl font-serif text-stone-300">❦</span>
+                 </div>
+            </div>
+        );
 
-        // --- Tools ---
-        // --- Updated Tools Component ---
+        // --- Tools ---
+        // --- Updated Tools Component ---
 const Tools = ({ data, onRead }) => {
-    // 解构数据，如果没有分层则做容错处理
-    const generalTools = data.general || data || [];
-    const latexTemplates = data.latex || [];
+    // 解构数据，如果没有分层则做容错处理
+    const generalTools = data.general || data || [];
+    const latexTemplates = data.latex || [];
 
-    // 提取公共的卡片渲染逻辑 (DRY原则)
-    const ToolCard = ({ item }) => (
-        <div onClick={() => item.filePath ? onRead(item) : (item.link && window.open(item.link))} 
-             className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900">
-            
-            {/* 外部链接图标 */}
-            {item.link && (
-                <div className="absolute top-4 right-4 text-stone-300 hover:text-blue-900 transition-colors p-2">
-                    <Icon name="external-link" size={16} />
-                </div>
-            )}
-            
-            <div className="mb-6 flex items-center justify-between">
-                <div className="w-12 h-12 bg-stone-50 rounded-lg flex items-center justify-center text-stone-400 group-hover:text-blue-900 group-hover:bg-blue-50 transition-colors">
-                    <Icon name={item.icon || "box"} size={24}/>
-                </div>
-                {/* 如果有 Tags 就显示 */}
-                {item.tags && (
-                    <div className="flex gap-1">
-                        {item.tags.map(t => (
-                            <span key={t} className="text-[10px] font-mono text-stone-400 border border-stone-100 px-1.5 py-0.5 rounded uppercase">{t}</span>
-                        ))}
-                    </div>
-                )}
-            </div>
-            
-            <h3 className="font-bold text-lg mb-2 text-stone-800 group-hover:text-blue-900 font-sans tracking-tight">
-                {item.title}
-            </h3>
-            <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">
-                {item.desc}
-            </p>
-            
-            {/* 按钮根据是否有 filePath 变化 */}
-            <div className="mt-auto pt-4 border-t border-stone-100 flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors">
-                <span className="font-semibold">{item.filePath ? "View Code" : "Open Tool"}</span>
-                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-        </div>
-    );
+    // 提取公共的卡片渲染逻辑 (DRY原则)
+    const ToolCard = ({ item }) => (
+        <div onClick={() => item.filePath ? onRead(item) : (item.link && window.open(item.link))} 
+             className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900">
+            
+            {/* 外部链接图标 */}
+            {item.link && (
+                <div className="absolute top-4 right-4 text-stone-300 hover:text-blue-900 transition-colors p-2">
+                    <Icon name="external-link" size={16} />
+                </div>
+            )}
+            
+            <div className="mb-6 flex items-center justify-between">
+                <div className="w-12 h-12 bg-stone-50 rounded-lg flex items-center justify-center text-stone-400 group-hover:text-blue-900 group-hover:bg-blue-50 transition-colors">
+                    <Icon name={item.icon || "box"} size={24}/>
+                </div>
+                {/* 如果有 Tags 就显示 */}
+                {item.tags && (
+                    <div className="flex gap-1">
+                        {item.tags.map(t => (
+                            <span key={t} className="text-[10px] font-mono text-stone-400 border border-stone-100 px-1.5 py-0.5 rounded uppercase">{t}</span>
+                        ))}
+                    </div>
+                )}
+            </div>
+            
+            <h3 className="font-bold text-lg mb-2 text-stone-800 group-hover:text-blue-900 font-sans tracking-tight">
+                {item.title}
+            </h3>
+            <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">
+                {item.desc}
+            </p>
+            
+            {/* 按钮根据是否有 filePath 变化 */}
+            <div className="mt-auto pt-4 border-t border-stone-100 flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors">
+                <span className="font-semibold">{item.filePath ? "View Code" : "Open Tool"}</span>
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+        </div>
+    );
 
-    return (
-        <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-16">
-                <h2 className="text-4xl font-serif font-bold text-stone-900">Workbench</h2>
-                <div className="h-px bg-stone-200 flex-grow"></div>
-            </div>
+    return (
+        <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-16">
+                <h2 className="text-4xl font-serif font-bold text-stone-900">Workbench</h2>
+                <div className="h-px bg-stone-200 flex-grow"></div>
+            </div>
 
-            {/* Section 1: LaTeX Templates */}
-            <div className="mb-20">
-                <div className="flex items-center gap-2 mb-8">
-                    <Icon name="file-code" size={20} className="text-blue-900"/>
-                    <h3 className="text-xl font-bold text-stone-800 font-serif">LaTeX Templates</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {latexTemplates.length > 0 ? latexTemplates.map(t => (
-                        <ToolCard key={t.id} item={t} />
-                    )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">No templates loaded. Check latex_templates.json</div>}
-                </div>
-            </div>
+            {/* Section 1: LaTeX Templates */}
+            <div className="mb-20">
+                <div className="flex items-center gap-2 mb-8">
+                    <Icon name="file-code" size={20} className="text-blue-900"/>
+                    <h3 className="text-xl font-bold text-stone-800 font-serif">LaTeX Templates</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {latexTemplates.length > 0 ? latexTemplates.map(t => (
+                        <ToolCard key={t.id} item={t} />
+                    )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">No templates loaded. Check latex_templates.json</div>}
+                </div>
+            </div>
 
-            {/* Section 2: General Utilities */}
-            <div>
-                <div className="flex items-center gap-2 mb-8">
-                    <Icon name="box" size={20} className="text-stone-400"/>
-                    <h3 className="text-xl font-bold text-stone-400 font-serif">General Utilities</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {generalTools.length > 0 ? generalTools.map(t => (
-                        <ToolCard key={t.id} item={t} />
-                    )) : <div className="text-stone-400">No general tools loaded.</div>}
-                </div>
-            </div>
-        </div>
-    );
+            {/* Section 2: General Utilities */}
+            <div>
+                <div className="flex items-center gap-2 mb-8">
+                    <Icon name="box" size={20} className="text-stone-400"/>
+                    <h3 className="text-xl font-bold text-stone-400 font-serif">General Utilities</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {generalTools.length > 0 ? generalTools.map(t => (
+                        <ToolCard key={t.id} item={t} />
+                    )) : <div className="text-stone-400">No general tools loaded.</div>}
+                </div>
+            </div>
+        </div>
+    );
 };
 
-        // --- Community ---
-        const Community = () => (
-            <div className="max-w-4xl mx-auto px-6 py-24 fade-in min-h-screen flex flex-col items-center text-center">
-                <div className="mb-8 text-blue-900"><Icon name="users" size={64} strokeWidth={1} /></div>
-                <h2 className="text-5xl font-serif font-bold mb-8 text-stone-900">The Community</h2>
-                
-                <div className="max-w-2xl text-lg text-stone-600 mb-12 font-light leading-relaxed">
-                    <p className="mb-6">
-                        我想建立一个会在 <strong className="text-stone-900">AI 领域深度研究</strong> 的社群。
-                    </p>
-                    <p className="mb-6">
-                        希望大家是 <span className="italic text-blue-900 font-serif">理想主义者</span> 与 <span className="italic text-blue-900 font-serif">长期主义者</span>。
-                    </p>
-                    <p>
-                        无论是在 AI 的技术、法律、人文还是数学领域，我们期待那些有独立想法的灵魂，在这里思想碰撞，<strong className="text-stone-900">共同成长</strong>。
-                    </p>
-                </div>
-                
-                <div className="w-full max-w-lg bg-white p-12 border border-stone-200 shadow-xl rounded-sm text-center transform hover:-translate-y-1 transition-transform duration-500">
-                    <h3 className="text-xs font-mono font-bold text-stone-400 mb-4 uppercase tracking-widest">Connect via Email</h3>
-                    <a href="mailto:mistatle@163.com" className="text-2xl md:text-3xl font-serif font-bold text-stone-900 hover:text-blue-900 transition-colors border-b-2 border-transparent hover:border-blue-900 pb-1">
-                        mistatle@163.com
-                    </a>
-                </div>
-            </div>
-        );
+        // --- Community ---
+        const Community = () => (
+            <div className="max-w-4xl mx-auto px-6 py-24 fade-in min-h-screen flex flex-col items-center text-center">
+                <div className="mb-8 text-blue-900"><Icon name="users" size={64} strokeWidth={1} /></div>
+                <h2 className="text-5xl font-serif font-bold mb-8 text-stone-900">The Community</h2>
+                
+                <div className="max-w-2xl text-lg text-stone-600 mb-12 font-light leading-relaxed">
+                    <p className="mb-6">
+                        我想建立一个会在 <strong className="text-stone-900">AI 领域深度研究</strong> 的社群。
+                    </p>
+                    <p className="mb-6">
+                        希望大家是 <span className="italic text-blue-900 font-serif">理想主义者</span> 与 <span className="italic text-blue-900 font-serif">长期主义者</span>。
+                    </p>
+                    <p>
+                        无论是在 AI 的技术、法律、人文还是数学领域，我们期待那些有独立想法的灵魂，在这里思想碰撞，<strong className="text-stone-900">共同成长</strong>。
+                    </p>
+                </div>
+                
+                <div className="w-full max-w-lg bg-white p-12 border border-stone-200 shadow-xl rounded-sm text-center transform hover:-translate-y-1 transition-transform duration-500">
+                    <h3 className="text-xs font-mono font-bold text-stone-400 mb-4 uppercase tracking-widest">Connect via Email</h3>
+                    <a href="mailto:mistatle@163.com" className="text-2xl md:text-3xl font-serif font-bold text-stone-900 hover:text-blue-900 transition-colors border-b-2 border-transparent hover:border-blue-900 pb-1">
+                        mistatle@163.com
+                    </a>
+                </div>
+            </div>
+        );
 
-        // --- 主程序逻辑 (App) ---
-        const App = () => {
-          const [activeTab, setActiveTab] = useState('home');
-          const [readingItem, setReadingItem] = useState(null); 
-          const [db, setDb] = useState(DEFAULT_DB);
-          const [loading, setLoading] = useState(true);
-          
-          // 修复：页面切换自动回到顶部
-          useEffect(() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }, [activeTab, readingItem]);
+        // --- 主程序逻辑 (App) ---
+        const App = () => {
+          const [activeTab, setActiveTab] = useState('home');
+          const [readingItem, setReadingItem] = useState(null); 
+          const [db, setDb] = useState(DEFAULT_DB);
+          const [loading, setLoading] = useState(true);
+          
+          // 修复：页面切换自动回到顶部
+          useEffect(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, [activeTab, readingItem]);
 
-          useEffect(() => {
-    const safeFetch = async (url) => {
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(res.statusText);
-            return await res.json();
-        } catch (e) {
-            console.error(`Load failed: ${url}`, e);
-            return null; // 失败返回 null
-        }
-    };
+          useEffect(() => {
+    const safeFetch = async (url) => {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(res.statusText);
+            return await res.json();
+        } catch (e) {
+            console.error(`Load failed: ${url}`, e);
+            return null; // 失败返回 null
+        }
+    };
 
-            Promise.all([
-                safeFetch('public/data/library.json'),
-                safeFetch('public/data/papers.json'),
-                safeFetch('public/data/lab.json'),
-                safeFetch('public/data/post.json'),
-                safeFetch('public/data/tools.json'),
-                safeFetch('public/data/latex_templates.json') 
-  ]).then(([library, papers, lab, posts, toolsData, latexData]) => {
-        
-        setDb(prev => ({
-            library: library || prev.library,
-            papers: papers || prev.papers,
-            lab: lab || prev.lab,
-            posts: posts || prev.posts,
-            // [核心修改] 将两个 fetch 结果合并到一个对象中
-            tools: {
-                general: toolsData || [],      // 来自 tools.json
-                latex: latexData || []         // 来自 latex_templates.json
-            }
-        }));
-        setLoading(false);
-    });
+            Promise.all([
+                safeFetch('public/data/library.json'),
+                safeFetch('public/data/papers.json'),
+                safeFetch('public/data/lab.json'),
+                safeFetch('public/data/post.json'),
+                safeFetch('public/data/tools.json'),
+                safeFetch('public/data/latex_templates.json') 
+  ]).then(([library, papers, lab, posts, toolsData, latexData]) => {
+        
+        setDb(prev => ({
+            library: library || prev.library,
+            papers: papers || prev.papers,
+            lab: lab || prev.lab,
+            posts: posts || prev.posts,
+            // [核心修改] 将两个 fetch 结果合并到一个对象中
+            tools: {
+                general: toolsData || [],      // 来自 tools.json
+                latex: latexData || []         // 来自 latex_templates.json
+            }
+        }));
+        setLoading(false);
+    });
 }, []);
 
-          const renderContent = () => {
-            if (readingItem) return <ArticleReader item={readingItem} onBack={() => setReadingItem(null)} />;
-            
-            if (loading) return <div className="min-h-screen flex items-center justify-center text-stone-400 font-mono animate-pulse">INITIALIZING SYSTEM...</div>;
+          const renderContent = () => {
+            if (readingItem) return <ArticleReader item={readingItem} onBack={() => setReadingItem(null)} />;
+            
+            if (loading) return <div className="min-h-screen flex items-center justify-center text-stone-400 font-mono animate-pulse">INITIALIZING SYSTEM...</div>;
 
-            switch(activeTab) {
-              case 'home': return <Hero setActiveTab={setActiveTab} />;
-              case 'library': return <Library data={db.library} onRead={setReadingItem} />;
-              case 'papers': return <Papers data={db.papers} onRead={setReadingItem} />;
-              case 'lab': return <Lab data={db.lab} />;
-              case 'posts': return <Posts data={db.posts} onRead={setReadingItem} />;
-              case 'tools': return <Tools data={db.tools} onRead={setReadingItem} />;
-              case 'community': return <Community />;
-              case 'about': return <About />;
-              default: return <Hero setActiveTab={setActiveTab} />;
-            }
-          };
+            switch(activeTab) {
+              case 'home': return <Hero setActiveTab={setActiveTab} />;
+              case 'library': return <Library data={db.library} onRead={setReadingItem} />;
+              case 'papers': return <Papers data={db.papers} onRead={setReadingItem} />;
+              case 'lab': return <Lab data={db.lab} />;
+              case 'posts': return <Posts data={db.posts} onRead={setReadingItem} />;
+              case 'tools': return <Tools data={db.tools} onRead={setReadingItem} />;
+              case 'community': return <Community />;
+              case 'about': return <About />;
+              default: return <Hero setActiveTab={setActiveTab} />;
+            }
+          };
 
-          return (
-            <div className="min-h-screen flex flex-col selection:bg-blue-900 selection:text-white">
-              <Navbar activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setReadingItem(null); }} />
-              <main className="flex-grow">{renderContent()}</main>
-              <footer className="bg-stone-50 border-t border-stone-200 py-12 mt-0 text-center text-stone-400 text-xs font-mono">
-                © 2025 MIStatlE. Built for the long term.
-              </footer>
-            </div>
-          );
-        };
+          return (
+            <div className="min-h-screen flex flex-col selection:bg-blue-900 selection:text-white">
+              <Navbar activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setReadingItem(null); }} />
+              <main className="flex-grow">{renderContent()}</main>
+              <footer className="bg-stone-50 border-t border-stone-200 py-12 mt-0 text-center text-stone-400 text-xs font-mono">
+                © 2025 MIStatlE. Built for the long term.
+              </footer>
+            </div>
+          );
+        };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
