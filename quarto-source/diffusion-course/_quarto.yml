@@ -1,7 +1,7 @@
 project:
   type: book
   # [关键配置] 编译后直接输出到 React 项目的静态资源目录
-  output-dir: ../../public/courses/diffusion
+  output-dir: public/courses/diffusion
 
 book:
   title: "Diffusion Models: Theory to Practice"
