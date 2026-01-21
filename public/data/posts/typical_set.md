@@ -1,11 +1,9 @@
-# Typical Set: 高维空间的典型集与概率集中
-
-**标签**: `Information Theory` `High-Dim Geometry`
-
-> **🔑 核心摘要**
-> 
-> 在高维空间中，概率质量（Probability Mass）并不集中在概率密度最大的区域（Mode），而是集中在“典型集” (Typical Set) 上。对于高斯分布，这表现为一个薄薄的球壳。本文基于渐进均分性 (AEP) 定义典型集。
-
+---
+title: "Typical Set: 高维空间的典型集与概率集中"
+date: 2026-1-21
+categories: [Information Theory]
+tags: ["High-Dim Geometry"]
+description: "在高维空间中，概率质量（Probability Mass）并不集中在概率密度最大的区域（Mode），而是集中在“典型集” (Typical Set) 上。对于高斯分布，这表现为一个薄薄的球壳。本文基于渐进均分性 (AEP) 定义典型集。"
 ---
 
 ## 1. 问题设定
