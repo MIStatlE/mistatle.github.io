@@ -12,7 +12,7 @@
       "title": "Probability & Stats",
       "icon": "sigma",
       "desc": "随机过程、贝叶斯推断与信息论。",
-      "count": "3 Courses"
+      "count": "1 Course"
     },
     {
       "id": "opt",
@@ -37,40 +37,75 @@
           {
             "title": "Foundations of Generative Models",
             "lessons": [
-              { 
-                "id": "diff_01", 
-                "title": "VAE & ELBO", 
+              {
+                "id": "diff_01",
+                "title": "VAE & ELBO",
                 "type": "note",
                 "filePath": "public/data/posts/vae_elbo.md"
               },
-              { 
-                "id": "diff_02", 
-                "title": "Score Matching", 
-                "type": "note" 
+              {
+                "id": "diff_02",
+                "title": "Score Matching",
+                "type": "note"
               }
             ]
           },
           {
             "title": "SDE Perspectives",
             "lessons": [
-              { 
-                "id": "diff_03", 
-                "title": "Conditional Technique", 
-                "type": "note", 
+              {
+                "id": "diff_03",
+                "title": "Conditional Technique",
+                "type": "note",
                 "highlight": true,
                 "filePath": "data/posts/conditional.md"
               },
-              { 
-                "id": "diff_04", 
-                "title": "Probability Flow ODE", 
-                "type": "note" 
+              {
+                "id": "diff_04",
+                "title": "Probability Flow ODE",
+                "type": "note"
               }
             ]
           }
         ]
       }
     ],
-    "prob": [],
+    "prob": [
+      {
+        "title": "Information Theory",
+        "chapters": [
+          {
+            "title": "Entropy & Surprise",
+            "lessons": [
+              {
+                "id": "info_01",
+                "title": "Shannon Entropy",
+                "type": "note",
+                "desc": "Quantifying uncertainty and information."
+              },
+              {
+                "id": "info_02",
+                "title": "KL Divergence & Cross Entropy",
+                "type": "note"
+              }
+            ]
+          },
+          {
+            "title": "High-Dimensional Geometry",
+            "lessons": [
+              {
+                "id": "info_aep",
+                "title": "Typical Set & AEP",
+                "type": "note",
+                "highlight": true,
+                "filePath": "public/data/posts/typical_set.md",
+                "desc": "Why -log p(x)? The geometry of high-dimensional probability."
+              }
+            ]
+          }
+        ]
+      }
+    ],
     "opt": [],
     "math-base": []
   }
