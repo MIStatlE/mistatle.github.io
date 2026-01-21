@@ -27,13 +27,17 @@ $$
 我们选择 $g(x)=-\log p(x)$。
 
 > **📝 注：**
-> 我们的研究对象是联合分布的概率密度函数在空间中的分布。独立同分布 (i.i.d.) 意味着联合概率是连乘 ($\prod$)，而大数定律处理的是求和 ($\sum$)。对数函数将“概率乘积”转化为“样本求和”：
->
-> $$
-> \underbrace{-\frac{1}{n} \log p(x^n)}_{\text{对数联合概率}} 
-> = -\frac{1}{n} \log \left( \prod_{i=1}^n p(x_i) \right) 
-> = \underbrace{\frac{1}{n} \sum_{i=1}^n \left[ -\log p(x_i) \right]}_{\text{样本均值} \xrightarrow{\text{LLN}} \mathbb{E}}
-> $$
+利用独立同分布 (i.i.d.) 的性质，我们将联合分布的概率密度通过对数变换，转化为样本均值的求和形式，从而应用大数定律 (LLN)：
+
+$$
+-\frac{1}{n} \log p(x^n) = -\frac{1}{n} \log \left( \prod_{i=1}^n p(x_i) \right) = \frac{1}{n} \sum_{i=1}^n \left[ -\log p(x_i) \right]
+$$
+
+当 $n \to \infty$ 时，根据大数定律，上述样本均值收敛于其期望值，即分布的熵：
+
+$$
+\frac{1}{n} \sum_{i=1}^n \left[ -\log p(x_i) \right] \xrightarrow{P} \mathbb{E}[-\log p(X)] = H(X)
+$$
 
 ---
 
@@ -56,7 +60,7 @@ $$
 典型集 $A_\epsilon^{(n)}$ 是满足以下条件的序列集合：
 
 $$
-A_\epsilon^{(n)} = \left\{ x^n \in \mathcal{X}^n : \left| -\frac{1}{n} \log p(x^n) - H(X) \right| \le \epsilon \right\}
+A_\epsilon^{(n)} = \{ x^n \in \mathcal{X}^n : \left| -\frac{1}{n} \log p(x^n) - H(X) \right| \le \epsilon\}
 $$
 
 简单来说，典型集包含了那些“惊奇度”（负对数似然）接近平均熵的样本。
