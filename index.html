@@ -307,39 +307,55 @@
             }
         };
 
-        // --- Icon（✅ 更轻：优先 lucide.createElement；无则 fallback） ---
-        const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) => {
-          const iconRef = useRef(null);
+        // --- Icon（✅ 稳定版：与最初版本一致，用 createIcons + data-lucide） ---
+const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) => {
+  const iconRef = useRef(null);
 
-          useEffect(() => {
-            const root = iconRef.current;
-            const lucide = window.lucide;
-            if (!root || !lucide) return;
+  useEffect(() => {
+    const root = iconRef.current;
+    if (!root) return;
 
-            root.innerHTML = "";
-            try {
-              if (typeof lucide.createElement === "function") {
-                const svg = lucide.createElement(name, {
-                  width: size,
-                  height: size,
-                  class: className || "",
-                  "stroke-width": strokeWidth
-                });
-                root.appendChild(svg);
-              } else {
-                root.innerHTML = `<i data-lucide="${name}"></i>`;
-                lucide.createIcons({
-                  root,
-                  attrs: { width: size, height: size, class: className || "", "stroke-width": strokeWidth }
-                });
-              }
-            } catch (e) {
-              root.innerHTML = "";
-            }
-          }, [name, size, strokeWidth, className]);
+    const renderOnce = () => {
+      const lucide = window.lucide;
+      if (!lucide || typeof lucide.createIcons !== "function") return false;
 
-          return <span ref={iconRef} style={{ display: "inline-flex", verticalAlign: "middle" }} {...props}></span>;
-        });
+      // 用 data-lucide 的方式（最兼容，包括 tv-2 / arrow-right 这种 kebab-case）
+      root.innerHTML = `<i data-lucide="${name}"></i>`;
+
+      lucide.createIcons({
+        root,
+        attrs: {
+          width: size,
+          height: size,
+          class: className || "",
+          "stroke-width": strokeWidth
+        }
+      });
+
+      return true;
+    };
+
+    // 先尝试一次
+    if (renderOnce()) return;
+
+    // 极端情况下（脚本还没就绪）做短暂重试，避免“首次渲染空白”
+    let tries = 0;
+    const timer = setInterval(() => {
+      tries += 1;
+      if (renderOnce() || tries >= 20) clearInterval(timer);
+    }, 50);
+
+    return () => clearInterval(timer);
+  }, [name, size, strokeWidth, className]);
+
+  return (
+    <span
+      ref={iconRef}
+      style={{ display: "inline-flex", verticalAlign: "middle" }}
+      {...props}
+    />
+  );
+});
 
         // --- 统一的 "Action Button" ---
         const ActionButton = ({ text, onClick, href }) => {
