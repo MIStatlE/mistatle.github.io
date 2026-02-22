@@ -5,24 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIStatlE | Math & Intelligence</title>
     <meta name="description" content="Bridging the gap between Abstract Theory & Concrete Reality.">
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <!-- ✅ 连接预热：减少 DNS/TLS 时间 -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- ✅ 全部 defer：不阻塞 HTML 解析；并保证 lucide/tailwind 在 Babel 之前执行 -->
+    <script crossorigin defer src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin defer src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script defer src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- ✅ 把 Marked/DOMPurify/KaTeX/Prism 从首屏移除：改为 ArticleReader 动态加载 -->
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
@@ -42,24 +41,23 @@
         }
         h1, h2, h3, h4, .serif { font-family: var(--font-serif); }
         .mono { font-family: var(--font-mono); }
-        
+
         .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
+
         .glass-nav {
             background: rgba(250, 250, 249, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        
-        /* 交互微动画 */
+
         .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #a8a29e; border-radius: 3px; }
-        
+
         /* Markdown 样式 */
         .prose h1 { font-family: var(--font-serif); font-size: 2.5rem; margin-top: 2rem; margin-bottom: 1.5rem; color: #1c1917; font-weight: 700; }
         .prose h2 { font-family: var(--font-serif); font-size: 1.8rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #1c1917; font-weight: 600; border-bottom: 1px solid #e7e5e4; padding-bottom: 0.5rem; }
@@ -68,12 +66,12 @@
         .prose blockquote { border-left: 4px solid #1e3a8a; padding-left: 1rem; font-style: italic; background: #f0f9ff; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1.5rem 0; }
         .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
         .prose li { margin-bottom: 0.5rem; }
-        
-        /* 公式滚动优化 */
-        .katex-display { 
-            overflow-x: auto; 
-            overflow-y: hidden; 
-            padding: 1rem 0; 
+
+        /* KaTeX 容器滚动优化（KaTeX CSS 会在需要时动态加载） */
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 1rem 0;
             -webkit-overflow-scrolling: touch;
         }
         .katex-display > .katex {
@@ -81,8 +79,6 @@
             max-width: 100%;
         }
 
-        pre[class*="language-"] { border-radius: 8px; margin: 1.5em 0; font-size: 0.85em; padding: 1.5em !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        
         /* 移动端菜单动画 */
         .slide-down { animation: slideDown 0.3s ease-out forwards; transform-origin: top; }
         @keyframes slideDown { from { opacity: 0; transform: scaleY(0.95); } to { opacity: 1; transform: scaleY(1); } }
@@ -92,7 +88,173 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, memo } = React;
+
+        // ============================
+        // ✅ Perf: 动态资源加载器 + 缓存
+        // ============================
+        const ASSETS = {
+          marked: "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+          dompurify: "https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js",
+          katexCss: "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css",
+          katexJs: "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js",
+          katexAutoRender: "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js",
+          prismCss: "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css",
+          prismCore: "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js",
+          prismAutoloader: "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js",
+          prismLangPath: "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/"
+        };
+
+        const _scriptPromises = window.__scriptPromises || (window.__scriptPromises = {});
+        const _cssPromises = window.__cssPromises || (window.__cssPromises = {});
+
+        function loadScriptOnce(src) {
+          if (_scriptPromises[src]) return _scriptPromises[src];
+          _scriptPromises[src] = new Promise((resolve, reject) => {
+            const s = document.createElement("script");
+            s.src = src;
+            s.defer = true;
+            s.onload = () => resolve(true);
+            s.onerror = () => reject(new Error("Failed to load script: " + src));
+            document.head.appendChild(s);
+          });
+          return _scriptPromises[src];
+        }
+
+        function loadCSSOnce(href) {
+          if (_cssPromises[href]) return _cssPromises[href];
+
+          // 已存在则直接 resolve
+          const exists = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+            .some(l => l.href === href);
+          if (exists) {
+            _cssPromises[href] = Promise.resolve(true);
+            return _cssPromises[href];
+          }
+
+          _cssPromises[href] = new Promise((resolve, reject) => {
+            const l = document.createElement("link");
+            l.rel = "stylesheet";
+            l.href = href;
+            l.onload = () => resolve(true);
+            l.onerror = () => reject(new Error("Failed to load css: " + href));
+            document.head.appendChild(l);
+          });
+          return _cssPromises[href];
+        }
+
+        function runWhenIdle(fn, timeout = 1200) {
+          if ("requestIdleCallback" in window) {
+            return window.requestIdleCallback(fn, { timeout });
+          }
+          return window.setTimeout(fn, 0);
+        }
+
+        async function ensureMarked() {
+          if (window.marked) return true;
+          await loadScriptOnce(ASSETS.marked);
+          return true;
+        }
+
+        async function ensureDOMPurify() {
+          if (window.DOMPurify) return true;
+          await loadScriptOnce(ASSETS.dompurify);
+          return true;
+        }
+
+        async function ensurePrism() {
+          if (window.Prism) return true;
+          await loadCSSOnce(ASSETS.prismCss);
+          await loadScriptOnce(ASSETS.prismCore);
+          await loadScriptOnce(ASSETS.prismAutoloader);
+
+          if (window.Prism?.plugins?.autoloader) {
+            window.Prism.plugins.autoloader.languages_path = ASSETS.prismLangPath;
+          }
+          return true;
+        }
+
+        async function ensureKatex() {
+          if (window.renderMathInElement && window.katex) return true;
+          await loadCSSOnce(ASSETS.katexCss);
+          if (!window.katex) await loadScriptOnce(ASSETS.katexJs);
+          if (!window.renderMathInElement) await loadScriptOnce(ASSETS.katexAutoRender);
+          return true;
+        }
+
+        function detectNeeds(body) {
+          const needsCode = /```/.test(body);
+          const needsMath = /\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/.test(body);
+          return { needsCode, needsMath };
+        }
+
+        // ✅ Frontmatter 解析（兼容 \r\n）
+        function parseFrontmatter(text) {
+          const pattern = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/;
+          const match = text.match(pattern);
+          if (!match) return { meta: null, body: text };
+
+          const yamlBlock = match[1];
+          const body = match[2];
+          const meta = {};
+
+          yamlBlock.split(/\r?\n/).forEach(line => {
+            const parts = line.split(":");
+            if (parts.length >= 2) {
+              const key = parts[0].trim();
+              let value = parts.slice(1).join(":").trim().replace(/^['"](.*)['"]$/, "$1");
+              if (value.startsWith("[") && value.endsWith("]")) {
+                value = value.slice(1, -1).split(",").map(v => v.trim().replace(/^['"](.*)['"]$/, "$1"));
+              }
+              meta[key] = value;
+            }
+          });
+
+          return { meta, body };
+        }
+
+        // ✅ 文章缓存（提升点击进入速度）
+        const ARTICLE_CACHE = window.__ARTICLE_CACHE__ || (window.__ARTICLE_CACHE__ = new Map());
+        const ARTICLE_FETCH_PROMISES = window.__ARTICLE_FETCH_PROMISES__ || (window.__ARTICLE_FETCH_PROMISES__ = new Map());
+
+        async function fetchArticleRecord(filePath) {
+          if (!filePath) throw new Error("No file path specified.");
+
+          const cached = ARTICLE_CACHE.get(filePath);
+          if (cached?.body) return cached;
+
+          if (ARTICLE_FETCH_PROMISES.has(filePath)) return ARTICLE_FETCH_PROMISES.get(filePath);
+
+          const p = (async () => {
+            const res = await fetch(filePath, { cache: "force-cache" });
+            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+            const text = await res.text();
+            const { meta, body } = parseFrontmatter(text);
+            const { needsCode, needsMath } = detectNeeds(body);
+
+            const existing = ARTICLE_CACHE.get(filePath) || {};
+            const record = { ...existing, text, meta, body, needsCode, needsMath };
+            ARTICLE_CACHE.set(filePath, record);
+            return record;
+          })().finally(() => {
+            ARTICLE_FETCH_PROMISES.delete(filePath);
+          });
+
+          ARTICLE_FETCH_PROMISES.set(filePath, p);
+          return p;
+        }
+
+        // ✅ 预热：首次 hover 就开始加载 Marked+DOMPurify（只触发一次）
+        function warmReaderDeps() {
+          ensureMarked().catch(() => {});
+          ensureDOMPurify().catch(() => {});
+        }
+
+        function prefetchArticle(filePath) {
+          if (!filePath) return;
+          warmReaderDeps();
+          fetchArticleRecord(filePath).catch(() => {});
+        }
 
         // --- 默认回退数据 (Backup Data) ---
         const DEFAULT_DB = {
@@ -129,40 +291,55 @@
                 { id: "why-entropy", date: "Oct 24, 2024", category: "INFORMATION THEORY", title: "熵：不仅仅是混乱度", desc: "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。", filePath: "data/posts/entropy.md" }
             ],
             tools: {
-        general: [
-            { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/", filePath: "" }
-        ],
-        latex: [
-            // 这里可以放一个硬编码的模板作为兜底，确认代码逻辑没问题
-            { 
-                id: "demo-template", 
-                title: "Template Placeholder", 
-                desc: "If you see this, the code logic is correct but fetch failed.", 
-                icon: "layout", 
-                tags: ["Debug"], 
-                filePath: "" 
+                general: [
+                    { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/", filePath: "" }
+                ],
+                latex: [
+                    { 
+                        id: "demo-template", 
+                        title: "Template Placeholder", 
+                        desc: "If you see this, the code logic is correct but fetch failed.", 
+                        icon: "layout", 
+                        tags: ["Debug"], 
+                        filePath: "" 
+                    }
+                ]
             }
-        ]
-    }
         };
 
-        // --- 工具组件 (修复版：更稳定的 Icon 渲染) ---
-        const Icon = ({ name, size = 20, className, ...props }) => {
-            const iconRef = useRef(null);
-            
-            useEffect(() => {
-                if (window.lucide && iconRef.current) {
-                    // 先清空避免重复
-                    iconRef.current.innerHTML = `<i data-lucide="${name}"></i>`;
-                    window.lucide.createIcons({
-                        root: iconRef.current,
-                        attrs: { width: size, height: size, class: className || '' }
-                    });
-                }
-            }, [name, size, className]);
+        // --- Icon（✅ 更轻：优先 lucide.createElement；无则 fallback） ---
+        const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) => {
+          const iconRef = useRef(null);
 
-            return <span ref={iconRef} style={{ display: 'inline-flex', verticalAlign: 'middle' }} {...props}></span>;
-        };
+          useEffect(() => {
+            const root = iconRef.current;
+            const lucide = window.lucide;
+            if (!root || !lucide) return;
+
+            root.innerHTML = "";
+            try {
+              if (typeof lucide.createElement === "function") {
+                const svg = lucide.createElement(name, {
+                  width: size,
+                  height: size,
+                  class: className || "",
+                  "stroke-width": strokeWidth
+                });
+                root.appendChild(svg);
+              } else {
+                root.innerHTML = `<i data-lucide="${name}"></i>`;
+                lucide.createIcons({
+                  root,
+                  attrs: { width: size, height: size, class: className || "", "stroke-width": strokeWidth }
+                });
+              }
+            } catch (e) {
+              root.innerHTML = "";
+            }
+          }, [name, size, strokeWidth, className]);
+
+          return <span ref={iconRef} style={{ display: "inline-flex", verticalAlign: "middle" }} {...props}></span>;
+        });
 
         // --- 统一的 "Action Button" ---
         const ActionButton = ({ text, onClick, href }) => {
@@ -174,7 +351,17 @@
             );
 
             if (href) {
-                return <a href={href} target="_blank" onClick={(e) => e.stopPropagation()} className="no-underline"><Content /></a>;
+                return (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="no-underline"
+                  >
+                    <Content />
+                  </a>
+                );
             }
             return <div onClick={onClick}><Content /></div>;
         };
@@ -206,21 +393,29 @@
 
         // --- 社交链接组件 ---
         const SocialLink = ({ icon, label, href, colorClass }) => (
-            <a href={href} target="_blank" className={`group flex flex-col items-center gap-2 transition-transform hover:-translate-y-1`}>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              className={`group relative flex flex-col items-center gap-2 transition-transform hover:-translate-y-1`}
+            >
                 <div className={`w-10 h-10 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all ${colorClass}`}>
                     <Icon name={icon} size={18} />
                 </div>
-                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 whitespace-nowrap">{label}</span>
+                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 whitespace-nowrap">
+                  {label}
+                </span>
             </a>
         );
 
-        // --- 导航栏 (Navbar) - 修复移动端交互 ---
+        // --- 导航栏 (Navbar) ---
         const Navbar = ({ activeTab, setActiveTab }) => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
 
             const handleTabClick = (tab) => {
                 setActiveTab(tab);
-                setIsMenuOpen(false); // 点击后关闭菜单
+                setIsMenuOpen(false);
             };
 
             return (
@@ -228,35 +423,46 @@
                     <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                         <div onClick={() => handleTabClick('home')}><Logo /></div>
                         
-                        {/* 桌面端导航 */}
                         <div className="hidden lg:flex items-center gap-1 bg-stone-100/50 p-1 rounded-full border border-stone-200/50">
                             {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
-                                <button key={item} onClick={() => setActiveTab(item)} 
-                                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}>
+                                <button
+                                  key={item}
+                                  onClick={() => setActiveTab(item)} 
+                                  aria-current={activeTab === item ? "page" : undefined}
+                                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}
+                                >
                                     {item.charAt(0).toUpperCase() + item.slice(1)}
                                 </button>
                             ))}
                         </div>
                         
                         <div className="hidden lg:flex items-center gap-4">
-    {/* 修改这里：onClick 传入 'about' */}
                              <button onClick={() => setActiveTab('about')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">
                                  ABOUT
                              </button>
                         </div>
 
-                        {/* 移动端汉堡按钮 */}
-                        <div className="lg:hidden cursor-pointer p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                            <Icon name={isMenuOpen ? "x" : "menu"} className="text-stone-800" />
-                        </div>
+                        <button
+                          type="button"
+                          className="lg:hidden p-2 rounded-md hover:bg-stone-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900/30"
+                          onClick={() => setIsMenuOpen(!isMenuOpen)}
+                          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                          aria-expanded={isMenuOpen}
+                          aria-controls="mobile-menu"
+                        >
+                          <Icon name={isMenuOpen ? "x" : "menu"} className="text-stone-800" />
+                        </button>
                     </div>
 
-                    {/* 移动端下拉菜单 */}
                     {isMenuOpen && (
-                        <div className="lg:hidden absolute top-20 left-0 w-full bg-[#fafaf9] border-b border-stone-200 shadow-xl p-4 flex flex-col gap-2 slide-down">
-                            {['library', 'papers', 'lab', 'posts', 'tools', 'community'].map((item) => (
-                                <button key={item} onClick={() => handleTabClick(item)} 
-                                    className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}>
+                        <div id="mobile-menu" className="lg:hidden absolute top-20 left-0 w-full bg-[#fafaf9] border-b border-stone-200 shadow-xl p-4 flex flex-col gap-2 slide-down">
+                            {['library', 'papers', 'lab', 'posts', 'tools', 'community', 'about'].map((item) => (
+                                <button
+                                  key={item}
+                                  onClick={() => handleTabClick(item)} 
+                                  aria-current={activeTab === item ? "page" : undefined}
+                                  className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}
+                                >
                                     {item.toUpperCase()}
                                 </button>
                             ))}
@@ -266,61 +472,55 @@
             );
         };
 
-        // --- ArticleReader ---
+        // --- ArticleReader（✅ 重库按需加载 + 缓存 + 空闲时高亮/公式） ---
         const ArticleReader = ({ item, onBack }) => {
             const [state, setState] = useState({ 
                 content: '', 
                 frontmatter: null, 
                 loading: true, 
-                error: null 
+                error: null,
+                needsCode: false,
+                needsMath: false
             });
             const contentRef = useRef(null);
 
-            // 1. 解析 Frontmatter
-            const parseMetadata = (text) => {
-                const pattern = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-                const match = text.match(pattern);
-                if (!match) return { meta: null, body: text };
-
-                const yamlBlock = match[1];
-                const body = match[2];
-                const meta = {};
-
-                yamlBlock.split('\n').forEach(line => {
-                    const parts = line.split(':');
-                    if (parts.length >= 2) {
-                        const key = parts[0].trim();
-                        let value = parts.slice(1).join(':').trim().replace(/^['"](.*)['"]$/, '$1');
-                        if (value.startsWith('[') && value.endsWith(']')) {
-                            value = value.slice(1, -1).split(',').map(v => v.trim().replace(/^['"](.*)['"]$/, '$1'));
-                        }
-                        meta[key] = value;
-                    }
-                });
-                return { meta, body };
-            };
-
             useEffect(() => {
                 let ignore = false;
+                const filePath = item?.filePath;
+
                 setState(s => ({ ...s, loading: true, error: null }));
 
-                if (!item.filePath) {
-                    setState({ content: '', frontmatter: null, loading: false, error: 'No file path specified.' });
+                if (!filePath) {
+                    setState({ content: '', frontmatter: null, loading: false, error: 'No file path specified.', needsCode: false, needsMath: false });
                     return;
                 }
 
-                fetch(item.filePath)
-                    .then(res => {
-                        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-                        return res.text();
-                    })
-                    .then(text => {
+                (async () => {
+                    try {
+                        const record = await fetchArticleRecord(filePath);
                         if (ignore) return;
 
-                        const { meta, body } = parseMetadata(text);
-                        const renderer = new marked.Renderer();
-                        
-                        // 兼容新旧版本的代码高亮参数
+                        // ✅ 如果已解析过 HTML，直接用缓存（秒开）
+                        if (record.html) {
+                          setState({
+                            content: record.html,
+                            frontmatter: record.meta,
+                            loading: false,
+                            error: null,
+                            needsCode: !!record.needsCode,
+                            needsMath: !!record.needsMath
+                          });
+                          return;
+                        }
+
+                        // ✅ 必需库（文章首次打开才加载）
+                        await ensureMarked();
+                        await ensureDOMPurify();
+                        if (ignore) return;
+
+                        const m = window.marked;
+                        const renderer = new m.Renderer();
+
                         renderer.code = function(entry, langStr) {
                             let codeContent = '';
                             let codeLang = '';
@@ -334,15 +534,15 @@
                             }
 
                             const validLang = (codeLang || 'text').toLowerCase();
-                            
                             const buttonData = encodeURIComponent(codeContent);
+
                             const displayCode = codeContent
                                 .replace(/&/g, '&amp;')
                                 .replace(/</g, '&lt;')
                                 .replace(/>/g, '&gt;')
                                 .replace(/"/g, '&quot;')
                                 .replace(/'/g, '&#039;');
-                            
+
                             return `
                                 <div class="relative group my-8 rounded-lg bg-[#2d2d2d] overflow-hidden shadow-xl border border-stone-700">
                                     <div class="flex justify-between items-center px-4 py-2 bg-[#383838] border-b border-stone-600 select-none">
@@ -356,58 +556,136 @@
                             `;
                         };
 
-                        const html = marked.parse(body, { renderer });
-                        setState({ content: html, frontmatter: meta, loading: false, error: null });
-                    })
-                    .catch(err => {
-                        if (!ignore) setState({ content: '', frontmatter: null, loading: false, error: err.message });
-                    });
+                        const html = m.parse(record.body, { renderer });
+
+                        const clean = window.DOMPurify
+                          ? window.DOMPurify.sanitize(html, { ADD_TAGS: ['button'], ADD_ATTR: ['data-code'] })
+                          : html;
+
+                        // ✅ 写入缓存
+                        ARTICLE_CACHE.set(filePath, { ...record, html: clean });
+
+                        if (ignore) return;
+                        setState({
+                          content: clean,
+                          frontmatter: record.meta,
+                          loading: false,
+                          error: null,
+                          needsCode: !!record.needsCode,
+                          needsMath: !!record.needsMath
+                        });
+                    } catch (err) {
+                        if (!ignore) setState({
+                          content: '',
+                          frontmatter: null,
+                          loading: false,
+                          error: err?.message || String(err),
+                          needsCode: false,
+                          needsMath: false
+                        });
+                    }
+                })();
 
                 return () => { ignore = true; };
             }, [item]);
 
-            // --- 副作用处理 ---
+            // ✅ 内容渲染后：lazy 图片、绑定 copy、空闲时加载 Prism/KaTeX 并处理
             useEffect(() => {
-                if (!state.loading && state.content && contentRef.current) {
-                    // 1. 渲染公式
-                    if (window.renderMathInElement) {
-                        window.renderMathInElement(contentRef.current, {
-                            delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}],
-                            throwOnError: false
-                        });
-                    }
-                    // 2. 高亮代码
-                    if (window.Prism) {
-                        window.Prism.highlightAllUnder(contentRef.current);
-                    }
+              let cancelled = false;
+              const root = contentRef.current;
+              if (state.loading || state.error || !state.content || !root) return;
 
-                    // 3. 绑定复制按钮
-                    const buttons = contentRef.current.querySelectorAll('.copy-btn');
-                    buttons.forEach(btn => {
-                        btn.onclick = () => {
-                            try {
-                                const code = decodeURIComponent(btn.getAttribute('data-code'));
-                                navigator.clipboard.writeText(code).then(() => {
-                                    const originalText = btn.innerText;
-                                    btn.innerText = 'Copied!';
-                                    btn.classList.add('text-emerald-400');
-                                    setTimeout(() => {
-                                        btn.innerText = originalText;
-                                        btn.classList.remove('text-emerald-400');
-                                    }, 2000);
-                                });
-                            } catch (e) { console.error('Copy failed', e); }
-                        };
-                    });
+              // 1) 图片 lazy-load
+              root.querySelectorAll("img").forEach(img => {
+                if (!img.getAttribute("loading")) img.setAttribute("loading", "lazy");
+                img.decoding = "async";
+              });
+
+              // 2) Copy button（防重复绑定）
+              const tryCopy = async (text) => {
+                // clipboard API
+                try {
+                  await navigator.clipboard.writeText(text);
+                  return true;
+                } catch (e) {}
+
+                // fallback
+                try {
+                  const ta = document.createElement("textarea");
+                  ta.value = text;
+                  ta.style.position = "fixed";
+                  ta.style.opacity = "0";
+                  ta.style.left = "-9999px";
+                  document.body.appendChild(ta);
+                  ta.focus();
+                  ta.select();
+                  const ok = document.execCommand("copy");
+                  document.body.removeChild(ta);
+                  return ok;
+                } catch (e) {
+                  return false;
                 }
-            }, [state.content, state.loading]);
+              };
+
+              root.querySelectorAll(".copy-btn").forEach(btn => {
+                if (btn.dataset.bound === "1") return;
+                btn.dataset.bound = "1";
+                btn.onclick = async () => {
+                  try {
+                    const code = decodeURIComponent(btn.getAttribute("data-code") || "");
+                    const ok = await tryCopy(code);
+                    const original = btn.innerText;
+                    btn.innerText = ok ? "Copied!" : "Copy failed";
+                    btn.classList.toggle("text-emerald-400", ok);
+                    btn.classList.toggle("text-red-300", !ok);
+                    setTimeout(() => {
+                      btn.innerText = original;
+                      btn.classList.remove("text-emerald-400", "text-red-300");
+                    }, 1800);
+                  } catch (e) {
+                    console.error("Copy failed", e);
+                  }
+                };
+              });
+
+              // 3) 空闲时做重活：公式渲染、代码高亮
+              const runHeavy = async () => {
+                if (cancelled) return;
+
+                if (state.needsMath) {
+                  await ensureKatex();
+                  if (cancelled) return;
+                  if (window.renderMathInElement) {
+                    window.renderMathInElement(root, {
+                      delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false }
+                      ],
+                      throwOnError: false
+                    });
+                  }
+                }
+
+                if (state.needsCode) {
+                  await ensurePrism();
+                  if (cancelled) return;
+                  if (window.Prism) {
+                    window.Prism.highlightAllUnder(root);
+                  }
+                }
+              };
+
+              runWhenIdle(() => { runHeavy().catch(() => {}); }, 1200);
+
+              return () => { cancelled = true; };
+            }, [state.content, state.loading, state.error, state.needsCode, state.needsMath]);
 
             return (
                 <div className="max-w-5xl mx-auto px-6 py-12 min-h-screen">
                     <button onClick={onBack} className="group flex items-center text-sm text-stone-400 hover:text-blue-900 mb-10 font-mono uppercase tracking-wider transition-colors">
                         <span className="mr-2 inline-block transition-transform group-hover:-translate-x-1">←</span> Back to List
                     </button>
-                    
+
                     {state.loading && (
                         <div className="flex flex-col items-center py-20 space-y-4">
                             <div className="w-8 h-8 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
@@ -421,10 +699,9 @@
                             <p className="font-mono text-sm">{state.error}</p>
                         </div>
                     )}
-                    
+
                     {!state.loading && !state.error && (
                         <article className="fade-in">
-                            {/* Header */}
                             <header className="mb-12 pb-8 border-b border-stone-200">
                                 <div className="flex flex-wrap gap-3 mb-4 text-xs font-mono uppercase tracking-widest text-stone-500">
                                     {state.frontmatter?.categories && (
@@ -432,11 +709,11 @@
                                     )}
                                     {state.frontmatter?.date && <span>• {state.frontmatter.date}</span>}
                                 </div>
-                                
+
                                 <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-6 leading-tight">
                                     {state.frontmatter?.title || item.title}
                                 </h1>
-                                
+
                                 {state.frontmatter?.description && (
                                     <p className="text-xl text-stone-600 font-serif italic font-light leading-relaxed">
                                         {state.frontmatter.description}
@@ -454,10 +731,9 @@
                                 )}
                             </header>
 
-                            {/* Body */}
-                            <div 
+                            <div
                                 ref={contentRef}
-                                className="prose prose-stone prose-lg prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900" 
+                                className="prose prose-stone prose-lg prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900"
                                 dangerouslySetInnerHTML={{ __html: state.content }}
                             ></div>
                         </article>
@@ -471,15 +747,15 @@
           <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[75vh] relative">
             <div className="absolute right-0 top-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
             <div className="absolute left-10 bottom-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-stone-900 hidden md:block">∑</div>
-            
+
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 shadow-sm text-stone-500 text-xs font-mono mb-8 w-fit self-start">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
               <span className="tracking-wider">LONG-TERM RESEARCH</span>
             </div>
-            
+
             <h1 className="text-5xl md:text-8xl font-bold text-stone-900 leading-[1.1] mb-8 font-serif tracking-tight">Bridging <br/><span className="text-stone-300">Abstract</span> & <span className="italic text-blue-900">Reality</span>.</h1>
             <p className="text-xl md:text-2xl text-stone-500 leading-relaxed max-w-2xl mb-16 font-serif italic"> “推导，直到直觉显现。”</p>
-            
+
             <div className="flex flex-wrap gap-6 mb-16">
               <button onClick={() => setActiveTab('library')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE LIBRARY <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
               <button onClick={() => setActiveTab('community')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">JOIN COMMUNITY</button>
@@ -496,7 +772,7 @@
                     <SocialLink icon="message-circle" label="公众号" href="#" colorClass="group-hover:text-[#07C160] group-hover:border-[#07C160]" />
                 </div>
             </div>
-            
+
             <div className="mt-8 flex justify-between text-xs font-mono text-stone-400 uppercase tracking-widest">
                 <span>Est. 2025</span>
                 <span>Artificial Intelligence</span>
@@ -505,10 +781,10 @@
           </div>
         );
 
-        // --- Library ---
+        // --- Library（✅ hover/touch 预取） ---
         const Library = ({ onRead, data }) => {
           const [selectedDiscipline, setSelectedDiscipline] = useState(null);
-          
+
           if (!data || !data.disciplines || data.disciplines.length === 0) {
             return <div className="p-12 text-center text-stone-400">Library data is empty.</div>;
           }
@@ -534,7 +810,7 @@
             );
           }
 
-          const courses = data.courses[selectedDiscipline] || []; 
+          const courses = data.courses[selectedDiscipline] || [];
           const currentInfo = data.disciplines.find(d => d.id === selectedDiscipline);
 
           return (
@@ -554,8 +830,17 @@
                                           <h4 className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-4 pl-2 border-l-2 border-blue-900">{chapter.title}</h4>
                                           <div className="grid gap-2">
                                               {chapter.lessons.map(lesson => (
-                                                  <div key={lesson.id} onClick={() => onRead(lesson)} className="flex items-center justify-between p-3 hover:bg-stone-50 rounded-lg cursor-pointer group transition-colors border border-transparent hover:border-stone-100">
-                                                      <div className="flex items-center gap-3"><Icon name="file-text" size={18} className={lesson.highlight ? "text-blue-600" : "text-stone-300"}/><span className={`text-sm ${lesson.highlight ? "font-bold text-stone-900" : "text-stone-600"}`}>{lesson.title}</span></div>
+                                                  <div
+                                                    key={lesson.id}
+                                                    onMouseEnter={() => prefetchArticle(lesson.filePath)}
+                                                    onTouchStart={() => prefetchArticle(lesson.filePath)}
+                                                    onClick={() => onRead(lesson)}
+                                                    className="flex items-center justify-between p-3 hover:bg-stone-50 rounded-lg cursor-pointer group transition-colors border border-transparent hover:border-stone-100"
+                                                  >
+                                                      <div className="flex items-center gap-3">
+                                                        <Icon name="file-text" size={18} className={lesson.highlight ? "text-blue-600" : "text-stone-300"}/>
+                                                        <span className={`text-sm ${lesson.highlight ? "font-bold text-stone-900" : "text-stone-600"}`}>{lesson.title}</span>
+                                                      </div>
                                                       {lesson.highlight && <span className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-full">ESSENTIAL</span>}
                                                   </div>
                                               ))}
@@ -570,10 +855,10 @@
           );
         };
 
-        // --- Papers ---
+        // --- Papers（✅ hover/touch 预取） ---
         const Papers = ({ data, onRead }) => {
             const [selectedTheme, setSelectedTheme] = useState(null);
-            
+
             if (!data || !data.themes) return <div className="p-12 text-center text-stone-400">No papers data loaded.</div>;
 
             if(!selectedTheme) return (
@@ -582,20 +867,15 @@
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {data.themes.map(t => (
                             <div key={t.id} onClick={() => setSelectedTheme(t.id)} className="group bg-stone-50 p-8 border border-stone-200 hover:border-stone-400 cursor-pointer transition-all relative overflow-hidden">
-                                {/* Decorative "Book Spine" accent */}
                                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-stone-300 group-hover:bg-blue-900 transition-colors"></div>
-                                
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-blue-900 transition-colors z-10">{t.title}</h3>
                                     <span className="font-mono text-xs text-stone-400 bg-white px-2 py-1 border border-stone-200 rounded">{t.count}</span>
                                 </div>
                                 <p className="text-sm text-stone-500 font-serif italic mb-8 z-10 relative">{t.desc}</p>
-                                
                                 <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors">
                                     View Collection <span className="ml-2">→</span>
                                 </div>
-                                
-                                {/* Subtle background letter */}
                                 <div className="absolute -bottom-4 -right-4 text-9xl font-serif text-stone-200 opacity-20 pointer-events-none select-none group-hover:opacity-30 transition-opacity">
                                     {t.title.charAt(0)}
                                 </div>
@@ -604,12 +884,12 @@
                     </div>
                 </div>
             );
-            
+
             const list = data.lists[selectedTheme] || [];
             return (
                 <div className="max-w-4xl mx-auto px-6 py-16 fade-in min-h-screen">
                     <button onClick={() => setSelectedTheme(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-12 font-mono text-xs uppercase tracking-widest"><span className="mr-2">←</span> Return to Collections</button>
-                    
+
                     <div className="mb-12 pb-6 border-b border-stone-200 flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <span className="font-mono text-xs text-blue-900 uppercase tracking-widest mb-2 block">Selected Papers</span>
@@ -622,7 +902,13 @@
 
                     <div className="space-y-4">
                         {list.length > 0 ? list.map((p, i) => (
-                            <div key={i} onClick={() => onRead(p)} className="group relative bg-white border border-transparent border-b-stone-100 hover:border-stone-200 hover:bg-stone-50/50 p-6 transition-all cursor-pointer">
+                            <div
+                              key={i}
+                              onMouseEnter={() => prefetchArticle(p.filePath)}
+                              onTouchStart={() => prefetchArticle(p.filePath)}
+                              onClick={() => onRead(p)}
+                              className="group relative bg-white border border-transparent border-b-stone-100 hover:border-stone-200 hover:bg-stone-50/50 p-6 transition-all cursor-pointer"
+                            >
                                 <div className="flex flex-col md:flex-row gap-4 justify-between">
                                     <div className="flex-grow pr-8">
                                         <h3 className="font-serif text-lg font-bold text-stone-800 group-hover:text-blue-900 transition-colors leading-snug mb-2">
@@ -637,7 +923,7 @@
                                         {p.read ? (
                                             <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full uppercase tracking-wider mb-2">Read</span>
                                         ) : <span className="h-6 block"></span>}
-                                        
+
                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-blue-900">
                                             <Icon name="arrow-right" size={16} />
                                         </div>
@@ -657,11 +943,10 @@
                     <h2 className="text-4xl font-serif font-bold text-stone-900">The Laboratory</h2>
                     <span className="font-mono text-xs text-stone-400 uppercase tracking-widest hidden md:inline-block">Experimental Projects</span>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {data && data.length > 0 ? data.map((item, idx) => (
                         <div key={item.id} className="bg-white border border-stone-300 hover:border-blue-900 transition-colors duration-300 flex flex-col group relative">
-                            {/* Technical Header */}
                             <div className="flex items-center justify-between px-6 py-3 border-b border-stone-100 bg-stone-50">
                                 <div className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
                                     EXP_NO.{String(idx + 1).padStart(2, '0')}
@@ -671,8 +956,7 @@
                                     <span className="font-mono text-[10px] font-bold text-stone-600 uppercase">{item.language}</span>
                                 </div>
                             </div>
-                            
-                            {/* Content Body */}
+
                             <div className="p-8 flex-grow flex flex-col">
                                 <h3 className="text-2xl font-serif font-bold text-stone-900 mb-3 group-hover:text-blue-900 transition-colors">
                                     {item.title}
@@ -685,13 +969,12 @@
                                 <p className="text-stone-600 text-sm leading-relaxed mb-8 font-light border-l-2 border-stone-200 pl-4">
                                     {item.desc}
                                 </p>
-                                
+
                                 <div className="mt-auto">
                                      <ActionButton text="View Project" href={item.link} />
                                 </div>
                             </div>
-                            
-                            {/* Corner Accent */}
+
                             <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-stone-200 group-hover:border-r-blue-900 transition-colors"></div>
                         </div>
                     )) : <div className="text-stone-400">No lab projects loaded.</div>}
@@ -699,73 +982,64 @@
             </div>
         );
 
-        // --- [NEW] About Component ---
-// 专门用于右上角 "ABOUT" 点击后的自我介绍
-// --- [Redesigned] About Component ---
-const About = () => (
-    <div className="max-w-2xl mx-auto px-6 py-40 fade-in min-h-screen flex flex-col items-center justify-center text-center">
-        
-        {/* 1. 核心图腾：极简的奇点/原点 */}
-        <div className="relative mb-16 group">
-            <div className="absolute -inset-4 bg-blue-100 rounded-full opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-700"></div>
-            <div className="relative text-stone-800 font-serif text-6xl">
-                ∞
+        // --- About ---
+        const About = () => (
+            <div className="max-w-2xl mx-auto px-6 py-40 fade-in min-h-screen flex flex-col items-center justify-center text-center">
+                <div className="relative mb-16 group">
+                    <div className="absolute -inset-4 bg-blue-100 rounded-full opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-700"></div>
+                    <div className="relative text-stone-800 font-serif text-6xl">∞</div>
+                </div>
+
+                <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 mb-6 tracking-tight">
+                    Theorist <span className="text-stone-300 font-light mx-2">&</span> Builder
+                </h1>
+
+                <p className="font-mono text-xs text-stone-400 uppercase tracking-[0.4em] mb-16">
+                    INFP · Researcher · Idealist
+                </p>
+
+                <div className="space-y-8 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
+                    <p>Seeking the <span className="text-stone-900 font-normal">Geometry</span> hidden in the noise.</p>
+                    <p>
+                        Bridging the chasm between <br/>
+                        <span className="italic">Abstract Axioms</span> and <span className="italic">Concrete Reality</span>.
+                    </p>
+                    <div className="w-px h-12 bg-stone-200 mx-auto my-8"></div>
+                    <p className="text-base text-stone-500">
+                        Writing the code for intelligence,<br/> 
+                        one theorem at a time.
+                    </p>
+                </div>
+
+                <div className="mt-32 pt-8 border-t border-stone-100 w-full max-w-xs flex justify-between text-[10px] font-mono text-stone-300 uppercase tracking-widest">
+                    <span>Shanghai</span>
+                    <span>Est. 2025</span>
+                </div>
             </div>
-        </div>
+        );
 
-        {/* 2. 身份定义 (The Persona) */}
-        <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 mb-6 tracking-tight">
-            Theorist <span className="text-stone-300 font-light mx-2">&</span> Builder
-        </h1>
-
-        <p className="font-mono text-xs text-stone-400 uppercase tracking-[0.4em] mb-16">
-            INFP · Researcher · Idealist
-        </p>
-
-        {/* 3. 宣言 (The Manifesto) - 少即是多 */}
-        <div className="space-y-8 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
-            <p>
-                Seeking the <span className="text-stone-900 font-normal">Geometry</span> hidden in the noise.
-            </p>
-            
-            <p>
-                Bridging the chasm between <br/>
-                <span className="italic">Abstract Axioms</span> and <span className="italic">Concrete Reality</span>.
-            </p>
-
-            <div className="w-px h-12 bg-stone-200 mx-auto my-8"></div>
-
-            <p className="text-base text-stone-500">
-                Writing the code for intelligence,<br/> 
-                one theorem at a time.
-            </p>
-        </div>
-
-        {/* 4. 极简页脚 */}
-        <div className="mt-32 pt-8 border-t border-stone-100 w-full max-w-xs flex justify-between text-[10px] font-mono text-stone-300 uppercase tracking-widest">
-            <span>Shanghai</span>
-            <span>Est. 2025</span>
-        </div>
-    </div>
-);
-        // --- Posts ---
+        // --- Posts（✅ hover/touch 预取） ---
         const Posts = ({ data, onRead }) => (
             <div className="max-w-4xl mx-auto px-6 py-20 fade-in min-h-screen">
                  <div className="text-center mb-20">
                     <span className="font-mono text-xs text-stone-400 uppercase tracking-[0.3em] mb-4 block">Selected Writings</span>
                     <h2 className="text-5xl font-serif font-bold text-stone-900">Journal</h2>
                  </div>
-                 
+
                  <div className="flex flex-col gap-16">
-                     {data && data.length > 0 ? data.map((post, idx) => (
-                         <article key={post.id} onClick={() => onRead(post)} className="group cursor-pointer flex flex-col md:flex-row gap-8 items-baseline border-t border-stone-200 pt-8 hover:border-stone-900 transition-colors duration-500">
-                             {/* Meta Info Column */}
+                     {data && data.length > 0 ? data.map((post) => (
+                         <article
+                           key={post.id}
+                           onMouseEnter={() => prefetchArticle(post.filePath)}
+                           onTouchStart={() => prefetchArticle(post.filePath)}
+                           onClick={() => onRead(post)}
+                           className="group cursor-pointer flex flex-col md:flex-row gap-8 items-baseline border-t border-stone-200 pt-8 hover:border-stone-900 transition-colors duration-500"
+                         >
                              <div className="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-2">
                                 <span className="font-serif text-sm italic text-stone-500">{post.date}</span>
                                 <span className="font-mono text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">{post.category}</span>
                              </div>
-                             
-                             {/* Content Column */}
+
                              <div className="w-full md:w-3/4">
                                  <h3 className="text-3xl font-serif font-bold text-stone-900 mb-4 leading-tight group-hover:text-blue-900 transition-colors">
                                     {post.title}
@@ -780,104 +1054,113 @@ const About = () => (
                          </article>
                      )) : <div className="text-stone-400">No posts loaded.</div>}
                  </div>
-                 
+
                  <div className="mt-20 border-t border-stone-900 pt-2 text-center">
                     <span className="text-2xl font-serif text-stone-300">❦</span>
                  </div>
             </div>
         );
 
-        // --- Tools ---
-        // --- Updated Tools Component ---
-const Tools = ({ data, onRead }) => {
-    // 解构数据，如果没有分层则做容错处理
-    const generalTools = data.general || data || [];
-    const latexTemplates = data.latex || [];
+        // --- Tools（✅ hover/touch 预取） ---
+        const Tools = ({ data, onRead }) => {
+            const generalTools = data.general || data || [];
+            const latexTemplates = data.latex || [];
 
-    // 提取公共的卡片渲染逻辑 (DRY原则)
-    const ToolCard = ({ item }) => (
-        <div onClick={() => item.filePath ? onRead(item) : (item.link && window.open(item.link))} 
-             className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900">
-            
-            {/* 外部链接图标 */}
-            {item.link && (
-                <div className="absolute top-4 right-4 text-stone-300 hover:text-blue-900 transition-colors p-2">
-                    <Icon name="external-link" size={16} />
-                </div>
-            )}
-            
-            <div className="mb-6 flex items-center justify-between">
-                <div className="w-12 h-12 bg-stone-50 rounded-lg flex items-center justify-center text-stone-400 group-hover:text-blue-900 group-hover:bg-blue-50 transition-colors">
-                    <Icon name={item.icon || "box"} size={24}/>
-                </div>
-                {/* 如果有 Tags 就显示 */}
-                {item.tags && (
-                    <div className="flex gap-1">
-                        {item.tags.map(t => (
-                            <span key={t} className="text-[10px] font-mono text-stone-400 border border-stone-100 px-1.5 py-0.5 rounded uppercase">{t}</span>
-                        ))}
+            const ToolCard = ({ item }) => (
+                <div
+                  onMouseEnter={() => prefetchArticle(item.filePath)}
+                  onTouchStart={() => prefetchArticle(item.filePath)}
+                  onClick={() => {
+                      if (item.filePath) {
+                          onRead(item);
+                          return;
+                      }
+                      if (item.link) {
+                          window.open(item.link, '_blank', 'noopener,noreferrer');
+                      }
+                  }}
+                  className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900"
+                >
+                    {item.link && (
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="absolute top-4 right-4 text-stone-300 hover:text-blue-900 transition-colors p-2"
+                          aria-label="Open external link"
+                        >
+                            <Icon name="external-link" size={16} />
+                        </a>
+                    )}
+
+                    <div className="mb-6 flex items-center justify-between">
+                        <div className="w-12 h-12 bg-stone-50 rounded-lg flex items-center justify-center text-stone-400 group-hover:text-blue-900 group-hover:bg-blue-50 transition-colors">
+                            <Icon name={item.icon || "box"} size={24}/>
+                        </div>
+                        {item.tags && (
+                            <div className="flex gap-1">
+                                {item.tags.map(t => (
+                                    <span key={t} className="text-[10px] font-mono text-stone-400 border border-stone-100 px-1.5 py-0.5 rounded uppercase">{t}</span>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
-            
-            <h3 className="font-bold text-lg mb-2 text-stone-800 group-hover:text-blue-900 font-sans tracking-tight">
-                {item.title}
-            </h3>
-            <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">
-                {item.desc}
-            </p>
-            
-            {/* 按钮根据是否有 filePath 变化 */}
-            <div className="mt-auto pt-4 border-t border-stone-100 flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors">
-                <span className="font-semibold">{item.filePath ? "View Code" : "Open Tool"}</span>
-                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-        </div>
-    );
 
-    return (
-        <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-16">
-                <h2 className="text-4xl font-serif font-bold text-stone-900">Workbench</h2>
-                <div className="h-px bg-stone-200 flex-grow"></div>
-            </div>
+                    <h3 className="font-bold text-lg mb-2 text-stone-800 group-hover:text-blue-900 font-sans tracking-tight">
+                        {item.title}
+                    </h3>
+                    <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">
+                        {item.desc}
+                    </p>
 
-            {/* Section 1: LaTeX Templates */}
-            <div className="mb-20">
-                <div className="flex items-center gap-2 mb-8">
-                    <Icon name="file-code" size={20} className="text-blue-900"/>
-                    <h3 className="text-xl font-bold text-stone-800 font-serif">LaTeX Templates</h3>
+                    <div className="mt-auto pt-4 border-t border-stone-100 flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors">
+                        <span className="font-semibold">{item.filePath ? "View Code" : "Open Tool"}</span>
+                        <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                    </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {latexTemplates.length > 0 ? latexTemplates.map(t => (
-                        <ToolCard key={t.id} item={t} />
-                    )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">No templates loaded. Check latex_templates.json</div>}
-                </div>
-            </div>
+            );
 
-            {/* Section 2: General Utilities */}
-            <div>
-                <div className="flex items-center gap-2 mb-8">
-                    <Icon name="box" size={20} className="text-stone-400"/>
-                    <h3 className="text-xl font-bold text-stone-400 font-serif">General Utilities</h3>
+            return (
+                <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
+                    <div className="flex items-center gap-4 mb-16">
+                        <h2 className="text-4xl font-serif font-bold text-stone-900">Workbench</h2>
+                        <div className="h-px bg-stone-200 flex-grow"></div>
+                    </div>
+
+                    <div className="mb-20">
+                        <div className="flex items-center gap-2 mb-8">
+                            <Icon name="file-code" size={20} className="text-blue-900"/>
+                            <h3 className="text-xl font-bold text-stone-800 font-serif">LaTeX Templates</h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {latexTemplates.length > 0 ? latexTemplates.map(t => (
+                                <ToolCard key={t.id} item={t} />
+                            )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">No templates loaded. Check latex_templates.json</div>}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div className="flex items-center gap-2 mb-8">
+                            <Icon name="box" size={20} className="text-stone-400"/>
+                            <h3 className="text-xl font-bold text-stone-400 font-serif">General Utilities</h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {generalTools.length > 0 ? generalTools.map(t => (
+                                <ToolCard key={t.id} item={t} />
+                            )) : <div className="text-stone-400">No general tools loaded.</div>}
+                        </div>
+                    </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {generalTools.length > 0 ? generalTools.map(t => (
-                        <ToolCard key={t.id} item={t} />
-                    )) : <div className="text-stone-400">No general tools loaded.</div>}
-                </div>
-            </div>
-        </div>
-    );
-};
+            );
+        };
 
         // --- Community ---
         const Community = () => (
             <div className="max-w-4xl mx-auto px-6 py-24 fade-in min-h-screen flex flex-col items-center text-center">
                 <div className="mb-8 text-blue-900"><Icon name="users" size={64} strokeWidth={1} /></div>
                 <h2 className="text-5xl font-serif font-bold mb-8 text-stone-900">The Community</h2>
-                
+
                 <div className="max-w-2xl text-lg text-stone-600 mb-12 font-light leading-relaxed">
                     <p className="mb-6">
                         我想建立一个会在 <strong className="text-stone-900">AI 领域深度研究</strong> 的社群。
@@ -889,7 +1172,7 @@ const Tools = ({ data, onRead }) => {
                         无论是在 AI 的技术、法律、人文还是数学领域，我们期待那些有独立想法的灵魂，在这里思想碰撞，<strong className="text-stone-900">共同成长</strong>。
                     </p>
                 </div>
-                
+
                 <div className="w-full max-w-lg bg-white p-12 border border-stone-200 shadow-xl rounded-sm text-center transform hover:-translate-y-1 transition-transform duration-500">
                     <h3 className="text-xs font-mono font-bold text-stone-400 mb-4 uppercase tracking-widest">Connect via Email</h3>
                     <a href="mailto:mistatle@163.com" className="text-2xl md:text-3xl font-serif font-bold text-stone-900 hover:text-blue-900 transition-colors border-b-2 border-transparent hover:border-blue-900 pb-1">
@@ -899,29 +1182,29 @@ const Tools = ({ data, onRead }) => {
             </div>
         );
 
-        // --- 主程序逻辑 (App) ---
+        // --- App（✅ 不再用全屏 loading 阻塞首屏；用 DEFAULT_DB 立即可渲染） ---
         const App = () => {
           const [activeTab, setActiveTab] = useState('home');
-          const [readingItem, setReadingItem] = useState(null); 
+          const [readingItem, setReadingItem] = useState(null);
           const [db, setDb] = useState(DEFAULT_DB);
           const [loading, setLoading] = useState(true);
-          
-          // 修复：页面切换自动回到顶部
+
           useEffect(() => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+            window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
           }, [activeTab, readingItem]);
 
           useEffect(() => {
-    const safeFetch = async (url) => {
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(res.statusText);
-            return await res.json();
-        } catch (e) {
-            console.error(`Load failed: ${url}`, e);
-            return null; // 失败返回 null
-        }
-    };
+            const safeFetch = async (url) => {
+                try {
+                    const res = await fetch(url, { cache: "force-cache" });
+                    if (!res.ok) throw new Error(res.statusText);
+                    return await res.json();
+                } catch (e) {
+                    console.error(`Load failed: ${url}`, e);
+                    return null;
+                }
+            };
 
             Promise.all([
                 safeFetch('public/data/library.json'),
@@ -929,28 +1212,24 @@ const Tools = ({ data, onRead }) => {
                 safeFetch('public/data/lab.json'),
                 safeFetch('public/data/post.json'),
                 safeFetch('public/data/tools.json'),
-                safeFetch('public/data/latex_templates.json') 
-  ]).then(([library, papers, lab, posts, toolsData, latexData]) => {
-        
-        setDb(prev => ({
-            library: library || prev.library,
-            papers: papers || prev.papers,
-            lab: lab || prev.lab,
-            posts: posts || prev.posts,
-            // [核心修改] 将两个 fetch 结果合并到一个对象中
-            tools: {
-                general: toolsData || [],      // 来自 tools.json
-                latex: latexData || []         // 来自 latex_templates.json
-            }
-        }));
-        setLoading(false);
-    });
-}, []);
+                safeFetch('public/data/latex_templates.json')
+            ]).then(([library, papers, lab, posts, toolsData, latexData]) => {
+                setDb(prev => ({
+                    library: library || prev.library,
+                    papers: papers || prev.papers,
+                    lab: lab || prev.lab,
+                    posts: posts || prev.posts,
+                    tools: {
+                        general: toolsData || prev.tools.general,
+                        latex: latexData || prev.tools.latex
+                    }
+                }));
+                setLoading(false);
+            });
+          }, []);
 
           const renderContent = () => {
             if (readingItem) return <ArticleReader item={readingItem} onBack={() => setReadingItem(null)} />;
-            
-            if (loading) return <div className="min-h-screen flex items-center justify-center text-stone-400 font-mono animate-pulse">INITIALIZING SYSTEM...</div>;
 
             switch(activeTab) {
               case 'home': return <Hero setActiveTab={setActiveTab} />;
@@ -970,7 +1249,7 @@ const Tools = ({ data, onRead }) => {
               <Navbar activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setReadingItem(null); }} />
               <main className="flex-grow">{renderContent()}</main>
               <footer className="bg-stone-50 border-t border-stone-200 py-12 mt-0 text-center text-stone-400 text-xs font-mono">
-                © 2025 MIStatlE. Built for the long term.
+                © 2025 MIStatlE. Built for the long term.{loading ? " · Syncing…" : ""}
               </footer>
             </div>
           );
