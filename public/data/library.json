@@ -9,7 +9,7 @@
     },
     {
       "id": "prob",
-      "title": "Probability & Stats",
+      "title": "Probability",
       "icon": "sigma",
       "desc": "随机过程、贝叶斯推断与信息论。",
       "count": "1 Course"
@@ -22,8 +22,15 @@
       "count": "1 Course"
     },
     {
-      "id": "math-base",
-      "title": "Math Foundation",
+      "id": "stat",
+      "title": "Statistics",
+      "icon": "infinity",
+      "desc": "线性代数、微积分与泛函分析基础。",
+      "count": "4 Courses"
+    },
+    {
+      "id": "ml",
+      "title": "Machine Learning Theory",
       "icon": "infinity",
       "desc": "线性代数、微积分与泛函分析基础。",
       "count": "4 Courses"
@@ -107,6 +114,6 @@
       }
     ],
     "opt": [],
-    "math-base": []
+    "ml": []
   }
 }
