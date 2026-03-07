@@ -1,83 +1,62 @@
 {
   "disciplines": [
     {
-      "id": "dl",
-      "title": "Deep Learning",
-      "icon": "network",
-      "desc": "从反向传播到大模型的数学原理。",
-      "count": "2 Courses"
+      "id": "opt",
+      "title": "Optimization",
+      "icon": "layers",
+      "desc": "凸优化、KKT 条件与一阶方法。",
+      "count": "0 Courses"
     },
     {
       "id": "prob",
       "title": "Probability",
       "icon": "sigma",
-      "desc": "随机过程、贝叶斯推断与信息论。",
-      "count": "1 Course"
-    },
-    {
-      "id": "opt",
-      "title": "Optimization",
-      "icon": "layers",
-      "desc": "凸优化、KKT条件与数值计算方法。",
-      "count": "1 Course"
+      "desc": "概率空间、随机变量与极限定理。",
+      "count": "0 Courses"
     },
     {
       "id": "stat",
       "title": "Statistics",
-      "icon": "infinity",
-      "desc": "线性代数、微积分与泛函分析基础。",
-      "count": "4 Courses"
+      "icon": "bar-chart-3",
+      "desc": "统计推断、估计理论与实验设计。",
+      "count": "0 Courses"
+    },
+    {
+      "id": "rl",
+      "title": "Reinforcement Learning",
+      "icon": "gamepad-2",
+      "desc": "MDP、策略梯度与价值函数方法。",
+      "count": "0 Courses"
     },
     {
       "id": "ml",
       "title": "Machine Learning Theory",
       "icon": "infinity",
-      "desc": "线性代数、微积分与泛函分析基础。",
-      "count": "4 Courses"
+      "desc": "泛化、复杂度与学习算法的理论基础。",
+      "count": "0 Courses"
+    },
+    {
+      "id": "info",
+      "title": "Information Theory",
+      "icon": "radio-tower",
+      "desc": "熵、相对熵与高维概率几何。",
+      "count": "1 Course"
+    },
+    {
+      "id": "diff",
+      "title": "Diffusion",
+      "icon": "sparkles",
+      "desc": "从 VAE/Score Matching 到 SDE 视角。",
+      "count": "1 Course"
     }
   ],
   "courses": {
-    "dl": [
-      {
-        "title": "Diffusion Models: Theory to Practice",
-        "chapters": [
-          {
-            "title": "Foundations of Generative Models",
-            "lessons": [
-              {
-                "id": "diff_01",
-                "title": "VAE & ELBO",
-                "type": "note",
-                "filePath": "public/data/posts/vae_elbo.md"
-              },
-              {
-                "id": "diff_02",
-                "title": "Score Matching",
-                "type": "note"
-              }
-            ]
-          },
-          {
-            "title": "SDE Perspectives",
-            "lessons": [
-              {
-                "id": "diff_03",
-                "title": "Conditional Technique",
-                "type": "note",
-                "highlight": true,
-                "filePath": "data/posts/conditional.md"
-              },
-              {
-                "id": "diff_04",
-                "title": "Probability Flow ODE",
-                "type": "note"
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "prob": [
+    "opt": [],
+    "prob": [],
+    "stat": [],
+    "rl": [],
+    "ml": [],
+    "info": [
       {
         "title": "Information Theory",
         "chapters": [
@@ -113,7 +92,44 @@
         ]
       }
     ],
-    "opt": [],
-    "ml": []
+    "diff": [
+      {
+        "title": "Diffusion Models: Theory to Practice",
+        "chapters": [
+          {
+            "title": "Foundations of Generative Models",
+            "lessons": [
+              {
+                "id": "diff_01",
+                "title": "VAE & ELBO",
+                "type": "note",
+                "filePath": "public/data/posts/vae_elbo.md"
+              },
+              {
+                "id": "diff_02",
+                "title": "Score Matching",
+                "type": "note"
+              }
+            ]
+          },
+          {
+            "title": "SDE Perspectives",
+            "lessons": [
+              {
+                "id": "diff_03",
+                "title": "Conditional Technique",
+                "type": "note",
+                "highlight": true
+              },
+              {
+                "id": "diff_04",
+                "title": "Probability Flow ODE",
+                "type": "note"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }
 }
