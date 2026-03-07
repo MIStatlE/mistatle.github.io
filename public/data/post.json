@@ -4,12 +4,13 @@
     "date": "Nov 10",
     "category": "PHILOSOPHY",
     "title": "在数学的严谨与直觉之间",
-    "filePath": "data/posts/math_intuition.md"
+    "desc": "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在 AI 研究中发挥作用。"
   },
   {
     "id": "why-entropy",
     "date": "Oct 24",
     "category": "INFORMATION THEORY",
     "title": "熵：不仅仅是混乱度",
-    "filePath": "data/posts/entropy.md"
+    "desc": "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。"
   }
+]

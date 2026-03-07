@@ -19,14 +19,12 @@
         "title": "Denoising Diffusion Probabilistic Models", 
         "authors": "Ho et al., 2020", 
         "tags": ["Foundation"], 
-        "read": true,
-        "filePath": "data/posts/paper_ddpm.md"
+        "read": true
       },
       {
         "title": "Score-Based Generative Modeling through Stochastic Differential Equations",
         "authors": "Song et al., 2021",
-        "tags": ["SDE", "Theory"],
-        "filePath": "data/posts/paper_sde.md"
+        "tags": ["SDE", "Theory"]
       }
     ],
     "opt": []

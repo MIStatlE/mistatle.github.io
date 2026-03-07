@@ -4,23 +4,20 @@
     "icon": "book-marked",
     "title": "Zotero 深度指南",
     "desc": "如何用 Zotero +坚果云打造完美的文献管理流。",
-    "link": "https://www.zotero.org/",
-    "filePath": "data/posts/tool_zotero.md"
+    "link": "https://www.zotero.org/"
   },
   {
     "id": "arxiv",
     "icon": "file-text",
     "title": "arXiv Sanity 使用心得",
     "desc": "在海量论文中快速筛选出真正有价值的工作。",
-    "link": "http://www.arxiv-sanity.com/",
-    "filePath": "data/posts/tool_arxiv.md"
+    "link": "http://www.arxiv-sanity.com/"
   },
   {
     "id": "overleaf",
     "icon": "edit-3",
     "title": "Overleaf 协作技巧",
     "desc": "云端 LaTeX 的高效模版与团队协作最佳实践。",
-    "link": "https://www.overleaf.com/",
-    "filePath": "data/posts/tool_overleaf.md"
+    "link": "https://www.overleaf.com/"
   }
 ]
