@@ -251,22 +251,44 @@
         }
 
         function prefetchArticle(filePath) {
-          if (!filePath) return;
+          const normalizedPath = normalizeContentPath(filePath);
+          if (!normalizedPath) return;
           warmReaderDeps();
-          fetchArticleRecord(filePath).catch(() => {});
+          fetchArticleRecord(normalizedPath).catch(() => {});
+        }
+
+        function normalizeContentPath(filePath) {
+          if (!filePath || typeof filePath !== 'string') return '';
+          if (/^(https?:)?\/\//.test(filePath)) return filePath;
+          if (filePath.startsWith('public/')) return filePath;
+          if (filePath.startsWith('data/')) return `public/${filePath}`;
+          return filePath;
+        }
+
+        function hasReadableContent(filePath) {
+          return !!normalizeContentPath(filePath);
         }
 
         // --- 默认回退数据 (Backup Data) ---
         const DEFAULT_DB = {
             library: {
                 disciplines: [
-                    { id: "dl", title: "Deep Learning", icon: "network", desc: "从反向传播到大模型的数学原理。", count: "2 Courses" },
-                    { id: "prob", title: "Probability & Stats", icon: "sigma", desc: "随机过程、贝叶斯推断与信息论。", count: "3 Courses" },
-                    { id: "opt", title: "Optimization", icon: "layers", desc: "凸优化、KKT条件与数值计算方法。", count: "1 Course" },
-                    { id: "math-base", title: "Math Foundation", icon: "infinity", desc: "线性代数、微积分与泛函分析基础。", count: "4 Courses" }
+                    { id: "opt", title: "Optimization", icon: "layers", desc: "凸优化、KKT 条件与一阶方法。", count: "0 Courses" },
+                    { id: "prob", title: "Probability", icon: "sigma", desc: "概率空间、随机变量与极限定理。", count: "0 Courses" },
+                    { id: "stat", title: "Statistics", icon: "bar-chart-3", desc: "统计推断、估计理论与实验设计。", count: "0 Courses" },
+                    { id: "rl", title: "Reinforcement Learning", icon: "gamepad-2", desc: "MDP、策略梯度与价值函数方法。", count: "0 Courses" },
+                    { id: "ml", title: "Machine Learning Theory", icon: "infinity", desc: "泛化、复杂度与学习算法的理论基础。", count: "0 Courses" },
+                    { id: "info", title: "Information Theory", icon: "radio-tower", desc: "熵、相对熵与高维概率几何。", count: "1 Course" },
+                    { id: "diff", title: "Diffusion", icon: "sparkles", desc: "从 VAE/Score Matching 到 SDE 视角。", count: "1 Course" }
                 ],
                 courses: {
-                    "dl": [{ title: "Diffusion Models: Theory to Practice", chapters: [{ title: "Foundations", lessons: [{ id: "diff_01", title: "VAE & ELBO", type: "note", filePath: "" }] }] }]
+                    "opt": [],
+                    "prob": [],
+                    "stat": [],
+                    "rl": [],
+                    "ml": [],
+                    "info": [{ title: "Information Theory", chapters: [{ title: "High-Dimensional Geometry", lessons: [{ id: "info_aep", title: "Typical Set & AEP", type: "note", filePath: "public/data/posts/typical_set.md", highlight: true }] }] }],
+                    "diff": [{ title: "Diffusion Models: Theory to Practice", chapters: [{ title: "Foundations", lessons: [{ id: "diff_01", title: "VAE & ELBO", type: "note", filePath: "public/data/posts/vae_elbo.md" }] }] }]
                 }
             },
             papers: {
@@ -287,12 +309,12 @@
                 { id: "bayes-opt", language: "MATLAB", stack: ["GPOps", "Viz"], title: "Bayesian Optimization Viz", desc: "高斯过程可视化交互演示，探索采集函数与后验分布。", link: "#", featured: false }
             ],
             posts: [
-                { id: "math-intuition", date: "Nov 10, 2024", category: "PHILOSOPHY", title: "在数学的严谨与直觉之间", desc: "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在AI研究中发挥作用。", filePath: "data/posts/math_intuition.md" },
-                { id: "why-entropy", date: "Oct 24, 2024", category: "INFORMATION THEORY", title: "熵：不仅仅是混乱度", desc: "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。", filePath: "data/posts/entropy.md" }
+                { id: "math-intuition", date: "Nov 10, 2024", category: "PHILOSOPHY", title: "在数学的严谨与直觉之间", desc: "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在AI研究中发挥作用。" },
+                { id: "why-entropy", date: "Oct 24, 2024", category: "INFORMATION THEORY", title: "熵：不仅仅是混乱度", desc: "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。" }
             ],
             tools: {
                 general: [
-                    { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/", filePath: "" }
+                    { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/" }
                 ],
                 latex: [
                     { 
@@ -502,7 +524,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             useEffect(() => {
                 let ignore = false;
-                const filePath = item?.filePath;
+                const filePath = normalizeContentPath(item?.filePath);
 
                 setState(s => ({ ...s, loading: true, error: null }));
 
@@ -809,7 +831,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return (
                 <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
                     <h2 className="text-4xl font-serif font-bold mb-6 text-stone-900">Library</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {data.disciplines.map(d => (
                             <div key={d.id} onClick={() => setSelectedDiscipline(d.id)} className="group p-8 bg-white border border-stone-200 hover:border-blue-900/50 hover:shadow-xl transition-all cursor-pointer rounded-xl relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-24 bg-stone-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
@@ -850,14 +872,17 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                                     key={lesson.id}
                                                     onMouseEnter={() => prefetchArticle(lesson.filePath)}
                                                     onTouchStart={() => prefetchArticle(lesson.filePath)}
-                                                    onClick={() => onRead(lesson)}
-                                                    className="flex items-center justify-between p-3 hover:bg-stone-50 rounded-lg cursor-pointer group transition-colors border border-transparent hover:border-stone-100"
+                                                    onClick={() => hasReadableContent(lesson.filePath) && onRead({ ...lesson, filePath: normalizeContentPath(lesson.filePath) })}
+                                                    className={`flex items-center justify-between p-3 rounded-lg group transition-colors border ${hasReadableContent(lesson.filePath) ? "cursor-pointer hover:bg-stone-50 border-transparent hover:border-stone-100" : "cursor-not-allowed border-stone-100 bg-stone-50/60 opacity-70"}`}
                                                   >
                                                       <div className="flex items-center gap-3">
                                                         <Icon name="file-text" size={18} className={lesson.highlight ? "text-blue-600" : "text-stone-300"}/>
                                                         <span className={`text-sm ${lesson.highlight ? "font-bold text-stone-900" : "text-stone-600"}`}>{lesson.title}</span>
                                                       </div>
-                                                      {lesson.highlight && <span className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-full">ESSENTIAL</span>}
+                                                      <div className="flex items-center gap-2">
+                                                        {!hasReadableContent(lesson.filePath) && <span className="text-[10px] font-bold text-stone-500 bg-stone-200 px-2 py-0.5 rounded-full">SOON</span>}
+                                                        {lesson.highlight && <span className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded-full">ESSENTIAL</span>}
+                                                      </div>
                                                   </div>
                                               ))}
                                           </div>
@@ -922,8 +947,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                               key={i}
                               onMouseEnter={() => prefetchArticle(p.filePath)}
                               onTouchStart={() => prefetchArticle(p.filePath)}
-                              onClick={() => onRead(p)}
-                              className="group relative bg-white border border-transparent border-b-stone-100 hover:border-stone-200 hover:bg-stone-50/50 p-6 transition-all cursor-pointer"
+                              onClick={() => hasReadableContent(p.filePath) && onRead({ ...p, filePath: normalizeContentPath(p.filePath) })}
+                              className={`group relative bg-white border border-transparent border-b-stone-100 p-6 transition-all ${hasReadableContent(p.filePath) ? "cursor-pointer hover:border-stone-200 hover:bg-stone-50/50" : "cursor-not-allowed opacity-75"}`}
                             >
                                 <div className="flex flex-col md:flex-row gap-4 justify-between">
                                     <div className="flex-grow pr-8">
@@ -940,8 +965,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                             <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full uppercase tracking-wider mb-2">Read</span>
                                         ) : <span className="h-6 block"></span>}
 
-                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-400 hover:text-blue-900">
-                                            <Icon name="arrow-right" size={16} />
+                                        <div className={`${hasReadableContent(p.filePath) ? "opacity-0 group-hover:opacity-100" : "opacity-100"} transition-opacity text-stone-400 hover:text-blue-900 text-[10px] font-mono uppercase tracking-wider`}>
+                                            {hasReadableContent(p.filePath) ? <Icon name="arrow-right" size={16} /> : "Soon"}
                                         </div>
                                     </div>
                                 </div>
@@ -1048,8 +1073,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                            key={post.id}
                            onMouseEnter={() => prefetchArticle(post.filePath)}
                            onTouchStart={() => prefetchArticle(post.filePath)}
-                           onClick={() => onRead(post)}
-                           className="group cursor-pointer flex flex-col md:flex-row gap-8 items-baseline border-t border-stone-200 pt-8 hover:border-stone-900 transition-colors duration-500"
+                           onClick={() => hasReadableContent(post.filePath) && onRead({ ...post, filePath: normalizeContentPath(post.filePath) })}
+                           className={`group flex flex-col md:flex-row gap-8 items-baseline border-t border-stone-200 pt-8 transition-colors duration-500 ${hasReadableContent(post.filePath) ? "cursor-pointer hover:border-stone-900" : "cursor-default opacity-80"}`}
                          >
                              <div className="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-2">
                                 <span className="font-serif text-sm italic text-stone-500">{post.date}</span>
@@ -1063,8 +1088,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                  <p className="text-stone-600 font-light text-lg leading-relaxed mb-6 font-serif">
                                      {post.desc}
                                  </p>
-                                 <div className="inline-flex items-center text-xs font-mono font-bold text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors border-b border-transparent group-hover:border-stone-900 pb-0.5">
-                                     Read Essay <span className="ml-2 group-hover:ml-3 transition-all">→</span>
+                                 <div className={`inline-flex items-center text-xs font-mono font-bold uppercase tracking-widest border-b pb-0.5 ${hasReadableContent(post.filePath) ? "text-stone-400 group-hover:text-stone-900 transition-colors border-transparent group-hover:border-stone-900" : "text-stone-400 border-stone-200"}`}>
+                                     {hasReadableContent(post.filePath) ? "Read Essay" : "Coming Soon"} <span className={`ml-2 ${hasReadableContent(post.filePath) ? "group-hover:ml-3 transition-all" : ""}`}>{hasReadableContent(post.filePath) ? "→" : ""}</span>
                                  </div>
                              </div>
                          </article>
@@ -1265,7 +1290,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               <Navbar activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setReadingItem(null); }} />
               <main className="flex-grow">{renderContent()}</main>
               <footer className="bg-stone-50 border-t border-stone-200 py-12 mt-0 text-center text-stone-400 text-xs font-mono">
-                © 2025 MIStatlE. Built for the long term.{loading ? " · Syncing…" : ""}
+                © {new Date().getFullYear()} MIStatlE. Built for the long term.{loading ? " · Syncing…" : ""}
               </footer>
             </div>
           );
