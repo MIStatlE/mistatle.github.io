@@ -218,29 +218,30 @@
         const ARTICLE_FETCH_PROMISES = window.__ARTICLE_FETCH_PROMISES__ || (window.__ARTICLE_FETCH_PROMISES__ = new Map());
 
         async function fetchArticleRecord(filePath) {
-          if (!filePath) throw new Error("No file path specified.");
+          const normalizedPath = normalizeContentPath(filePath);
+          if (!normalizedPath) throw new Error("No file path specified.");
 
-          const cached = ARTICLE_CACHE.get(filePath);
+          const cached = ARTICLE_CACHE.get(normalizedPath);
           if (cached?.body) return cached;
 
-          if (ARTICLE_FETCH_PROMISES.has(filePath)) return ARTICLE_FETCH_PROMISES.get(filePath);
+          if (ARTICLE_FETCH_PROMISES.has(normalizedPath)) return ARTICLE_FETCH_PROMISES.get(normalizedPath);
 
           const p = (async () => {
-            const res = await fetch(filePath, { cache: "force-cache" });
+            const res = await fetch(normalizedPath, { cache: "no-cache" });
             if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
             const text = await res.text();
             const { meta, body } = parseFrontmatter(text);
             const { needsCode, needsMath } = detectNeeds(body);
 
-            const existing = ARTICLE_CACHE.get(filePath) || {};
+            const existing = ARTICLE_CACHE.get(normalizedPath) || {};
             const record = { ...existing, text, meta, body, needsCode, needsMath };
-            ARTICLE_CACHE.set(filePath, record);
+            ARTICLE_CACHE.set(normalizedPath, record);
             return record;
           })().finally(() => {
-            ARTICLE_FETCH_PROMISES.delete(filePath);
+            ARTICLE_FETCH_PROMISES.delete(normalizedPath);
           });
 
-          ARTICLE_FETCH_PROMISES.set(filePath, p);
+          ARTICLE_FETCH_PROMISES.set(normalizedPath, p);
           return p;
         }
 
@@ -1229,6 +1230,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           const [readingItem, setReadingItem] = useState(null);
           const [db, setDb] = useState(DEFAULT_DB);
           const [loading, setLoading] = useState(true);
+          const [fallbackSources, setFallbackSources] = useState([]);
 
           useEffect(() => {
             const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
@@ -1238,12 +1240,12 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           useEffect(() => {
             const safeFetch = async (url) => {
                 try {
-                    const res = await fetch(url, { cache: "force-cache" });
+                    const res = await fetch(url, { cache: "no-cache" });
                     if (!res.ok) throw new Error(res.statusText);
-                    return await res.json();
+                    return { ok: true, url, data: await res.json() };
                 } catch (e) {
                     console.error(`Load failed: ${url}`, e);
-                    return null;
+                    return { ok: false, url, error: e?.message || String(e) };
                 }
             };
 
@@ -1255,16 +1257,21 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                 safeFetch('public/data/tools.json'),
                 safeFetch('public/data/latex_templates.json')
             ]).then(([library, papers, lab, posts, toolsData, latexData]) => {
+                const failedSources = [library, papers, lab, posts, toolsData, latexData]
+                  .filter(result => !result.ok)
+                  .map(result => result.url.replace('public/data/', '').replace('.json', ''));
+
                 setDb(prev => ({
-                    library: library || prev.library,
-                    papers: papers || prev.papers,
-                    lab: lab || prev.lab,
-                    posts: posts || prev.posts,
+                    library: library.ok ? library.data : prev.library,
+                    papers: papers.ok ? papers.data : prev.papers,
+                    lab: lab.ok ? lab.data : prev.lab,
+                    posts: posts.ok ? posts.data : prev.posts,
                     tools: {
-                        general: toolsData || prev.tools.general,
-                        latex: latexData || prev.tools.latex
+                        general: toolsData.ok ? toolsData.data : prev.tools.general,
+                        latex: latexData.ok ? latexData.data : prev.tools.latex
                     }
                 }));
+                setFallbackSources(failedSources);
                 setLoading(false);
             });
           }, []);
@@ -1290,7 +1297,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               <Navbar activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setReadingItem(null); }} />
               <main className="flex-grow">{renderContent()}</main>
               <footer className="bg-stone-50 border-t border-stone-200 py-12 mt-0 text-center text-stone-400 text-xs font-mono">
-                © {new Date().getFullYear()} MIStatlE. Built for the long term.{loading ? " · Syncing…" : ""}
+                © {new Date().getFullYear()} MIStatlE. Built for the long term.
+                {loading ? " · Syncing…" : ""}
+                {!loading && fallbackSources.length > 0 ? ` · Fallback active: ${fallbackSources.join(', ')}` : ""}
               </footer>
             </div>
           );
