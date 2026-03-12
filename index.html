@@ -879,6 +879,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               ? courseIndex.lessons[currentLessonIndex + 1]
               : null;
             const hasSidebar = state.headings.length > 0 || (courseIndex && courseIndex.lessons.length > 0);
+            const indexCardClass = "rounded-2xl border border-stone-200/80 bg-white/95 shadow-[0_18px_40px_rgba(28,35,45,0.06)] backdrop-blur-sm";
+            const indexLabelClass = "text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400";
 
             const jumpToHeading = (id) => {
               const node = document.getElementById(id);
@@ -896,7 +898,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             };
 
             return (
-                <div className="max-w-5xl mx-auto px-6 py-12 min-h-screen">
+                <div className={`${hasSidebar ? "max-w-[88rem]" : "max-w-[70rem]"} mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 min-h-screen`}>
                     <button onClick={onBack} className="group flex items-center text-sm text-stone-400 hover:text-blue-900 mb-10 font-mono uppercase tracking-wider transition-colors">
                         <span className="mr-2 inline-block transition-transform group-hover:-translate-x-1">←</span> Back to List
                     </button>
@@ -916,8 +918,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     )}
 
                     {!state.loading && !state.error && (
-                        <div className={`fade-in ${hasSidebar ? "lg:grid lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-12" : ""}`}>
-                            <article>
+                        <div className={`fade-in ${hasSidebar ? "lg:grid lg:grid-cols-[minmax(0,1fr)_13.5rem] xl:grid-cols-[minmax(0,1fr)_14.5rem] lg:gap-8 xl:gap-10 items-start" : ""}`}>
+                            <article className="min-w-0">
                                 <header className="mb-12 pb-8 border-b border-stone-200">
                                     <div className="flex flex-wrap gap-3 mb-4 text-xs font-mono uppercase tracking-widest text-stone-500">
                                         {state.frontmatter?.categories && (
@@ -951,15 +953,15 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                 {hasSidebar && (
                                     <div className="lg:hidden space-y-6 mb-10">
                                         {state.headings.length > 0 && (
-                                            <div className="bg-stone-50 border border-stone-200 rounded-xl p-5">
-                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-4">Article Index</p>
+                                            <div className={`${indexCardClass} p-4`}>
+                                                <p className={`${indexLabelClass} mb-3`}>Article Index</p>
                                                 <div className="space-y-2">
                                                     {state.headings.map((heading) => (
                                                         <button
                                                           key={heading.id}
                                                           type="button"
                                                           onClick={() => jumpToHeading(heading.id)}
-                                                          className={`block text-left text-sm text-stone-600 hover:text-blue-900 transition-colors ${heading.level === 1 ? "font-semibold" : heading.level === 2 ? "pl-3" : "pl-6"}`}
+                                                          className={`block text-left text-[13px] leading-snug text-stone-600 hover:text-blue-900 transition-colors ${heading.level === 1 ? "font-semibold" : heading.level === 2 ? "pl-2.5" : "pl-5"}`}
                                                         >
                                                             {heading.title}
                                                         </button>
@@ -969,10 +971,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                         )}
 
                                         {courseIndex && (
-                                            <div className="bg-white border border-stone-200 rounded-xl p-5">
-                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-2">Course Index</p>
-                                                <h3 className="font-serif text-xl text-stone-900 mb-4">{courseIndex.courseTitle}</h3>
-                                                <div className="space-y-3">
+                                            <div className={`${indexCardClass} p-4`}>
+                                                <p className={`${indexLabelClass} mb-2`}>Course Index</p>
+                                                <h3 className="font-serif text-lg text-stone-900 mb-3">{courseIndex.courseTitle}</h3>
+                                                <div className="space-y-2.5">
                                                     {courseIndex.lessons.map((lesson) => {
                                                       const isCurrent = lesson.filePath === currentPath || lesson.id === item?.id;
                                                       return (
@@ -981,10 +983,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                                           type="button"
                                                           onClick={() => openCourseLesson(lesson)}
                                                           disabled={!lesson.readable || isCurrent}
-                                                          className={`w-full text-left rounded-lg border px-3 py-3 transition-colors ${isCurrent ? "border-blue-900 bg-blue-50 text-blue-900" : lesson.readable ? "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white" : "border-stone-100 bg-stone-50/60 text-stone-400 cursor-not-allowed"}`}
+                                                          className={`w-full text-left rounded-lg border px-3 py-2.5 transition-colors ${isCurrent ? "border-blue-900 bg-blue-50 text-blue-900" : lesson.readable ? "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white" : "border-stone-100 bg-stone-50/60 text-stone-400 cursor-not-allowed"}`}
                                                         >
-                                                            <div className="text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1">{lesson.chapterTitle}</div>
-                                                            <div className="text-sm">{lesson.title}</div>
+                                                            <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-stone-400 mb-1">{lesson.chapterTitle}</div>
+                                                            <div className="text-[13px] leading-snug">{lesson.title}</div>
                                                         </button>
                                                       );
                                                     })}
@@ -996,7 +998,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                                 <div
                                     ref={contentRef}
-                                    className="prose prose-stone prose-lg prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900"
+                                    className="prose prose-stone prose-lg xl:prose-xl prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900"
                                     dangerouslySetInnerHTML={{ __html: state.content }}
                                 ></div>
 
@@ -1026,17 +1028,17 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                             {hasSidebar && (
                                 <aside className="hidden lg:block">
-                                    <div className="sticky top-28 space-y-6">
+                                    <div className="sticky top-24 space-y-5">
                                         {state.headings.length > 0 && (
-                                            <div className="bg-stone-50 border border-stone-200 rounded-xl p-5">
-                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-4">Article Index</p>
+                                            <div className={`${indexCardClass} p-4`}>
+                                                <p className={`${indexLabelClass} mb-3`}>Article Index</p>
                                                 <div className="space-y-2">
                                                     {state.headings.map((heading) => (
                                                         <button
                                                           key={heading.id}
                                                           type="button"
                                                           onClick={() => jumpToHeading(heading.id)}
-                                                          className={`block w-full text-left text-sm text-stone-600 hover:text-blue-900 transition-colors ${heading.level === 1 ? "font-semibold" : heading.level === 2 ? "pl-3" : "pl-6"}`}
+                                                          className={`block w-full text-left text-[13px] leading-snug text-stone-600 hover:text-blue-900 transition-colors ${heading.level === 1 ? "font-semibold" : heading.level === 2 ? "pl-2.5" : "pl-5"}`}
                                                         >
                                                             {heading.title}
                                                         </button>
@@ -1046,10 +1048,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                         )}
 
                                         {courseIndex && (
-                                            <div className="bg-white border border-stone-200 rounded-xl p-5">
-                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-2">Course Index</p>
-                                                <h3 className="font-serif text-xl text-stone-900 mb-4">{courseIndex.courseTitle}</h3>
-                                                <div className="space-y-3">
+                                            <div className={`${indexCardClass} p-4`}>
+                                                <p className={`${indexLabelClass} mb-2`}>Course Index</p>
+                                                <h3 className="font-serif text-lg text-stone-900 mb-3">{courseIndex.courseTitle}</h3>
+                                                <div className="space-y-2.5">
                                                     {courseIndex.lessons.map((lesson) => {
                                                       const isCurrent = lesson.filePath === currentPath || lesson.id === item?.id;
                                                       return (
@@ -1058,10 +1060,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                                           type="button"
                                                           onClick={() => openCourseLesson(lesson)}
                                                           disabled={!lesson.readable || isCurrent}
-                                                          className={`w-full text-left rounded-lg border px-3 py-3 transition-colors ${isCurrent ? "border-blue-900 bg-blue-50 text-blue-900" : lesson.readable ? "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white" : "border-stone-100 bg-stone-50/60 text-stone-400 cursor-not-allowed"}`}
+                                                          className={`w-full text-left rounded-lg border px-3 py-2.5 transition-colors ${isCurrent ? "border-blue-900 bg-blue-50 text-blue-900" : lesson.readable ? "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white" : "border-stone-100 bg-stone-50/60 text-stone-400 cursor-not-allowed"}`}
                                                         >
-                                                            <div className="text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1">{lesson.chapterTitle}</div>
-                                                            <div className="text-sm">{lesson.title}</div>
+                                                            <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-stone-400 mb-1">{lesson.chapterTitle}</div>
+                                                            <div className="text-[13px] leading-snug">{lesson.title}</div>
                                                         </button>
                                                       );
                                                     })}
