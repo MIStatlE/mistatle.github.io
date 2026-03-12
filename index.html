@@ -526,8 +526,11 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             if (platform === 'xiaohongshu') {
                 return (
                     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                        <path d="M7.2 9.3c.85-.95 1.9-1.45 3.2-1.45 1 0 1.9.32 2.62.92 1.15-1.02 2.52-1.47 4.14-1.32M7.15 14.6h9.7M7.15 11.95h9.7M8.1 17.35h7.8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                        <rect x="3.2" y="4.1" width="17.6" height="15.8" rx="4.6" fill="currentColor" opacity="0.12"/>
+                        <rect x="3.2" y="4.1" width="17.6" height="15.8" rx="4.6" fill="none" stroke="currentColor" strokeWidth="1.4"/>
+                        <path d="M8.1 7.8h4.05c2.8 0 4.75 1.18 4.75 3.25 0 2.1-1.95 3.28-4.75 3.28H8.1Z" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+                        <text x="12" y="12.75" textAnchor="middle" fontSize="5.9" fontWeight="700" fill="currentColor" fontFamily="ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont">RED</text>
+                        <path d="M8.4 16.55h7.2" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
                     </svg>
                 );
             }
@@ -535,8 +538,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             if (platform === 'zhihu') {
                 return (
                     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="3.5" y="5.2" width="17" height="13.6" rx="2.8" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                        <path d="M7.1 9.2h5.9M7.1 12h5.1M7.1 14.8h5.9M15.7 9v6.1M13.9 10.25h3.65M13.9 13.85h3.65" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                        <rect x="2.9" y="5.1" width="18.2" height="13.8" rx="3.2" fill="currentColor" opacity="0.1"/>
+                        <path d="M4.2 17.8h15.6" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round"/>
+                        <text x="7.4" y="14.1" textAnchor="middle" fontSize="8.2" fontWeight="700" fill="currentColor" fontFamily="'Noto Sans CJK SC','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">知</text>
+                        <text x="15.8" y="14.1" textAnchor="middle" fontSize="4.9" fontWeight="700" fill="currentColor" fontFamily="ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont">zhihu</text>
                     </svg>
                 );
             }
