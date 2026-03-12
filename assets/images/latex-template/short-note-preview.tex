@@ -1,0 +1,102 @@
+\documentclass[12pt]{article}
+
+\input{short-note-template.tex}
+
+\begin{document}
+
+\MakeShortHeader
+  {Fisher Information}
+  {Regularity, Asymptotic Normality \& Geometry}
+  {Statistics, Geometry, MLE}
+
+\begin{KeyBox}
+Fisher information is more than a variance lower bound. It acts as the local \Term{geometry} of the parameter space and tells us how sharply the likelihood reacts to perturbations in $\theta$.
+\end{KeyBox}
+
+\section{Core Concepts}
+
+\begin{Definition}[Score Function]
+The score is the gradient of the log-likelihood:
+\[
+\mathbf{s}(\theta)=\nabla_{\theta}\log p(x;\theta).
+\]
+Under standard regularity conditions, $\mathbb{E}[\mathbf{s}(\theta)]=0$.
+\end{Definition}
+
+\begin{Theorem}[Cram\'er-Rao Lower Bound]
+For any unbiased estimator $\hat{\theta}$,
+\[
+\mathrm{Var}(\hat{\theta})\succeq \mathcal{I}(\theta)^{-1}.
+\]
+The inequality says the inverse Fisher information controls the best achievable uncertainty.
+\end{Theorem}
+
+\begin{Takeaway}
+The template is compact because the important sentence, formal definition, theorem, and takeaway each get a visually distinct block without wasting vertical space.
+\end{Takeaway}
+
+\newpage
+
+\MakeShortHeader
+  {Expectation as a Linear Operator}
+  {A one-page refresher for probability notes}
+  {Probability, Cheatsheet, Notes}
+
+\begin{KeyBox}
+Expectation is linear even when random variables are dependent:
+\[
+\mathbb{E}[aX+bY+c]=a\mathbb{E}[X]+b\mathbb{E}[Y]+c.
+\]
+\end{KeyBox}
+
+\section{Useful Blocks}
+
+\begin{Definition}[Variance]
+The variance of $X$ is
+\[
+\mathrm{Var}(X)=\mathbb{E}\left[(X-\mu)^2\right],\qquad \mu=\mathbb{E}[X].
+\]
+It measures spread around the mean rather than around zero.
+\end{Definition}
+
+\begin{Theorem}[Bias-Variance Identity]
+For any estimator $\hat{\theta}$,
+\[
+\mathbb{E}\left[(\hat{\theta}-\theta)^2\right]=\mathrm{Var}(\hat{\theta})+\mathrm{Bias}(\hat{\theta})^2.
+\]
+\end{Theorem}
+
+\begin{Takeaway}
+This page shows how the same visual system works for a dense formula note. The header, card, theorem block, and narrow margins make it easy to read on mobile.
+\end{Takeaway}
+
+\newpage
+
+\MakeShortHeader
+  {梯度下降的直觉}
+  {Compact bilingual note for screen reading}
+  {优化, Bilingual, SGD}
+
+\begin{KeyBox}
+梯度下降每一步都沿着局部最陡下降方向移动：
+\[
+\theta_{t+1}=\theta_t-\eta \nabla f(\theta_t).
+\]
+当学习率合适时，它会稳定逼近局部最优点。
+\end{KeyBox}
+
+\section{为什么这个模板适合短内容}
+
+\begin{Definition}[学习率]
+学习率 $\eta$ 控制单步更新的幅度。过大时容易震荡，过小时收敛很慢。这个模板用左侧色条块来呈现定义和提醒，阅读负担很低。
+\end{Definition}
+
+\begin{Theorem}[Smooth Objective]
+若 $f$ 的梯度是 $L$-Lipschitz，且 $\eta < 1/L$，则梯度下降能够保证目标函数值单调下降。这一类结论很适合放在蓝色 theorem 卡片中。
+\end{Theorem}
+
+\begin{Takeaway}
+第三页展示了中英混排和公式环境。你可以把它当作知识卡片、讲义单页或自媒体配图底稿。
+\end{Takeaway}
+
+\end{document}

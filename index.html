@@ -66,6 +66,20 @@
         .prose blockquote { border-left: 4px solid #1e3a8a; padding-left: 1rem; font-style: italic; background: #f0f9ff; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1.5rem 0; }
         .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
         .prose li { margin-bottom: 0.5rem; }
+        .prose .template-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0 2rem;
+        }
+        .prose .template-gallery img {
+            width: 100%;
+            display: block;
+            border-radius: 0.9rem;
+            border: 1px solid #e7e5e4;
+            box-shadow: 0 12px 30px -18px rgba(0,0,0,0.35);
+            background: white;
+        }
 
         /* KaTeX 容器滚动优化（KaTeX CSS 会在需要时动态加载） */
         .katex-display {
@@ -1123,6 +1137,18 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                   }}
                   className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900"
                 >
+                    {item.previewImage && (
+                        <div className="mb-6 overflow-hidden rounded-2xl border border-stone-100 bg-stone-50 aspect-[4/5]">
+                            <img
+                              src={item.previewImage}
+                              alt={`${item.title} preview`}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                            />
+                        </div>
+                    )}
+
                     {item.link && (
                         <a
                           href={item.link}
@@ -1145,6 +1171,11 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                 {item.tags.map(t => (
                                     <span key={t} className="text-[10px] font-mono text-stone-400 border border-stone-100 px-1.5 py-0.5 rounded uppercase">{t}</span>
                                 ))}
+                                {item.previewImages && item.previewImages.length > 1 && (
+                                    <span className="text-[10px] font-mono text-blue-900 border border-blue-100 bg-blue-50 px-1.5 py-0.5 rounded uppercase">
+                                        {item.previewImages.length} Previews
+                                    </span>
+                                )}
                             </div>
                         )}
                     </div>

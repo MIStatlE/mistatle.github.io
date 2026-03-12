@@ -6,6 +6,12 @@
     "icon": "file-text", 
     "tags": ["Cheatsheet", "TColorBox"],
     "filePath": "public/data/templates/short_note.md",
+    "previewImage": "assets/images/latex-template/short-note-preview-1.png",
+    "previewImages": [
+      "assets/images/latex-template/short-note-preview-1.png",
+      "assets/images/latex-template/short-note-preview-2.png",
+      "assets/images/latex-template/short-note-preview-3.png"
+    ],
     "link": null
   }
 ]
