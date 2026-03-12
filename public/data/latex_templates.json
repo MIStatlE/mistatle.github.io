@@ -13,5 +13,21 @@
       "assets/images/latex-template/short-note-preview-3.png"
     ],
     "link": null
+  },
+  {
+    "id": "mi-book-style",
+    "title": "MI Book / Lecture Note",
+    "desc": "适合中文数学书、讲义和长笔记的书籍模板，统一了页眉、彩带、定理盒子和封面系统。",
+    "icon": "book-open",
+    "tags": ["Book", "XeLaTeX", "CTeX"],
+    "filePath": "public/data/templates/mi_book_style.md",
+    "previewImage": "assets/images/latex-template/mi-book-preview-1.png",
+    "previewImages": [
+      "assets/images/latex-template/mi-book-preview-1.png",
+      "assets/images/latex-template/mi-book-preview-2.png",
+      "assets/images/latex-template/mi-book-preview-3.png",
+      "assets/images/latex-template/mi-book-preview-4.png"
+    ],
+    "link": null
   }
 ]
