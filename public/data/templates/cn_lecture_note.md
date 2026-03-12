@@ -73,3 +73,329 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 2. 按需要保留或删除示例章节。
 3. 继续在 `definition / theorem / AnalysisBox / SummaryBox` 这些环境里写内容。
 
+---
+
+### 🧾 Full Source (`CN.tex`)
+
+下面附上完整可复制源码，和前两套模板一样，打开页面即可直接复制使用。
+
+```latex
+\documentclass[11pt]{article}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \errmessage{Please compile with XeLaTeX or LuaLaTeX}
+\fi
+
+\usepackage[fontset=fandol]{ctex}
+\usepackage{fontspec}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage[most]{tcolorbox}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage[capitalize,nameinlink]{cleveref}
+
+\geometry{
+  paperwidth=7.15in,
+  paperheight=10in,
+  left=0.78in,
+  right=0.78in,
+  top=0.78in,
+  bottom=0.8in,
+  headsep=0.24in,
+  footskip=0.4in
+}
+
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Helvetica Neue}{\setsansfont{Helvetica Neue}}{\setsansfont{TeX Gyre Heros}}
+\IfFontExistsTF{JetBrains Mono}{\setmonofont{JetBrains Mono}}{\IfFontExistsTF{Menlo}{\setmonofont{Menlo}}{\setmonofont{Courier New}}}
+\IfFontExistsTF{Noto Serif CJK SC}{\setCJKmainfont{Noto Serif CJK SC}}{}
+\IfFontExistsTF{Noto Sans CJK SC}{\setCJKsansfont{Noto Sans CJK SC}}{}
+
+\linespread{1.24}
+\setlength{\parindent}{1.6em}
+\setlength{\parskip}{0.15em}
+
+\definecolor{cnInk}{HTML}{20303C}
+\definecolor{cnBlue}{HTML}{2A4B7C}
+\definecolor{cnSky}{HTML}{EFF5FB}
+\definecolor{cnGold}{HTML}{B67A2D}
+\definecolor{cnGoldBg}{HTML}{FFF6E9}
+\definecolor{cnRed}{HTML}{C75146}
+\definecolor{cnRedBg}{HTML}{FEF1EF}
+\definecolor{cnGreen}{HTML}{2E7D5B}
+\definecolor{cnGreenBg}{HTML}{EEF7F1}
+\definecolor{cnLine}{HTML}{D8E2EE}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=cnBlue,
+  citecolor=cnBlue,
+  urlcolor=cnGold,
+  pdfauthor={MIStatlE},
+  pdftitle={CN Lecture Note Template}
+}
+
+\newcounter{lecnum}
+\renewcommand{\thepage}{\thelecnum-\arabic{page}}
+\renewcommand{\thesection}{\thelecnum.\arabic{section}}
+\renewcommand{\thesubsection}{\thelecnum.\arabic{section}.\arabic{subsection}}
+\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
+\numberwithin{equation}{section}
+
+\titleformat{\section}
+  {\Large\bfseries\color{cnBlue}}
+  {\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.1em}{0.45em}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{cnInk}}
+  {\thesubsection}{0.55em}{}
+\titlespacing*{\subsection}{0pt}{0.9em}{0.3em}
+
+\setlist[itemize]{leftmargin=1.5em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=1.7em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\LectureSeries}{Learning Theory / Optimization Notes}
+\newcommand{\LectureSpeaker}{MIStatlE}
+\newcommand{\LectureAffiliation}{Fudan University}
+
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\sffamily\color{cnBlue}\LectureSeries}
+\fancyhead[R]{\small\sffamily\color{cnInk}\nouppercase{\rightmark}}
+\fancyfoot[L]{\small\sffamily\color{cnGold}\LectureSpeaker}
+\fancyfoot[R]{\small\sffamily\color{cnGold}\thepage}
+\pagestyle{fancy}
+\fancypagestyle{plain}{\pagestyle{fancy}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+\tcbset{
+  cn-panel/.style={
+    enhanced,
+    breakable,
+    boxrule=0.7pt,
+    arc=4pt,
+    left=10pt,right=10pt,top=10pt,bottom=10pt
+  },
+  cn-soft/.style={
+    enhanced,
+    breakable,
+    frame hidden,
+    borderline west={3pt}{0pt}{#1},
+    colback=#1!8,
+    left=9pt,right=9pt,top=8pt,bottom=8pt,
+    arc=2pt
+  }
+}
+
+\newcommand{\LectureBanner}[6]{%
+  \setcounter{lecnum}{#1}%
+  \setcounter{page}{1}%
+  \setcounter{section}{0}%
+  \setcounter{equation}{0}%
+  \markright{#2}%
+  \begin{tcolorbox}[
+    cn-panel,
+    colback=cnSky,
+    colframe=cnBlue,
+    borderline west={4pt}{0pt}{cnGold}
+  ]
+    {\sffamily\small\color{cnInk!70} #4 \hfill #5}\par
+    \vspace{0.35em}
+    {\bfseries\fontsize{22}{26}\selectfont\color{cnInk} 第 #1 讲：#2\par}
+    \vspace{0.2em}
+    {\large\color{cnBlue} #3\par}
+    \vspace{0.7em}
+    {\small\sffamily\color{cnInk!75} 主讲：#6 \hfill \LectureAffiliation}
+  \end{tcolorbox}
+  \vspace{0.7em}
+}
+
+\newtcolorbox{SummaryBox}{
+  cn-panel,
+  colback=cnGoldBg,
+  colframe=cnGold,
+  title=\textbf{本讲摘要},
+  fonttitle=\bfseries,
+  coltitle=white,
+  colbacktitle=cnGold
+}
+
+\newtcolorbox{AnalysisBox}{
+  cn-soft=cnBlue,
+  title=\textbf{分析},
+  fonttitle=\bfseries,
+  coltitle=cnBlue
+}
+
+\newtcolorbox{RemarkBox}{
+  cn-soft=cnRed,
+  title=\textbf{备注},
+  fonttitle=\bfseries,
+  coltitle=cnRed
+}
+
+\newtcolorbox{ExampleBox}{
+  cn-panel,
+  colback=cnGreenBg,
+  colframe=cnGreen,
+  title=\textbf{Example},
+  fonttitle=\bfseries,
+  coltitle=white,
+  colbacktitle=cnGreen
+}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{注}
+
+\tcolorboxenvironment{theorem}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
+\tcolorboxenvironment{lemma}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
+\tcolorboxenvironment{proposition}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
+\tcolorboxenvironment{corollary}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
+\tcolorboxenvironment{definition}{cn-soft=cnGold,title=\textbf{定义},fonttitle=\bfseries,coltitle=cnGold}
+\tcolorboxenvironment{remark}{cn-soft=cnRed,title=\textbf{注},fonttitle=\bfseries,coltitle=cnRed}
+
+\DeclareMathOperator{\diam}{diam}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+
+\begin{document}
+
+\LectureBanner
+  {3}
+  {凸函数与次梯度}
+  {从几何直觉到优化分析}
+  {Optimization Notes}
+  {2026 Spring}
+  {MIStatlE}
+
+\begin{SummaryBox}
+这一讲的目标很直接：先把凸集、凸函数与次梯度放到同一张图景里，再解释为什么这些定义并不是“为了证明而发明的符号”，而是优化算法可解释性的基础。
+\end{SummaryBox}
+
+\section{凸性首先是一种几何约束}
+
+设 $C \subset \R^d$。若对任意 $x,y \in C$ 与任意 $\lambda \in [0,1]$ 都有
+\[
+\lambda x + (1-\lambda)y \in C,
+\]
+则称 $C$ 为凸集。它表达的是一条很朴素的要求：点与点之间的连线不应离开可行区域。
+
+\begin{definition}[仿射组合]
+给定向量族 $x_1,\dots,x_m$，若系数满足 $\sum_{i=1}^m \alpha_i = 1$，则
+\[
+\sum_{i=1}^m \alpha_i x_i
+\]
+称为这些向量的仿射组合。
+\end{definition}
+
+\begin{AnalysisBox}
+把“仿射”与“凸”分开看很重要。仿射只要求系数和为 $1$，允许负系数；凸组合则进一步要求系数非负。很多几何直觉的真正分界点就在这里。
+\end{AnalysisBox}
+
+\subsection{从集合到函数}
+
+函数 $f:C\to \R$ 的凸性要求
+\[
+f(\lambda x+(1-\lambda)y) \le \lambda f(x)+(1-\lambda)f(y), \qquad \lambda\in[0,1].
+\]
+换句话说，函数图像永远不高于两点连线所定义的“弦”。这一性质把最优化问题从“可能有很多局部陷阱”变成“局部信息可以指导全局”的结构问题。
+
+\begin{proposition}[一阶判别]
+若 $f$ 可微，则 $f$ 在凸集 $C$ 上凸，当且仅当对任意 $x,y\in C$ 有
+\[
+f(y)\ge f(x) + \ip{\nabla f(x)}{y-x}.
+\]
+\end{proposition}
+
+\begin{proof}
+一方面，令 $g(t)=f(x+t(y-x))$，由一维凸函数的切线下界即可得到上式。另一方面，将该不等式作用于线段上的点，可以反推出弦不等式，因此与凸性等价。
+\end{proof}
+
+\section{次梯度把不可微点重新接回理论}
+
+很多真正有用的目标函数在关键处并不可微，例如 $\ell_1$ 正则项、支持函数与某些 max 结构。因此仅靠梯度无法覆盖完整的凸分析。
+
+\begin{definition}[次梯度]
+设 $f:C\to \R$ 为凸函数。若向量 $g\in \R^d$ 满足
+\[
+f(y)\ge f(x)+\ip{g}{y-x}, \qquad \forall y\in C,
+\]
+则称 $g$ 是 $f$ 在 $x$ 处的一个次梯度，所有次梯度组成的集合记为 $\partial f(x)$。
+\end{definition}
+
+\begin{ExampleBox}
+对 $f(x)=|x|$，当 $x\neq 0$ 时只有一个次梯度，即 $\mathrm{sign}(x)$；而在 $x=0$ 时，
+\[
+\partial f(0)=[-1,1].
+\]
+这正是“不可微点不是断裂，而是一整簇合法切线”的最直观例子。
+\end{ExampleBox}
+
+\begin{theorem}[最优性条件]
+设 $f$ 为凸函数，则点 $x^\star$ 是全局极小点，当且仅当
+\[
+0\in \partial f(x^\star).
+\]
+\end{theorem}
+
+\begin{AnalysisBox}
+这条结论的意义不只是“方便判别最优解”。它告诉我们：在凸问题里，最优性其实就是“存在一条水平支撑超平面”。几何语言和优化语言在这里完全重合。
+\end{AnalysisBox}
+
+\section{算法视角：为什么这套结构会影响更新规则}
+
+如果目标函数光滑，我们可以沿着负梯度方向更新；如果目标函数只有凸性而没有可微性，我们就转向次梯度法。此时收敛速度变慢，但问题的几何结构仍然允许我们得到全局控制。
+
+\begin{lemma}[次梯度一步估计]
+令 $x_{t+1}=x_t-\eta_t g_t$，其中 $g_t\in \partial f(x_t)$。则对任意比较点 $x^\star$ 都有
+\[
+\|x_{t+1}-x^\star\|_2^2
+\le
+\|x_t-x^\star\|_2^2
+-2\eta_t\bigl(f(x_t)-f(x^\star)\bigr)
++\eta_t^2\|g_t\|_2^2.
+\]
+\end{lemma}
+
+\begin{proof}
+展开平方并使用次梯度不等式即可：
+\[
+\|x_t-\eta_t g_t-x^\star\|_2^2
+= \|x_t-x^\star\|_2^2 - 2\eta_t\ip{g_t}{x_t-x^\star} + \eta_t^2\|g_t\|_2^2.
+\]
+再由 $f(x_t)-f(x^\star)\le \ip{g_t}{x_t-x^\star}$ 得证。
+\end{proof}
+
+\begin{RemarkBox}
+很多初学者会把“不可微”理解成“无法分析”。实际上，在凸问题里，真正重要的不是导数是否唯一，而是能否找到一个稳定的局部线性下界。
+\end{RemarkBox}
+
+\section{一页总结}
+
+\begin{itemize}
+  \item 凸集保证可行域几何足够稳定。
+  \item 凸函数保证局部一阶信息可以指向全局结构。
+  \item 次梯度把不可微点重新纳入统一框架。
+  \item 许多优化算法的收敛分析，本质上都在重复使用“切线下界 + 平方展开”这两个动作。
+\end{itemize}
+
+\end{document}
+```
