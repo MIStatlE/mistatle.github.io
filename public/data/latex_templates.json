@@ -15,6 +15,36 @@
     "link": null
   },
   {
+    "id": "cn-lecture-note",
+    "title": "CN Lecture Note",
+    "desc": "中文 lecture note 模板，适合课程讲义、系列笔记和长篇推导。",
+    "icon": "notebook-pen",
+    "tags": ["Lecture Note", "CTeX", "XeLaTeX"],
+    "filePath": "public/data/templates/cn_lecture_note.md",
+    "previewImage": "assets/images/latex-template/cn-lecture-preview-1.png",
+    "previewImages": [
+      "assets/images/latex-template/cn-lecture-preview-1.png",
+      "assets/images/latex-template/cn-lecture-preview-2.png",
+      "assets/images/latex-template/cn-lecture-preview-3.png"
+    ],
+    "link": null
+  },
+  {
+    "id": "en-article-note",
+    "title": "EN Article Note",
+    "desc": "英文 expository article 模板，适合理论说明文、handout 和长笔记。",
+    "icon": "scroll-text",
+    "tags": ["Article", "Expository", "XeLaTeX"],
+    "filePath": "public/data/templates/en_article_note.md",
+    "previewImage": "assets/images/latex-template/en-article-preview-1.png",
+    "previewImages": [
+      "assets/images/latex-template/en-article-preview-1.png",
+      "assets/images/latex-template/en-article-preview-2.png",
+      "assets/images/latex-template/en-article-preview-3.png"
+    ],
+    "link": null
+  },
+  {
     "id": "mi-book-style",
     "title": "MI Book / Lecture Note",
     "desc": "适合中文数学书、讲义和长笔记的书籍模板，统一了页眉、彩带、定理盒子和封面系统。",
