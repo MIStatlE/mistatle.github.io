@@ -284,6 +284,75 @@
           return !!normalizeContentPath(filePath);
         }
 
+        function slugifyHeading(value) {
+          return String(value || "section")
+            .toLowerCase()
+            .normalize("NFKD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9\u4e00-\u9fff\s-]/g, "")
+            .trim()
+            .replace(/\s+/g, "-")
+            .replace(/-+/g, "-") || "section";
+        }
+
+        function annotateHeadings(html) {
+          const container = document.createElement("div");
+          container.innerHTML = html;
+
+          const seen = new Map();
+          const headings = [];
+
+          container.querySelectorAll("h1, h2, h3").forEach((node) => {
+            const title = (node.textContent || "").trim();
+            if (!title) return;
+
+            const base = slugifyHeading(title);
+            const count = seen.get(base) || 0;
+            seen.set(base, count + 1);
+            const id = count ? `${base}-${count + 1}` : base;
+
+            node.id = id;
+            headings.push({
+              id,
+              title,
+              level: Number(node.tagName.replace("H", ""))
+            });
+          });
+
+          return {
+            html: container.innerHTML,
+            headings
+          };
+        }
+
+        function buildCourseIndex(discipline, course) {
+          if (!course?.chapters) {
+            return null;
+          }
+
+          return {
+            type: "library-course",
+            disciplineTitle: discipline?.title || "",
+            courseTitle: course?.title || "",
+            lessons: course.chapters.flatMap((chapter) =>
+              (chapter.lessons || []).map((lesson) => ({
+                ...lesson,
+                chapterTitle: chapter.title,
+                readable: hasReadableContent(lesson.filePath),
+                filePath: normalizeContentPath(lesson.filePath)
+              }))
+            )
+          };
+        }
+
+        function buildLibraryReadingItem(lesson, discipline, course) {
+          return {
+            ...lesson,
+            filePath: normalizeContentPath(lesson.filePath),
+            readingContext: buildCourseIndex(discipline, course)
+          };
+        }
+
         // --- 默认回退数据 (Backup Data) ---
         const DEFAULT_DB = {
             library: {
@@ -444,23 +513,84 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           </div>
         );
 
+        const PlatformIcon = ({ platform }) => {
+            if (platform === 'bilibili') {
+                return (
+                    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="4" y="6.5" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+                        <path d="M9 4.2 7.4 6M15 4.2 16.6 6M9.2 10.5v3M14.8 10.5v3M9 15.7c1 .65 2 .95 3 .95s2-.3 3-.95" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                );
+            }
+
+            if (platform === 'xiaohongshu') {
+                return (
+                    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                        <path d="M7.2 9.3c.85-.95 1.9-1.45 3.2-1.45 1 0 1.9.32 2.62.92 1.15-1.02 2.52-1.47 4.14-1.32M7.15 14.6h9.7M7.15 11.95h9.7M8.1 17.35h7.8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                    </svg>
+                );
+            }
+
+            if (platform === 'zhihu') {
+                return (
+                    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3.5" y="5.2" width="17" height="13.6" rx="2.8" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                        <path d="M7.1 9.2h5.9M7.1 12h5.1M7.1 14.8h5.9M15.7 9v6.1M13.9 10.25h3.65M13.9 13.85h3.65" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                );
+            }
+
+            if (platform === 'wechat') {
+                return (
+                    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M10.3 6.2c-3.4 0-6.1 2.28-6.1 5.1 0 1.6.88 3 2.26 3.96l-.62 2.14 2.37-1.2c.66.16 1.36.24 2.1.24 3.36 0 6.08-2.28 6.08-5.14 0-2.82-2.72-5.1-6.08-5.1Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                        <path d="M15.85 11.2c-2.36 0-4.27 1.58-4.27 3.55 0 1.08.57 2.02 1.48 2.67l-.34 1.51 1.7-.84c.45.1.93.15 1.43.15 2.35 0 4.27-1.6 4.27-3.56s-1.92-3.48-4.27-3.48Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                        <circle cx="8.3" cy="11.1" r="0.85" fill="currentColor"/>
+                        <circle cx="12.15" cy="11.1" r="0.85" fill="currentColor"/>
+                        <circle cx="14.65" cy="14.65" r="0.75" fill="currentColor"/>
+                        <circle cx="17.45" cy="14.65" r="0.75" fill="currentColor"/>
+                    </svg>
+                );
+            }
+
+            return <Icon name="link" size={18} />;
+        };
+
         // --- 社交链接组件 ---
-        const SocialLink = ({ icon, label, href, colorClass }) => (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              className={`group relative flex flex-col items-center gap-2 transition-transform hover:-translate-y-1`}
-            >
-                <div className={`w-10 h-10 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all ${colorClass}`}>
-                    <Icon name={icon} size={18} />
-                </div>
-                <span className="text-[10px] font-mono text-stone-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 whitespace-nowrap">
-                  {label}
-                </span>
-            </a>
-        );
+        const SocialLink = ({ platform, icon, label, href, colorClass, note }) => {
+            const sharedClass = `group relative flex flex-col items-center gap-2 transition-transform hover:-translate-y-1`;
+            const badge = (
+                <>
+                    <div className={`w-10 h-10 rounded-full bg-white border border-stone-200 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all ${colorClass}`}>
+                        {icon ? <Icon name={icon} size={18} /> : <PlatformIcon platform={platform} />}
+                    </div>
+                    <span className="text-[10px] font-mono text-stone-400 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-6 whitespace-nowrap">
+                      {note || label}
+                    </span>
+                </>
+            );
+
+            if (!href) {
+                return (
+                    <div aria-label={label} className={`${sharedClass} cursor-default opacity-70`}>
+                        {badge}
+                    </div>
+                );
+            }
+
+            return (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className={sharedClass}
+                >
+                    {badge}
+                </a>
+            );
+        };
 
         // --- 导航栏 (Navbar) ---
         const Navbar = ({ activeTab, setActiveTab }) => {
@@ -526,14 +656,15 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         };
 
         // --- ArticleReader（✅ 重库按需加载 + 缓存 + 空闲时高亮/公式） ---
-        const ArticleReader = ({ item, onBack }) => {
+        const ArticleReader = ({ item, onBack, onSelectItem }) => {
             const [state, setState] = useState({ 
                 content: '', 
                 frontmatter: null, 
                 loading: true, 
                 error: null,
                 needsCode: false,
-                needsMath: false
+                needsMath: false,
+                headings: []
             });
             const contentRef = useRef(null);
 
@@ -561,7 +692,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                             loading: false,
                             error: null,
                             needsCode: !!record.needsCode,
-                            needsMath: !!record.needsMath
+                            needsMath: !!record.needsMath,
+                            headings: record.headings || []
                           });
                           return;
                         }
@@ -615,17 +747,20 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                           ? window.DOMPurify.sanitize(html, { ADD_TAGS: ['button'], ADD_ATTR: ['data-code'] })
                           : html;
 
+                        const annotated = annotateHeadings(clean);
+
                         // ✅ 写入缓存
-                        ARTICLE_CACHE.set(filePath, { ...record, html: clean });
+                        ARTICLE_CACHE.set(filePath, { ...record, html: annotated.html, headings: annotated.headings });
 
                         if (ignore) return;
                         setState({
-                          content: clean,
+                          content: annotated.html,
                           frontmatter: record.meta,
                           loading: false,
                           error: null,
                           needsCode: !!record.needsCode,
-                          needsMath: !!record.needsMath
+                          needsMath: !!record.needsMath,
+                          headings: annotated.headings
                         });
                     } catch (err) {
                         if (!ignore) setState({
@@ -634,7 +769,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                           loading: false,
                           error: err?.message || String(err),
                           needsCode: false,
-                          needsMath: false
+                          needsMath: false,
+                          headings: []
                         });
                     }
                 })();
@@ -733,6 +869,32 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               return () => { cancelled = true; };
             }, [state.content, state.loading, state.error, state.needsCode, state.needsMath]);
 
+            const courseIndex = item?.readingContext?.type === "library-course" ? item.readingContext : null;
+            const currentPath = normalizeContentPath(item?.filePath);
+            const currentLessonIndex = courseIndex
+              ? courseIndex.lessons.findIndex((lesson) => lesson.filePath === currentPath || lesson.id === item?.id)
+              : -1;
+            const previousLesson = currentLessonIndex > 0 ? courseIndex.lessons[currentLessonIndex - 1] : null;
+            const nextLesson = courseIndex && currentLessonIndex >= 0 && currentLessonIndex < courseIndex.lessons.length - 1
+              ? courseIndex.lessons[currentLessonIndex + 1]
+              : null;
+            const hasSidebar = state.headings.length > 0 || (courseIndex && courseIndex.lessons.length > 0);
+
+            const jumpToHeading = (id) => {
+              const node = document.getElementById(id);
+              if (!node) return;
+              node.scrollIntoView({ behavior: "smooth", block: "start" });
+            };
+
+            const openCourseLesson = (lesson) => {
+              if (!lesson?.readable || !onSelectItem) return;
+              onSelectItem({
+                ...lesson,
+                title: lesson.title,
+                readingContext: courseIndex
+              });
+            };
+
             return (
                 <div className="max-w-5xl mx-auto px-6 py-12 min-h-screen">
                     <button onClick={onBack} className="group flex items-center text-sm text-stone-400 hover:text-blue-900 mb-10 font-mono uppercase tracking-wider transition-colors">
@@ -754,42 +916,162 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     )}
 
                     {!state.loading && !state.error && (
-                        <article className="fade-in">
-                            <header className="mb-12 pb-8 border-b border-stone-200">
-                                <div className="flex flex-wrap gap-3 mb-4 text-xs font-mono uppercase tracking-widest text-stone-500">
-                                    {state.frontmatter?.categories && (
-                                        <span className="text-blue-900 font-bold">{Array.isArray(state.frontmatter.categories) ? state.frontmatter.categories[0] : state.frontmatter.categories}</span>
+                        <div className={`fade-in ${hasSidebar ? "lg:grid lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-12" : ""}`}>
+                            <article>
+                                <header className="mb-12 pb-8 border-b border-stone-200">
+                                    <div className="flex flex-wrap gap-3 mb-4 text-xs font-mono uppercase tracking-widest text-stone-500">
+                                        {state.frontmatter?.categories && (
+                                            <span className="text-blue-900 font-bold">{Array.isArray(state.frontmatter.categories) ? state.frontmatter.categories[0] : state.frontmatter.categories}</span>
+                                        )}
+                                        {state.frontmatter?.date && <span>• {state.frontmatter.date}</span>}
+                                        {courseIndex?.courseTitle && <span>• {courseIndex.courseTitle}</span>}
+                                    </div>
+
+                                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-6 leading-tight">
+                                        {state.frontmatter?.title || item.title}
+                                    </h1>
+
+                                    {state.frontmatter?.description && (
+                                        <p className="text-xl text-stone-600 font-serif italic font-light leading-relaxed">
+                                            {state.frontmatter.description}
+                                        </p>
                                     )}
-                                    {state.frontmatter?.date && <span>• {state.frontmatter.date}</span>}
-                                </div>
 
-                                <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-900 mb-6 leading-tight">
-                                    {state.frontmatter?.title || item.title}
-                                </h1>
+                                    {state.frontmatter?.tags && (
+                                        <div className="flex flex-wrap gap-2 mt-6">
+                                            {(Array.isArray(state.frontmatter.tags) ? state.frontmatter.tags : [state.frontmatter.tags]).map((tag, i) => (
+                                                <span key={i} className="px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-mono uppercase rounded border border-stone-200">
+                                                    #{tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </header>
 
-                                {state.frontmatter?.description && (
-                                    <p className="text-xl text-stone-600 font-serif italic font-light leading-relaxed">
-                                        {state.frontmatter.description}
-                                    </p>
-                                )}
+                                {hasSidebar && (
+                                    <div className="lg:hidden space-y-6 mb-10">
+                                        {state.headings.length > 0 && (
+                                            <div className="bg-stone-50 border border-stone-200 rounded-xl p-5">
+                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-4">Article Index</p>
+                                                <div className="space-y-2">
+                                                    {state.headings.map((heading) => (
+                                                        <button
+                                                          key={heading.id}
+                                                          type="button"
+                                                          onClick={() => jumpToHeading(heading.id)}
+                                                          className={`block text-left text-sm text-stone-600 hover:text-blue-900 transition-colors ${heading.level === 1 ? "font-semibold" : heading.level === 2 ? "pl-3" : "pl-6"}`}
+                                                        >
+                                                            {heading.title}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
-                                {state.frontmatter?.tags && (
-                                    <div className="flex flex-wrap gap-2 mt-6">
-                                        {(Array.isArray(state.frontmatter.tags) ? state.frontmatter.tags : [state.frontmatter.tags]).map((tag, i) => (
-                                            <span key={i} className="px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-mono uppercase rounded border border-stone-200">
-                                                #{tag}
-                                            </span>
-                                        ))}
+                                        {courseIndex && (
+                                            <div className="bg-white border border-stone-200 rounded-xl p-5">
+                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-2">Course Index</p>
+                                                <h3 className="font-serif text-xl text-stone-900 mb-4">{courseIndex.courseTitle}</h3>
+                                                <div className="space-y-3">
+                                                    {courseIndex.lessons.map((lesson) => {
+                                                      const isCurrent = lesson.filePath === currentPath || lesson.id === item?.id;
+                                                      return (
+                                                        <button
+                                                          key={lesson.id}
+                                                          type="button"
+                                                          onClick={() => openCourseLesson(lesson)}
+                                                          disabled={!lesson.readable || isCurrent}
+                                                          className={`w-full text-left rounded-lg border px-3 py-3 transition-colors ${isCurrent ? "border-blue-900 bg-blue-50 text-blue-900" : lesson.readable ? "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white" : "border-stone-100 bg-stone-50/60 text-stone-400 cursor-not-allowed"}`}
+                                                        >
+                                                            <div className="text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1">{lesson.chapterTitle}</div>
+                                                            <div className="text-sm">{lesson.title}</div>
+                                                        </button>
+                                                      );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
-                            </header>
 
-                            <div
-                                ref={contentRef}
-                                className="prose prose-stone prose-lg prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900"
-                                dangerouslySetInnerHTML={{ __html: state.content }}
-                            ></div>
-                        </article>
+                                <div
+                                    ref={contentRef}
+                                    className="prose prose-stone prose-lg prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900"
+                                    dangerouslySetInnerHTML={{ __html: state.content }}
+                                ></div>
+
+                                {(previousLesson || nextLesson) && (
+                                    <div className="mt-12 pt-8 border-t border-stone-200 grid gap-4 md:grid-cols-2">
+                                        <button
+                                          type="button"
+                                          onClick={() => previousLesson && openCourseLesson(previousLesson)}
+                                          disabled={!previousLesson?.readable}
+                                          className={`rounded-xl border p-4 text-left transition-colors ${previousLesson?.readable ? "border-stone-200 hover:border-stone-400 hover:bg-stone-50" : "border-stone-100 text-stone-300 cursor-not-allowed"}`}
+                                        >
+                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">Previous Note</div>
+                                            <div className="font-serif text-lg text-stone-900">{previousLesson?.title || "None"}</div>
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => nextLesson && openCourseLesson(nextLesson)}
+                                          disabled={!nextLesson?.readable}
+                                          className={`rounded-xl border p-4 text-left transition-colors ${nextLesson?.readable ? "border-stone-200 hover:border-stone-400 hover:bg-stone-50" : "border-stone-100 text-stone-300 cursor-not-allowed"}`}
+                                        >
+                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">Next Note</div>
+                                            <div className="font-serif text-lg text-stone-900">{nextLesson?.title || "None"}</div>
+                                        </button>
+                                    </div>
+                                )}
+                            </article>
+
+                            {hasSidebar && (
+                                <aside className="hidden lg:block">
+                                    <div className="sticky top-28 space-y-6">
+                                        {state.headings.length > 0 && (
+                                            <div className="bg-stone-50 border border-stone-200 rounded-xl p-5">
+                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-4">Article Index</p>
+                                                <div className="space-y-2">
+                                                    {state.headings.map((heading) => (
+                                                        <button
+                                                          key={heading.id}
+                                                          type="button"
+                                                          onClick={() => jumpToHeading(heading.id)}
+                                                          className={`block w-full text-left text-sm text-stone-600 hover:text-blue-900 transition-colors ${heading.level === 1 ? "font-semibold" : heading.level === 2 ? "pl-3" : "pl-6"}`}
+                                                        >
+                                                            {heading.title}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {courseIndex && (
+                                            <div className="bg-white border border-stone-200 rounded-xl p-5">
+                                                <p className="text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400 mb-2">Course Index</p>
+                                                <h3 className="font-serif text-xl text-stone-900 mb-4">{courseIndex.courseTitle}</h3>
+                                                <div className="space-y-3">
+                                                    {courseIndex.lessons.map((lesson) => {
+                                                      const isCurrent = lesson.filePath === currentPath || lesson.id === item?.id;
+                                                      return (
+                                                        <button
+                                                          key={lesson.id}
+                                                          type="button"
+                                                          onClick={() => openCourseLesson(lesson)}
+                                                          disabled={!lesson.readable || isCurrent}
+                                                          className={`w-full text-left rounded-lg border px-3 py-3 transition-colors ${isCurrent ? "border-blue-900 bg-blue-50 text-blue-900" : lesson.readable ? "border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-white" : "border-stone-100 bg-stone-50/60 text-stone-400 cursor-not-allowed"}`}
+                                                        >
+                                                            <div className="text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1">{lesson.chapterTitle}</div>
+                                                            <div className="text-sm">{lesson.title}</div>
+                                                        </button>
+                                                      );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </aside>
+                            )}
+                        </div>
                     )}
                 </div>
             );
@@ -817,12 +1099,12 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
                 <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">FOLLOW US:</span>
                 <div className="flex gap-4">
-                    <SocialLink icon="tv-2" label="Bilibili" href="#" colorClass="group-hover:text-[#00AEEC] group-hover:border-[#00AEEC]" />
+                    <SocialLink platform="bilibili" label="Bilibili" href="https://space.bilibili.com/496530225?spm_id_from=333.1007.0.0" colorClass="group-hover:text-[#00AEEC] group-hover:border-[#00AEEC]" />
                     <SocialLink icon="youtube" label="YouTube" href="#" colorClass="group-hover:text-[#FF0000] group-hover:border-[#FF0000]" />
-                    <SocialLink icon="github" label="GitHub" href="#" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
-                    <SocialLink icon="heart" label="小红书" href="#" colorClass="group-hover:text-[#FF2442] group-hover:border-[#FF2442]" />
-                    <SocialLink icon="compass" label="知乎" href="#" colorClass="group-hover:text-[#0084FF] group-hover:border-[#0084FF]" />
-                    <SocialLink icon="message-circle" label="公众号" href="#" colorClass="group-hover:text-[#07C160] group-hover:border-[#07C160]" />
+                    <SocialLink icon="github" label="GitHub" href="https://github.com/mistatle" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
+                    <SocialLink platform="xiaohongshu" label="小红书" href="https://www.xiaohongshu.com/user/profile/64d362e1000000000b0087a6" colorClass="group-hover:text-[#FF2442] group-hover:border-[#FF2442]" />
+                    <SocialLink platform="zhihu" label="知乎" href="https://www.zhihu.com/people/kkk-36-70-64" colorClass="group-hover:text-[#0084FF] group-hover:border-[#0084FF]" />
+                    <SocialLink platform="wechat" label="公众号" href="" note="QR pending" colorClass="group-hover:text-[#07C160] group-hover:border-[#07C160]" />
                 </div>
             </div>
 
@@ -887,7 +1169,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                                     key={lesson.id}
                                                     onMouseEnter={() => prefetchArticle(lesson.filePath)}
                                                     onTouchStart={() => prefetchArticle(lesson.filePath)}
-                                                    onClick={() => hasReadableContent(lesson.filePath) && onRead({ ...lesson, filePath: normalizeContentPath(lesson.filePath) })}
+                                                    onClick={() => hasReadableContent(lesson.filePath) && onRead(buildLibraryReadingItem(lesson, currentInfo, course))}
                                                     className={`flex items-center justify-between p-3 rounded-lg group transition-colors border ${hasReadableContent(lesson.filePath) ? "cursor-pointer hover:bg-stone-50 border-transparent hover:border-stone-100" : "cursor-not-allowed border-stone-100 bg-stone-50/60 opacity-70"}`}
                                                   >
                                                       <div className="flex items-center gap-3">
@@ -1047,22 +1329,19 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                 </div>
 
                 <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 mb-6 tracking-tight">
-                    A Graduate Student <span className="text-stone-300 font-light mx-2">&</span> A Serious Person
+                    INFP <span className="text-stone-300 font-light mx-2">&</span> Learning Theory
                 </h1>
 
                 <p className="font-mono text-xs text-stone-400 uppercase tracking-[0.4em] mb-16">
-                    GRADUATE STUDENT · ML THEORY · STILL LEARNING
+                    INFP · LEARNING THEORY · SERIOUS
                 </p>
 
                 <div className="space-y-8 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
                     <p>
-                        我是一个研究生，现在主要在学习和研究 <span className="text-stone-900 font-normal">machine learning theory</span>。
-                    </p>
-                    <p>
-                        我还在努力学习，也还在努力成长。很多事情都需要慢慢理解、慢慢积累，所以会继续认真地学、认真地做。
+                        我是 INFP，在学 <span className="text-stone-900 font-normal">learning theory</span>，也是一个很认真的人。
                     </p>
                     <p className="text-base text-stone-500">
-                        想把抽象理论和真实问题一点点连接起来，也想长期做一个认真做事的人。
+                        希望我们能够真诚、清晰、理想。
                     </p>
                 </div>
 
@@ -1287,7 +1566,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           }, []);
 
           const renderContent = () => {
-            if (readingItem) return <ArticleReader item={readingItem} onBack={() => setReadingItem(null)} />;
+            if (readingItem) return <ArticleReader item={readingItem} onBack={() => setReadingItem(null)} onSelectItem={setReadingItem} />;
 
             switch(activeTab) {
               case 'home': return <Hero setActiveTab={setActiveTab} />;
