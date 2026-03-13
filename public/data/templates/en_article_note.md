@@ -121,23 +121,23 @@ tags: [LaTeX, Article, Expository, XeLaTeX]
 \setlength{\parindent}{1.4em}
 \setlength{\parskip}{0.2em}
 
-\definecolor{brand}{HTML}{1A9D8F}
-\definecolor{brandD}{HTML}{2A7F6F}
+\definecolor{brand}{HTML}{4C6A92}
+\definecolor{brandD}{HTML}{213A5A}
 \definecolor{ink}{HTML}{1A1A1A}
-\definecolor{keybg}{HTML}{E8F4F1}
-\definecolor{keydark}{HTML}{2F5E58}
-\definecolor{accent}{HTML}{FF6B6B}
-\definecolor{accentD}{HTML}{D94F4F}
-\definecolor{soft}{HTML}{F3F8F7}
-\definecolor{xhsRed}{HTML}{FF4D4F}
+\definecolor{keybg}{HTML}{EEF3F8}
+\definecolor{keydark}{HTML}{24364E}
+\definecolor{accent}{HTML}{C89A4B}
+\definecolor{accentD}{HTML}{9B6A2F}
+\definecolor{soft}{HTML}{F7F5F0}
+\definecolor{xhsRed}{HTML}{B95E4A}
 \definecolor{xhsDark}{HTML}{1F1F1F}
-\definecolor{xhsCream}{HTML}{FFF8F0}
-\definecolor{xhsBlue}{HTML}{2F54EB}
-\definecolor{xhsYellow}{HTML}{FFB800}
+\definecolor{xhsCream}{HTML}{FBF8F1}
+\definecolor{xhsBlue}{HTML}{2F5B8A}
+\definecolor{xhsYellow}{HTML}{D8A64B}
 \definecolor{secblue}{HTML}{2B44C6}
-\definecolor{thmBg}{RGB}{235,245,255}
-\definecolor{lemBg}{RGB}{255,240,240}
-\definecolor{defBg}{RGB}{232,244,241}
+\definecolor{thmBg}{RGB}{236,242,251}
+\definecolor{lemBg}{RGB}{249,239,237}
+\definecolor{defBg}{RGB}{242,245,249}
 
 \hypersetup{
   colorlinks=true,
@@ -206,15 +206,15 @@ tags: [LaTeX, Article, Expository, XeLaTeX]
 \newcommand{\MakeArticleHeader}[5]{%
   \begin{tcolorbox}[
     en-card,
-    colback=xhsCream,
-    colframe=keybg,
-    borderline west={4pt}{0pt}{brandD}
+    colback=white,
+    colframe=brandD!25!white,
+    borderline west={4pt}{0pt}{accent}
   ]
-    {\small\sffamily\color{ink!68} #4 \hfill #3}\par
+    {\small\sffamily\color{ink!60} #4 \hfill #3}\par
     \vspace{0.4em}
     {\bfseries\fontsize{24}{28}\selectfont\color{keydark} #1\par}
     \vspace{0.2em}
-    {\large\color{brandD} #2\par}
+    {\large\color{brand} #2\par}
     \vspace{0.65em}
     \foreach \Tag in {#5}{\tcbox[meta-tag]{\Tag}\hspace{0.35em}}
   \end{tcolorbox}
@@ -241,11 +241,11 @@ tags: [LaTeX, Article, Expository, XeLaTeX]
 \newtcolorbox{ExampleBox}{
   en-card,
   colback=xhsCream,
-  colframe=xhsRed,
+  colframe=accent,
   title=\textbf{Example},
   fonttitle=\bfseries,
   coltitle=white,
-  colbacktitle=xhsRed
+  colbacktitle=accentD
 }
 
 \theoremstyle{plain}

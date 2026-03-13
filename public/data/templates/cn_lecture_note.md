@@ -124,23 +124,23 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 \setlength{\parindent}{1.6em}
 \setlength{\parskip}{0.15em}
 
-\definecolor{brand}{HTML}{1A9D8F}
-\definecolor{brandD}{HTML}{2A7F6F}
+\definecolor{brand}{HTML}{4C6A92}
+\definecolor{brandD}{HTML}{213A5A}
 \definecolor{ink}{HTML}{1A1A1A}
-\definecolor{keybg}{HTML}{E8F4F1}
-\definecolor{keydark}{HTML}{2F5E58}
-\definecolor{accent}{HTML}{FF6B6B}
-\definecolor{accentD}{HTML}{D94F4F}
-\definecolor{soft}{HTML}{F3F8F7}
-\definecolor{xhsRed}{HTML}{FF4D4F}
+\definecolor{keybg}{HTML}{EEF3F8}
+\definecolor{keydark}{HTML}{24364E}
+\definecolor{accent}{HTML}{C89A4B}
+\definecolor{accentD}{HTML}{9B6A2F}
+\definecolor{soft}{HTML}{F7F5F0}
+\definecolor{xhsRed}{HTML}{B95E4A}
 \definecolor{xhsDark}{HTML}{1F1F1F}
-\definecolor{xhsCream}{HTML}{FFF8F0}
-\definecolor{xhsBlue}{HTML}{2F54EB}
-\definecolor{xhsYellow}{HTML}{FFB800}
+\definecolor{xhsCream}{HTML}{FBF8F1}
+\definecolor{xhsBlue}{HTML}{2F5B8A}
+\definecolor{xhsYellow}{HTML}{D8A64B}
 \definecolor{secblue}{HTML}{2B44C6}
-\definecolor{thmBg}{RGB}{235,245,255}
-\definecolor{lemBg}{RGB}{255,240,240}
-\definecolor{defBg}{RGB}{232,244,241}
+\definecolor{thmBg}{RGB}{236,242,251}
+\definecolor{lemBg}{RGB}{249,239,237}
+\definecolor{defBg}{RGB}{242,245,249}
 
 \hypersetup{
   colorlinks=true,
@@ -212,36 +212,36 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
   \markright{#2}%
   \begin{tcolorbox}[
     cn-panel,
-    colback=keybg,
+    colback=white,
     colframe=brandD,
-    borderline west={4pt}{0pt}{xhsYellow}
+    borderline west={4pt}{0pt}{accent}
   ]
-    {\sffamily\small\color{ink!68} #4 \hfill #5}\par
+    {\sffamily\small\color{ink!60} #4 \hfill #5}\par
     \vspace{0.35em}
     {\bfseries\fontsize{22}{26}\selectfont\color{keydark} 第 #1 讲：#2\par}
     \vspace{0.2em}
-    {\large\color{brandD} #3\par}
+    {\large\color{brand} #3\par}
     \vspace{0.7em}
-    {\small\sffamily\color{ink!72} 主讲：#6 \hfill \LectureAffiliation}
+    {\small\sffamily\color{ink!72} 主讲：#6 \hfill {\color{brandD}\LectureAffiliation}}
   \end{tcolorbox}
   \vspace{0.7em}
 }
 
 \newtcolorbox{SummaryBox}{
   cn-panel,
-  colback=xhsCream,
-  colframe=xhsYellow,
+  colback=soft,
+  colframe=accent,
   title=\textbf{本讲摘要},
   fonttitle=\bfseries,
-  coltitle=xhsDark,
-  colbacktitle=xhsYellow
+  coltitle=white,
+  colbacktitle=accentD
 }
 
 \newtcolorbox{AnalysisBox}{
-  cn-soft=brandD,
+  cn-soft=secblue,
   title=\textbf{分析},
   fonttitle=\bfseries,
-  coltitle=brandD
+  coltitle=secblue
 }
 
 \newtcolorbox{RemarkBox}{
@@ -253,7 +253,7 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 
 \newtcolorbox{ExampleBox}{
   cn-panel,
-  colback=soft,
+  colback=white,
   colframe=xhsBlue,
   title=\textbf{Example},
   fonttitle=\bfseries,
