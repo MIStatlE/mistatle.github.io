@@ -489,6 +489,59 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return <div onClick={onClick}><Content /></div>;
         };
 
+        const sectionShellBaseClass = "mx-auto px-6 py-16 md:py-20 fade-in min-h-screen";
+        const sectionSurfaceClass = "rounded-[1.75rem] border border-stone-200/90 bg-white/92 shadow-[0_18px_50px_rgba(28,25,23,0.07)] backdrop-blur-sm";
+        const sectionHeaderEyebrowClass = "font-mono text-[11px] uppercase tracking-[0.28em] text-blue-900";
+        const sectionHeaderAsideClass = "font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400";
+
+        const SectionShell = ({ children, maxWidth = "max-w-6xl", className = "" }) => (
+            <section className={`${maxWidth} ${sectionShellBaseClass} ${className}`.trim()}>
+                {children}
+            </section>
+        );
+
+        const SectionPanel = ({ children, className = "", ...props }) => (
+            <div className={`${sectionSurfaceClass} ${className}`.trim()} {...props}>
+                {children}
+            </div>
+        );
+
+        const SectionHeader = ({ eyebrow, title, description, aside, centered = false, className = "" }) => (
+            <div className={`mb-12 md:mb-14 ${className}`.trim()}>
+                <div className={`flex items-center gap-4 mb-5 ${centered ? "justify-center" : ""}`}>
+                    <span className={sectionHeaderEyebrowClass}>{eyebrow}</span>
+                    {!centered && <div className="h-px flex-1 bg-gradient-to-r from-stone-200 via-stone-200 to-transparent"></div>}
+                </div>
+
+                <div className={`${centered ? "text-center" : "md:flex md:items-end md:justify-between md:gap-8"}`}>
+                    <div>
+                        <h2 className="text-4xl md:text-5xl font-serif font-bold tracking-tight text-stone-900">{title}</h2>
+                        {description && (
+                            <p className={`mt-4 text-stone-500 leading-relaxed ${centered ? "max-w-2xl mx-auto" : "max-w-2xl"}`}>
+                                {description}
+                            </p>
+                        )}
+                    </div>
+                    {aside && (
+                        <div className={`${sectionHeaderAsideClass} ${centered ? "mt-5" : "mt-5 md:mt-0 md:text-right"}`}>
+                            {aside}
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+
+        const SectionBackButton = ({ label, onClick }) => (
+            <button
+              type="button"
+              onClick={onClick}
+              className="group inline-flex items-center rounded-full border border-stone-200 bg-white px-4 py-2 text-[11px] font-mono uppercase tracking-[0.24em] text-stone-500 shadow-sm transition-colors hover:border-blue-900/30 hover:text-blue-900"
+            >
+                <span className="mr-2 inline-block transition-transform group-hover:-translate-x-1">←</span>
+                {label}
+            </button>
+        );
+
         // --- Logo 组件 ---
         const Logo = () => (
           <div className="flex items-center gap-3 select-none group cursor-pointer">
@@ -881,7 +934,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               ? courseIndex.lessons[currentLessonIndex + 1]
               : null;
             const hasSidebar = state.headings.length > 0 || (courseIndex && courseIndex.lessons.length > 0);
-            const indexCardClass = "rounded-2xl border border-stone-200/80 bg-white/95 shadow-[0_18px_40px_rgba(28,35,45,0.06)] backdrop-blur-sm";
+            const indexCardClass = sectionSurfaceClass;
             const indexLabelClass = "text-[10px] font-mono uppercase tracking-[0.24em] text-stone-400";
 
             const jumpToHeading = (id) => {
@@ -1130,22 +1183,33 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
           if (!selectedDiscipline) {
             return (
-                <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <h2 className="text-4xl font-serif font-bold mb-6 text-stone-900">Library</h2>
+                <SectionShell>
+                    <SectionHeader
+                      eyebrow="Knowledge Base"
+                      title="Library"
+                      description="Courses, notes, and conceptual maps organized by discipline."
+                      aside={`${data.disciplines.length} disciplines`}
+                    />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {data.disciplines.map(d => (
-                            <div key={d.id} onClick={() => setSelectedDiscipline(d.id)} className="group p-8 bg-white border border-stone-200 hover:border-blue-900/50 hover:shadow-xl transition-all cursor-pointer rounded-xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-24 bg-stone-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-700"></div>
+                            <SectionPanel
+                              key={d.id}
+                              className="group relative cursor-pointer overflow-hidden p-8 transition-all hover:-translate-y-1 hover:border-blue-900/30 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+                              onClick={() => setSelectedDiscipline(d.id)}
+                            >
+                                <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-stone-50 transition-transform duration-700 group-hover:scale-[1.55] group-hover:bg-blue-50/80"></div>
+                                <div className="pointer-events-none absolute inset-x-10 bottom-0 h-16 bg-gradient-to-t from-blue-50/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+                                <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-blue-200 via-stone-200 to-transparent"></div>
                                 <div className="relative z-10">
-                                    <div className="w-12 h-12 bg-stone-100 text-stone-600 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-900 group-hover:text-white transition-colors"><Icon name={d.icon} size={24} /></div>
+                                    <div className="w-12 h-12 bg-stone-100 text-stone-600 rounded-lg flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-105 group-hover:bg-blue-900 group-hover:text-white"><Icon name={d.icon} size={24} /></div>
                                     <h3 className="text-2xl font-bold text-stone-900 mb-2 font-serif">{d.title}</h3>
                                     <p className="text-stone-500 mb-6">{d.desc}</p>
-                                    <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider"><Icon name="book-open" size={12} className="mr-2"/> {d.count} <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">→</span></div>
+                                    <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider"><Icon name="book-open" size={12} className="mr-2"/> {d.count} <span className="ml-auto text-blue-900/70 opacity-0 group-hover:opacity-100 transition-opacity">→</span></div>
                                 </div>
-                            </div>
+                            </SectionPanel>
                         ))}
                     </div>
-                </div>
+                </SectionShell>
             );
           }
 
@@ -1153,20 +1217,29 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           const currentInfo = data.disciplines.find(d => d.id === selectedDiscipline);
 
           return (
-              <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
-                  <button onClick={() => setSelectedDiscipline(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-8 font-mono text-xs uppercase tracking-widest transition-colors group"><span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Disciplines</button>
-                  <div className="flex items-center gap-4 mb-12">
-                    <div className="w-16 h-16 bg-blue-900 text-white rounded-xl flex items-center justify-center shadow-lg"><Icon name={currentInfo.icon} size={32} /></div>
-                    <div><h2 className="text-4xl font-serif font-bold text-stone-900">{currentInfo.title}</h2><p className="text-stone-500 mt-1">{currentInfo.desc}</p></div>
-                  </div>
+              <SectionShell maxWidth="max-w-6xl">
+                  <SectionBackButton label="Back to Library" onClick={() => setSelectedDiscipline(null)} />
+                  <SectionHeader
+                    eyebrow="Discipline"
+                    title={currentInfo.title}
+                    description={currentInfo.desc}
+                    aside={`${courses.length} courses`}
+                    className="mt-8"
+                  />
                   <div className="space-y-12">
                       {courses.length > 0 ? courses.map((course, idx) => (
-                          <div key={idx} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
-                              <div className="bg-stone-50 px-8 py-6 border-b border-stone-100 flex justify-between items-center"><h3 className="font-bold text-xl text-stone-800">{course.title}</h3><span className="text-xs font-mono bg-white border border-stone-200 px-2 py-1 rounded text-stone-500">COURSE {idx + 1}</span></div>
+                          <SectionPanel key={idx} className="overflow-hidden">
+                              <div className="bg-stone-50/80 px-8 py-6 border-b border-stone-100 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                  <h3 className="font-serif font-bold text-2xl text-stone-900">{course.title}</h3>
+                                  <span className="w-fit text-xs font-mono bg-white border border-stone-200 px-2.5 py-1 rounded-full text-stone-500 uppercase tracking-[0.18em]">Course {idx + 1}</span>
+                              </div>
                               <div className="p-8">
                                   {course.chapters.map((chapter, cIdx) => (
                                       <div key={cIdx} className="mb-8 last:mb-0">
-                                          <h4 className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-4 pl-2 border-l-2 border-blue-900">{chapter.title}</h4>
+                                          <div className="flex items-center gap-3 mb-4">
+                                              <span className="text-xs font-bold text-blue-900 uppercase tracking-widest">{chapter.title}</span>
+                                              <div className="h-px flex-1 bg-stone-200"></div>
+                                          </div>
                                           <div className="grid gap-2">
                                               {chapter.lessons.map(lesson => (
                                                   <div
@@ -1190,10 +1263,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                       </div>
                                   ))}
                               </div>
-                          </div>
+                          </SectionPanel>
                       )) : <div className="p-12 text-center border border-dashed border-stone-300 text-stone-400">Construction in progress...</div>}
                   </div>
-              </div>
+              </SectionShell>
           );
         };
 
@@ -1204,52 +1277,57 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             if (!data || !data.themes) return <div className="p-12 text-center text-stone-400">No papers data loaded.</div>;
 
             if(!selectedTheme) return (
-                <div className="max-w-5xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <h2 className="text-4xl font-serif font-bold mb-10 text-stone-900 border-l-4 border-stone-900 pl-6">Reading Collections</h2>
+                <SectionShell maxWidth="max-w-6xl">
+                    <SectionHeader
+                      eyebrow="Reading Collections"
+                      title="Papers"
+                      description="Themes, curated lists, and notes worth returning to."
+                      aside={`${data.themes.length} themes`}
+                    />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {data.themes.map(t => (
-                            <div key={t.id} onClick={() => setSelectedTheme(t.id)} className="group bg-stone-50 p-8 border border-stone-200 hover:border-stone-400 cursor-pointer transition-all relative overflow-hidden">
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-stone-300 group-hover:bg-blue-900 transition-colors"></div>
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-blue-900 transition-colors z-10">{t.title}</h3>
-                                    <span className="font-mono text-xs text-stone-400 bg-white px-2 py-1 border border-stone-200 rounded">{t.count}</span>
+                            <SectionPanel key={t.id} onClick={() => setSelectedTheme(t.id)} className="group cursor-pointer p-8 transition-all hover:-translate-y-1 hover:border-blue-900/25">
+                                <div className="flex items-center gap-3 mb-5">
+                                    <div className="w-10 h-10 rounded-full border border-stone-200 bg-stone-50 flex items-center justify-center text-blue-900">
+                                        <Icon name="book-open" size={18} />
+                                    </div>
+                                    <div className="h-px flex-1 bg-gradient-to-r from-stone-200 to-transparent"></div>
                                 </div>
-                                <p className="text-sm text-stone-500 font-serif italic mb-8 z-10 relative">{t.desc}</p>
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-blue-900 transition-colors">{t.title}</h3>
+                                    <span className="font-mono text-xs text-stone-400 bg-stone-50 px-2.5 py-1 border border-stone-200 rounded-full">{t.count}</span>
+                                </div>
+                                <p className="text-sm text-stone-500 font-serif italic mb-8">{t.desc}</p>
                                 <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors">
                                     View Collection <span className="ml-2">→</span>
                                 </div>
-                                <div className="absolute -bottom-4 -right-4 text-9xl font-serif text-stone-200 opacity-20 pointer-events-none select-none group-hover:opacity-30 transition-opacity">
-                                    {t.title.charAt(0)}
-                                </div>
-                            </div>
+                            </SectionPanel>
                         ))}
                     </div>
-                </div>
+                </SectionShell>
             );
 
             const list = data.lists[selectedTheme] || [];
+            const selectedThemeInfo = data.themes.find(t => t.id === selectedTheme);
             return (
-                <div className="max-w-4xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <button onClick={() => setSelectedTheme(null)} className="flex items-center text-stone-400 hover:text-stone-900 mb-12 font-mono text-xs uppercase tracking-widest"><span className="mr-2">←</span> Return to Collections</button>
+                <SectionShell maxWidth="max-w-5xl">
+                    <SectionBackButton label="Back to Papers" onClick={() => setSelectedTheme(null)} />
+                    <SectionHeader
+                      eyebrow="Selected Theme"
+                      title={selectedThemeInfo?.title || "Papers"}
+                      description={selectedThemeInfo?.desc}
+                      aside={`${list.length} papers`}
+                      className="mt-8"
+                    />
 
-                    <div className="mb-12 pb-6 border-b border-stone-200 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div>
-                            <span className="font-mono text-xs text-blue-900 uppercase tracking-widest mb-2 block">Selected Papers</span>
-                            <h2 className="text-4xl font-serif font-bold text-stone-900">{data.themes.find(t=>t.id===selectedTheme)?.title}</h2>
-                        </div>
-                        <div className="text-right hidden md:block">
-                            <span className="text-4xl font-serif text-stone-200 italic">&</span>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
+                    <SectionPanel className="overflow-hidden divide-y divide-stone-100">
                         {list.length > 0 ? list.map((p, i) => (
                             <div
                               key={i}
                               onMouseEnter={() => prefetchArticle(p.filePath)}
                               onTouchStart={() => prefetchArticle(p.filePath)}
                               onClick={() => hasReadableContent(p.filePath) && onRead({ ...p, filePath: normalizeContentPath(p.filePath) })}
-                              className={`group relative bg-white border border-transparent border-b-stone-100 p-6 transition-all ${hasReadableContent(p.filePath) ? "cursor-pointer hover:border-stone-200 hover:bg-stone-50/50" : "cursor-not-allowed opacity-75"}`}
+                              className={`group relative p-6 transition-colors ${hasReadableContent(p.filePath) ? "cursor-pointer hover:bg-stone-50/70" : "cursor-not-allowed opacity-75"}`}
                             >
                                 <div className="flex flex-col md:flex-row gap-4 justify-between">
                                     <div className="flex-grow pr-8">
@@ -1273,23 +1351,25 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                 </div>
                             </div>
                         )) : <div className="text-stone-400 italic py-12 text-center">No papers in this category yet.</div>}
-                    </div>
-                </div>
+                    </SectionPanel>
+                </SectionShell>
             );
         };
 
         // --- Lab ---
         const Lab = ({ data }) => (
-            <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-                <div className="flex items-end justify-between mb-12 border-b border-stone-200 pb-4">
-                    <h2 className="text-4xl font-serif font-bold text-stone-900">The Laboratory</h2>
-                    <span className="font-mono text-xs text-stone-400 uppercase tracking-widest hidden md:inline-block">Experimental Projects</span>
-                </div>
+            <SectionShell>
+                <SectionHeader
+                  eyebrow="Experimental Projects"
+                  title="The Laboratory"
+                  description="Small builds, visual experiments, and tools that sharpen the workflow."
+                  aside={data && data.length > 0 ? `${data.length} active items` : "in progress"}
+                />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {data && data.length > 0 ? data.map((item, idx) => (
-                        <div key={item.id} className="bg-white border border-stone-300 hover:border-blue-900 transition-colors duration-300 flex flex-col group relative">
-                            <div className="flex items-center justify-between px-6 py-3 border-b border-stone-100 bg-stone-50">
+                        <SectionPanel key={item.id} className="flex flex-col group relative overflow-hidden transition-colors duration-300 hover:border-blue-900/25">
+                            <div className="flex items-center justify-between px-6 py-3 border-b border-stone-100 bg-stone-50/80">
                                 <div className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
                                     EXP_NO.{String(idx + 1).padStart(2, '0')}
                                 </div>
@@ -1318,92 +1398,93 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                             </div>
 
                             <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-stone-200 group-hover:border-r-blue-900 transition-colors"></div>
-                        </div>
+                        </SectionPanel>
                     )) : <div className="text-stone-400">No lab projects loaded.</div>}
                 </div>
-            </div>
+            </SectionShell>
         );
 
         // --- About ---
         const About = () => (
-            <div className="max-w-2xl mx-auto px-6 py-40 fade-in min-h-screen flex flex-col items-center justify-center text-center">
-                <div className="relative mb-16 group">
-                    <div className="absolute -inset-4 bg-blue-100 rounded-full opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-700"></div>
-                    <div className="relative text-stone-800 font-serif text-6xl">∞</div>
-                </div>
+            <SectionShell maxWidth="max-w-4xl" className="flex flex-col justify-center">
+                <SectionHeader
+                  eyebrow="About"
+                  title="INFP & Learning Theory"
+                  description="A small corner for rigorous ideas, quiet persistence, and work that should still matter later."
+                  centered={true}
+                />
 
-                <h1 className="text-3xl md:text-4xl font-serif font-bold text-stone-900 mb-6 tracking-tight">
-                    INFP <span className="text-stone-300 font-light mx-2">&</span> Learning Theory
-                </h1>
+                <SectionPanel className="p-10 md:p-14 text-center">
+                    <div className="relative mb-10 inline-flex items-center justify-center">
+                        <div className="absolute inset-0 rounded-full bg-blue-50 blur-2xl opacity-80"></div>
+                        <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-stone-200 bg-stone-50 text-4xl text-stone-800">∞</div>
+                    </div>
 
-                <p className="font-mono text-xs text-stone-400 uppercase tracking-[0.4em] mb-16">
-                    INFP · LEARNING THEORY · SERIOUS
-                </p>
+                    <div className="space-y-6 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light max-w-2xl mx-auto">
+                        <p>
+                            I’m drawn to rigorous ideas, quiet persistence, and work that remains meaningful over time.
+                        </p>
+                        <p className="text-base text-stone-500">
+                            希望我们能够真诚、清晰、理想。
+                        </p>
+                    </div>
 
-                <div className="space-y-8 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
-                    <p>
-                        I’m drawn to rigorous ideas, quiet persistence, and work that remains meaningful over time.
-                    </p>
-                    <p className="text-base text-stone-500">
-                        希望我们能够真诚、清晰、理想。
-                    </p>
-                </div>
+                    <div className="mt-12 pt-10 border-t border-stone-100">
+                        <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-stone-400 mb-4">Email</div>
+                        <a href="mailto:mistatle@163.com" className="text-2xl md:text-3xl font-serif font-bold text-stone-900 hover:text-blue-900 transition-colors">
+                            mistatle@163.com
+                        </a>
+                    </div>
 
-                <div className="w-full max-w-lg bg-white p-12 border border-stone-200 shadow-xl rounded-sm text-center transform hover:-translate-y-1 transition-transform duration-500 mt-16">
-                    <h3 className="text-xs font-mono font-bold text-stone-400 mb-4 uppercase tracking-widest">Email</h3>
-                    <a href="mailto:mistatle@163.com" className="text-2xl md:text-3xl font-serif font-bold text-stone-900 hover:text-blue-900 transition-colors border-b-2 border-transparent hover:border-blue-900 pb-1">
-                        mistatle@163.com
-                    </a>
-                </div>
-
-                <div className="mt-32 pt-8 border-t border-stone-100 w-full max-w-xs flex justify-between text-[10px] font-mono text-stone-300 uppercase tracking-widest">
-                    <span>Shanghai</span>
-                    <span>Est. 2025</span>
-                </div>
-            </div>
+                    <div className="mt-10 flex justify-center gap-6 text-[10px] font-mono text-stone-300 uppercase tracking-widest">
+                        <span>Shanghai</span>
+                        <span>Est. 2025</span>
+                    </div>
+                </SectionPanel>
+            </SectionShell>
         );
 
         // --- Posts（✅ hover/touch 预取） ---
         const Posts = ({ data, onRead }) => (
-            <div className="max-w-4xl mx-auto px-6 py-20 fade-in min-h-screen">
-                 <div className="text-center mb-20">
-                    <span className="font-mono text-xs text-stone-400 uppercase tracking-[0.3em] mb-4 block">Selected Writings</span>
-                    <h2 className="text-5xl font-serif font-bold text-stone-900">Journal</h2>
-                 </div>
+            <SectionShell maxWidth="max-w-5xl">
+                 <SectionHeader
+                   eyebrow="Selected Writings"
+                   title="Journal"
+                   description="Longer notes, essays, and fragments worth keeping."
+                   aside={data && data.length > 0 ? `${data.length} entries` : "in progress"}
+                 />
 
-                 <div className="flex flex-col gap-16">
-                     {data && data.length > 0 ? data.map((post) => (
-                         <article
-                           key={post.id}
-                           onMouseEnter={() => prefetchArticle(post.filePath)}
-                           onTouchStart={() => prefetchArticle(post.filePath)}
-                           onClick={() => hasReadableContent(post.filePath) && onRead({ ...post, filePath: normalizeContentPath(post.filePath) })}
-                           className={`group flex flex-col md:flex-row gap-8 items-baseline border-t border-stone-200 pt-8 transition-colors duration-500 ${hasReadableContent(post.filePath) ? "cursor-pointer hover:border-stone-900" : "cursor-default opacity-80"}`}
-                         >
-                             <div className="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-2">
-                                <span className="font-serif text-sm italic text-stone-500">{post.date}</span>
-                                <span className="font-mono text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">{post.category}</span>
-                             </div>
-
-                             <div className="w-full md:w-3/4">
-                                 <h3 className="text-3xl font-serif font-bold text-stone-900 mb-4 leading-tight group-hover:text-blue-900 transition-colors">
-                                    {post.title}
-                                 </h3>
-                                 <p className="text-stone-600 font-light text-lg leading-relaxed mb-6 font-serif">
-                                     {post.desc}
-                                 </p>
-                                 <div className={`inline-flex items-center text-xs font-mono font-bold uppercase tracking-widest border-b pb-0.5 ${hasReadableContent(post.filePath) ? "text-stone-400 group-hover:text-stone-900 transition-colors border-transparent group-hover:border-stone-900" : "text-stone-400 border-stone-200"}`}>
-                                     {hasReadableContent(post.filePath) ? "Read Essay" : "Coming Soon"} <span className={`ml-2 ${hasReadableContent(post.filePath) ? "group-hover:ml-3 transition-all" : ""}`}>{hasReadableContent(post.filePath) ? "→" : ""}</span>
+                 <SectionPanel className="overflow-hidden">
+                     <div className="flex flex-col gap-0">
+                         {data && data.length > 0 ? data.map((post, index) => (
+                             <article
+                               key={post.id}
+                               onMouseEnter={() => prefetchArticle(post.filePath)}
+                               onTouchStart={() => prefetchArticle(post.filePath)}
+                               onClick={() => hasReadableContent(post.filePath) && onRead({ ...post, filePath: normalizeContentPath(post.filePath) })}
+                               className={`group flex flex-col md:flex-row gap-8 items-baseline px-8 py-8 transition-colors duration-500 ${index > 0 ? "border-t border-stone-100" : ""} ${hasReadableContent(post.filePath) ? "cursor-pointer hover:bg-stone-50/70" : "cursor-default opacity-80"}`}
+                             >
+                                 <div className="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-2">
+                                    <span className="font-serif text-sm italic text-stone-500">{post.date}</span>
+                                    <span className="font-mono text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">{post.category}</span>
                                  </div>
-                             </div>
-                         </article>
-                     )) : <div className="text-stone-400">No posts loaded.</div>}
-                 </div>
 
-                 <div className="mt-20 border-t border-stone-900 pt-2 text-center">
-                    <span className="text-2xl font-serif text-stone-300">❦</span>
-                 </div>
-            </div>
+                                 <div className="w-full md:w-3/4">
+                                     <h3 className="text-3xl font-serif font-bold text-stone-900 mb-4 leading-tight group-hover:text-blue-900 transition-colors">
+                                        {post.title}
+                                     </h3>
+                                     <p className="text-stone-600 font-light text-lg leading-relaxed mb-6 font-serif">
+                                         {post.desc}
+                                     </p>
+                                     <div className={`inline-flex items-center text-xs font-mono font-bold uppercase tracking-widest border-b pb-0.5 ${hasReadableContent(post.filePath) ? "text-stone-400 group-hover:text-stone-900 transition-colors border-transparent group-hover:border-stone-900" : "text-stone-400 border-stone-200"}`}>
+                                         {hasReadableContent(post.filePath) ? "Read Essay" : "Coming Soon"} <span className={`ml-2 ${hasReadableContent(post.filePath) ? "group-hover:ml-3 transition-all" : ""}`}>{hasReadableContent(post.filePath) ? "→" : ""}</span>
+                                     </div>
+                                 </div>
+                             </article>
+                         )) : <div className="text-stone-400 p-8">No posts loaded.</div>}
+                     </div>
+                 </SectionPanel>
+            </SectionShell>
         );
 
         // --- Tools（✅ hover/touch 预取） ---
@@ -1412,7 +1493,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             const latexTemplates = data.latex || [];
 
             const ToolCard = ({ item }) => (
-                <div
+                <SectionPanel
                   onMouseEnter={() => prefetchArticle(item.filePath)}
                   onTouchStart={() => prefetchArticle(item.filePath)}
                   onClick={() => {
@@ -1424,10 +1505,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                           window.open(item.link, '_blank', 'noopener,noreferrer');
                       }
                   }}
-                  className="group bg-white border border-stone-200 p-8 cursor-pointer relative hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col h-full border-t-4 border-t-transparent hover:border-t-blue-900"
+                  className="group relative flex h-full cursor-pointer flex-col p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
                 >
                     {item.previewImage && (
-                        <div className="mb-6 overflow-hidden rounded-2xl border border-stone-100 bg-stone-50 aspect-[4/5]">
+                        <div className="mb-6 overflow-hidden rounded-[1.2rem] border border-stone-100 bg-stone-50 aspect-[4/5]">
                             <img
                               src={item.previewImage}
                               alt={`${item.title} preview`}
@@ -1480,20 +1561,22 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         <span className="font-semibold">{item.filePath ? "View Code" : "Open Tool"}</span>
                         <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                     </div>
-                </div>
+                </SectionPanel>
             );
 
             return (
-                <div className="max-w-6xl mx-auto px-6 py-16 fade-in min-h-screen">
-                    <div className="flex items-center gap-4 mb-16">
-                        <h2 className="text-4xl font-serif font-bold text-stone-900">Workbench</h2>
-                        <div className="h-px bg-stone-200 flex-grow"></div>
-                    </div>
+                <SectionShell>
+                    <SectionHeader
+                      eyebrow="Tools & Templates"
+                      title="Workbench"
+                      description="Reusable LaTeX templates and small utilities from the workflow."
+                      aside={`${latexTemplates.length} templates`}
+                    />
 
                     <div className="mb-20">
-                        <div className="flex items-center gap-2 mb-8">
-                            <Icon name="file-code" size={20} className="text-blue-900"/>
-                            <h3 className="text-xl font-bold text-stone-800 font-serif">LaTeX Templates</h3>
+                        <div className="flex items-center gap-3 mb-8">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-blue-900">LaTeX Templates</span>
+                            <div className="h-px flex-1 bg-stone-200"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {latexTemplates.length > 0 ? latexTemplates.map(t => (
@@ -1503,9 +1586,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     </div>
 
                     <div>
-                        <div className="flex items-center gap-2 mb-8">
-                            <Icon name="box" size={20} className="text-stone-400"/>
-                            <h3 className="text-xl font-bold text-stone-400 font-serif">General Utilities</h3>
+                        <div className="flex items-center gap-3 mb-8">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">General Utilities</span>
+                            <div className="h-px flex-1 bg-stone-200"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {generalTools.length > 0 ? generalTools.map(t => (
@@ -1513,7 +1596,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                             )) : <div className="text-stone-400">No general tools loaded.</div>}
                         </div>
                     </div>
-                </div>
+                </SectionShell>
             );
         };
 
@@ -1588,10 +1671,25 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             <div className="min-h-screen flex flex-col selection:bg-blue-900 selection:text-white">
               <Navbar activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setReadingItem(null); }} />
               <main className="flex-grow">{renderContent()}</main>
-              <footer className="bg-stone-50 border-t border-stone-200 py-12 mt-0 text-center text-stone-400 text-xs font-mono">
-                © {new Date().getFullYear()} MIStatlE. Built for the long term.
-                {loading ? " · Syncing…" : ""}
-                {!loading && fallbackSources.length > 0 ? ` · Fallback active: ${fallbackSources.join(', ')}` : ""}
+              <footer className="bg-stone-50/90 border-t border-stone-200 py-12 mt-0 text-stone-400 text-xs font-mono">
+                <div className="max-w-6xl mx-auto px-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div>© {new Date().getFullYear()} MIStatlE. Built for the long term.</div>
+                    <div className="flex items-center gap-2 uppercase tracking-[0.18em]">
+                        <span className={`inline-block h-1.5 w-1.5 rounded-full ${loading ? "bg-blue-600 animate-pulse" : fallbackSources.length > 0 ? "bg-amber-500" : "bg-stone-300"}`}></span>
+                        {loading ? (
+                            <span>Syncing…</span>
+                        ) : fallbackSources.length > 0 ? (
+                            <span
+                              className="rounded-full border border-stone-200 bg-white px-3 py-1 text-[10px] text-stone-500"
+                              title={`Fallback sources: ${fallbackSources.join(', ')}`}
+                            >
+                                Local Fallback · {fallbackSources.length}
+                            </span>
+                        ) : (
+                            <span>Theory · Practice · Continuity</span>
+                        )}
+                    </div>
+                </div>
               </footer>
             </div>
           );
