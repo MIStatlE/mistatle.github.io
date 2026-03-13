@@ -124,23 +124,23 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 \setlength{\parindent}{1.6em}
 \setlength{\parskip}{0.15em}
 
-\definecolor{brand}{HTML}{4C6A92}
-\definecolor{brandD}{HTML}{213A5A}
+\definecolor{brand}{HTML}{5B8CFF}
+\definecolor{brandD}{HTML}{2F54EB}
 \definecolor{ink}{HTML}{1A1A1A}
-\definecolor{keybg}{HTML}{EEF3F8}
-\definecolor{keydark}{HTML}{24364E}
-\definecolor{accent}{HTML}{C89A4B}
-\definecolor{accentD}{HTML}{9B6A2F}
-\definecolor{soft}{HTML}{F7F5F0}
-\definecolor{xhsRed}{HTML}{B95E4A}
+\definecolor{keybg}{HTML}{EFF4FF}
+\definecolor{keydark}{HTML}{1F3C88}
+\definecolor{accent}{HTML}{FFB84D}
+\definecolor{accentD}{HTML}{FF8F1F}
+\definecolor{soft}{HTML}{FFFBF2}
+\definecolor{xhsRed}{HTML}{FF6B6B}
 \definecolor{xhsDark}{HTML}{1F1F1F}
-\definecolor{xhsCream}{HTML}{FBF8F1}
-\definecolor{xhsBlue}{HTML}{2F5B8A}
-\definecolor{xhsYellow}{HTML}{D8A64B}
-\definecolor{secblue}{HTML}{2B44C6}
-\definecolor{thmBg}{RGB}{236,242,251}
-\definecolor{lemBg}{RGB}{249,239,237}
-\definecolor{defBg}{RGB}{242,245,249}
+\definecolor{xhsCream}{HTML}{FFF8EE}
+\definecolor{xhsBlue}{HTML}{3A86FF}
+\definecolor{xhsYellow}{HTML}{FFC857}
+\definecolor{secblue}{HTML}{365CFF}
+\definecolor{thmBg}{RGB}{240,245,255}
+\definecolor{lemBg}{RGB}{255,242,242}
+\definecolor{defBg}{RGB}{240,247,255}
 
 \hypersetup{
   colorlinks=true,
@@ -212,7 +212,7 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
   \markright{#2}%
   \begin{tcolorbox}[
     cn-panel,
-    colback=white,
+    colback=keybg,
     colframe=brandD,
     borderline west={4pt}{0pt}{accent}
   ]
@@ -229,12 +229,12 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 
 \newtcolorbox{SummaryBox}{
   cn-panel,
-  colback=soft,
+  colback=xhsCream,
   colframe=accent,
   title=\textbf{本讲摘要},
   fonttitle=\bfseries,
   coltitle=white,
-  colbacktitle=accentD
+  colbacktitle=accent
 }
 
 \newtcolorbox{AnalysisBox}{
@@ -253,7 +253,7 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 
 \newtcolorbox{ExampleBox}{
   cn-panel,
-  colback=white,
+  colback=soft,
   colframe=xhsBlue,
   title=\textbf{Example},
   fonttitle=\bfseries,
