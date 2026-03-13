@@ -124,22 +124,29 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 \setlength{\parindent}{1.6em}
 \setlength{\parskip}{0.15em}
 
-\definecolor{cnInk}{HTML}{20303C}
-\definecolor{cnBlue}{HTML}{2A4B7C}
-\definecolor{cnSky}{HTML}{EFF5FB}
-\definecolor{cnGold}{HTML}{B67A2D}
-\definecolor{cnGoldBg}{HTML}{FFF6E9}
-\definecolor{cnRed}{HTML}{C75146}
-\definecolor{cnRedBg}{HTML}{FEF1EF}
-\definecolor{cnGreen}{HTML}{2E7D5B}
-\definecolor{cnGreenBg}{HTML}{EEF7F1}
-\definecolor{cnLine}{HTML}{D8E2EE}
+\definecolor{brand}{HTML}{1A9D8F}
+\definecolor{brandD}{HTML}{2A7F6F}
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{keybg}{HTML}{E8F4F1}
+\definecolor{keydark}{HTML}{2F5E58}
+\definecolor{accent}{HTML}{FF6B6B}
+\definecolor{accentD}{HTML}{D94F4F}
+\definecolor{soft}{HTML}{F3F8F7}
+\definecolor{xhsRed}{HTML}{FF4D4F}
+\definecolor{xhsDark}{HTML}{1F1F1F}
+\definecolor{xhsCream}{HTML}{FFF8F0}
+\definecolor{xhsBlue}{HTML}{2F54EB}
+\definecolor{xhsYellow}{HTML}{FFB800}
+\definecolor{secblue}{HTML}{2B44C6}
+\definecolor{thmBg}{RGB}{235,245,255}
+\definecolor{lemBg}{RGB}{255,240,240}
+\definecolor{defBg}{RGB}{232,244,241}
 
 \hypersetup{
   colorlinks=true,
-  linkcolor=cnBlue,
-  citecolor=cnBlue,
-  urlcolor=cnGold,
+  linkcolor=brandD,
+  citecolor=brandD,
+  urlcolor=secblue,
   pdfauthor={MIStatlE},
   pdftitle={CN Lecture Note Template}
 }
@@ -152,12 +159,12 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 \numberwithin{equation}{section}
 
 \titleformat{\section}
-  {\Large\bfseries\color{cnBlue}}
+  {\Large\bfseries\color{keydark}}
   {\thesection}{0.6em}{}
 \titlespacing*{\section}{0pt}{1.1em}{0.45em}
 
 \titleformat{\subsection}
-  {\large\bfseries\color{cnInk}}
+  {\large\bfseries\color{brand}}
   {\thesubsection}{0.55em}{}
 \titlespacing*{\subsection}{0pt}{0.9em}{0.3em}
 
@@ -170,10 +177,10 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
-\fancyhead[L]{\small\sffamily\color{cnBlue}\LectureSeries}
-\fancyhead[R]{\small\sffamily\color{cnInk}\nouppercase{\rightmark}}
-\fancyfoot[L]{\small\sffamily\color{cnGold}\LectureSpeaker}
-\fancyfoot[R]{\small\sffamily\color{cnGold}\thepage}
+\fancyhead[L]{\small\sffamily\color{brandD}\LectureSeries}
+\fancyhead[R]{\small\sffamily\color{ink}\nouppercase{\rightmark}}
+\fancyfoot[L]{\small\sffamily\color{brand}\LectureSpeaker}
+\fancyfoot[R]{\small\sffamily\color{brand}\thepage}
 \pagestyle{fancy}
 \fancypagestyle{plain}{\pagestyle{fancy}}
 \renewcommand{\sectionmark}[1]{\markright{#1}}
@@ -205,53 +212,53 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
   \markright{#2}%
   \begin{tcolorbox}[
     cn-panel,
-    colback=cnSky,
-    colframe=cnBlue,
-    borderline west={4pt}{0pt}{cnGold}
+    colback=keybg,
+    colframe=brandD,
+    borderline west={4pt}{0pt}{xhsYellow}
   ]
-    {\sffamily\small\color{cnInk!70} #4 \hfill #5}\par
+    {\sffamily\small\color{ink!68} #4 \hfill #5}\par
     \vspace{0.35em}
-    {\bfseries\fontsize{22}{26}\selectfont\color{cnInk} 第 #1 讲：#2\par}
+    {\bfseries\fontsize{22}{26}\selectfont\color{keydark} 第 #1 讲：#2\par}
     \vspace{0.2em}
-    {\large\color{cnBlue} #3\par}
+    {\large\color{brandD} #3\par}
     \vspace{0.7em}
-    {\small\sffamily\color{cnInk!75} 主讲：#6 \hfill \LectureAffiliation}
+    {\small\sffamily\color{ink!72} 主讲：#6 \hfill \LectureAffiliation}
   \end{tcolorbox}
   \vspace{0.7em}
 }
 
 \newtcolorbox{SummaryBox}{
   cn-panel,
-  colback=cnGoldBg,
-  colframe=cnGold,
+  colback=xhsCream,
+  colframe=xhsYellow,
   title=\textbf{本讲摘要},
   fonttitle=\bfseries,
-  coltitle=white,
-  colbacktitle=cnGold
+  coltitle=xhsDark,
+  colbacktitle=xhsYellow
 }
 
 \newtcolorbox{AnalysisBox}{
-  cn-soft=cnBlue,
+  cn-soft=brandD,
   title=\textbf{分析},
   fonttitle=\bfseries,
-  coltitle=cnBlue
+  coltitle=brandD
 }
 
 \newtcolorbox{RemarkBox}{
-  cn-soft=cnRed,
+  cn-soft=accentD,
   title=\textbf{备注},
   fonttitle=\bfseries,
-  coltitle=cnRed
+  coltitle=accentD
 }
 
 \newtcolorbox{ExampleBox}{
   cn-panel,
-  colback=cnGreenBg,
-  colframe=cnGreen,
+  colback=soft,
+  colframe=xhsBlue,
   title=\textbf{Example},
   fonttitle=\bfseries,
   coltitle=white,
-  colbacktitle=cnGreen
+  colbacktitle=xhsBlue
 }
 
 \theoremstyle{plain}
@@ -264,12 +271,12 @@ tags: [LaTeX, Lecture Note, CTeX, XeLaTeX]
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{注}
 
-\tcolorboxenvironment{theorem}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
-\tcolorboxenvironment{lemma}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
-\tcolorboxenvironment{proposition}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
-\tcolorboxenvironment{corollary}{cn-panel,colback=cnSky!70!white,colframe=cnBlue,borderline west={3pt}{0pt}{cnBlue}}
-\tcolorboxenvironment{definition}{cn-soft=cnGold,title=\textbf{定义},fonttitle=\bfseries,coltitle=cnGold}
-\tcolorboxenvironment{remark}{cn-soft=cnRed,title=\textbf{注},fonttitle=\bfseries,coltitle=cnRed}
+\tcolorboxenvironment{theorem}{cn-panel,colback=thmBg,colframe=secblue,borderline west={3pt}{0pt}{secblue}}
+\tcolorboxenvironment{lemma}{cn-panel,colback=lemBg,colframe=accentD,borderline west={3pt}{0pt}{accentD}}
+\tcolorboxenvironment{proposition}{cn-panel,colback=thmBg,colframe=brandD,borderline west={3pt}{0pt}{brandD}}
+\tcolorboxenvironment{corollary}{cn-panel,colback=defBg,colframe=brand,borderline west={3pt}{0pt}{brand}}
+\tcolorboxenvironment{definition}{cn-soft=brandD,title=\textbf{定义},fonttitle=\bfseries,coltitle=brandD}
+\tcolorboxenvironment{remark}{cn-soft=accentD,title=\textbf{注},fonttitle=\bfseries,coltitle=accentD}
 
 \DeclareMathOperator{\diam}{diam}
 \newcommand{\E}{\mathbb{E}}

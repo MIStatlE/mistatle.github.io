@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIStatlE | Math & Intelligence</title>
     <meta name="description" content="Bridging the gap between Abstract Theory & Concrete Reality.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/mistatle-mark.svg">
 
     <!-- ✅ 连接预热：减少 DNS/TLS 时间 -->
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
@@ -491,14 +492,14 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         // --- Logo 组件 ---
         const Logo = () => (
           <div className="flex items-center gap-3 select-none group cursor-pointer">
-            <div className="relative w-10 h-10 flex items-center justify-center bg-white border border-stone-200 shadow-sm rounded-sm group-hover:shadow-md transition-all duration-300 overflow-hidden">
-                <svg width="40" height="40" viewBox="0 0 40 40" className="opacity-90">
-                    <line x1="10" y1="0" x2="10" y2="40" stroke="#f5f5f4" strokeWidth="1" />
-                    <line x1="30" y1="0" x2="30" y2="40" stroke="#f5f5f4" strokeWidth="1" />
-                    <line x1="0" y1="20" x2="40" y2="20" stroke="#f5f5f4" strokeWidth="1" />
-                    <path d="M8 32 C 15 32, 15 8, 32 8" stroke="#1e3a8a" strokeWidth="2" fill="none" strokeLinecap="round" className="group-hover:stroke-blue-600 transition-colors duration-500" />
-                    <circle cx="8" cy="32" r="2.5" fill="#1c1917" className="group-hover:fill-blue-900 transition-colors" />
-                    <circle cx="32" cy="8" r="2.5" fill="#1c1917" className="group-hover:fill-blue-900 transition-colors" />
+            <div className="relative w-11 h-11 flex items-center justify-center bg-white border border-stone-200 shadow-sm rounded-xl group-hover:shadow-md transition-all duration-300 overflow-hidden">
+                <svg width="44" height="44" viewBox="0 0 44 44" className="opacity-95">
+                    <rect x="5.5" y="5.5" width="33" height="33" rx="10" fill="#FCFCFB" stroke="#D6D3D1" />
+                    <path d="M22 11.2V33.2" stroke="#D6D3D1" strokeWidth="1.2" strokeLinecap="round" />
+                    <path d="M12.2 30.8C15 29.8 17.4 27.9 19.2 25.25C21 22.6 22.35 20.45 24.1 18.75C25.85 17.05 28.05 15.4 32.4 12.55" stroke="#1E3A8A" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-blue-700 transition-colors duration-500" />
+                    <circle cx="12.25" cy="30.85" r="3" fill="#1C1917" className="group-hover:fill-stone-900 transition-colors duration-500" />
+                    <circle cx="32.45" cy="12.7" r="3" fill="#FCFCFB" stroke="#B67A2D" strokeWidth="1.8" className="group-hover:stroke-amber-600 transition-colors duration-500" />
+                    <circle cx="21.8" cy="21.8" r="1.25" fill="#2F5E58" className="group-hover:fill-teal-700 transition-colors duration-500" />
                 </svg>
             </div>
             <div className="flex flex-col justify-center">

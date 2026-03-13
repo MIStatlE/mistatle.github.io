@@ -39,34 +39,40 @@
 \setlength{\parindent}{1.4em}
 \setlength{\parskip}{0.2em}
 
-\definecolor{enInk}{HTML}{1F2A37}
-\definecolor{enSlate}{HTML}{44556B}
-\definecolor{enBlue}{HTML}{3056D3}
-\definecolor{enBlueBg}{HTML}{EEF3FF}
-\definecolor{enSand}{HTML}{F7F3EC}
-\definecolor{enGold}{HTML}{9D6C2F}
-\definecolor{enRose}{HTML}{C75263}
-\definecolor{enRoseBg}{HTML}{FFF1F4}
-\definecolor{enTeal}{HTML}{0F766E}
-\definecolor{enTealBg}{HTML}{ECFEFF}
-\definecolor{enLine}{HTML}{D8DEE8}
+\definecolor{brand}{HTML}{1A9D8F}
+\definecolor{brandD}{HTML}{2A7F6F}
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{keybg}{HTML}{E8F4F1}
+\definecolor{keydark}{HTML}{2F5E58}
+\definecolor{accent}{HTML}{FF6B6B}
+\definecolor{accentD}{HTML}{D94F4F}
+\definecolor{soft}{HTML}{F3F8F7}
+\definecolor{xhsRed}{HTML}{FF4D4F}
+\definecolor{xhsDark}{HTML}{1F1F1F}
+\definecolor{xhsCream}{HTML}{FFF8F0}
+\definecolor{xhsBlue}{HTML}{2F54EB}
+\definecolor{xhsYellow}{HTML}{FFB800}
+\definecolor{secblue}{HTML}{2B44C6}
+\definecolor{thmBg}{RGB}{235,245,255}
+\definecolor{lemBg}{RGB}{255,240,240}
+\definecolor{defBg}{RGB}{232,244,241}
 
 \hypersetup{
   colorlinks=true,
-  linkcolor=enBlue,
-  citecolor=enBlue,
-  urlcolor=enGold,
+  linkcolor=brandD,
+  citecolor=brandD,
+  urlcolor=secblue,
   pdfauthor={MIStatlE},
   pdftitle={EN Article Template}
 }
 
 \titleformat{\section}
-  {\Large\bfseries\color{enInk}}
+  {\Large\bfseries\color{keydark}}
   {\thesection}{0.6em}{}
 \titlespacing*{\section}{0pt}{1.0em}{0.45em}
 
 \titleformat{\subsection}
-  {\large\bfseries\color{enBlue}}
+  {\large\bfseries\color{brand}}
   {\thesubsection}{0.55em}{}
 \titlespacing*{\subsection}{0pt}{0.85em}{0.3em}
 
@@ -78,10 +84,10 @@
 
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
-\fancyhead[L]{\small\sffamily\color{enSlate}\ArticleShortTitle}
-\fancyhead[R]{\small\sffamily\color{enSlate}\nouppercase{\rightmark}}
-\fancyfoot[L]{\small\sffamily\color{enGold}\ArticleAuthor}
-\fancyfoot[R]{\small\sffamily\color{enGold}\thepage}
+\fancyhead[L]{\small\sffamily\color{brandD}\ArticleShortTitle}
+\fancyhead[R]{\small\sffamily\color{ink!72}\nouppercase{\rightmark}}
+\fancyfoot[L]{\small\sffamily\color{brand}\ArticleAuthor}
+\fancyfoot[R]{\small\sffamily\color{brand}\thepage}
 \pagestyle{fancy}
 \fancypagestyle{plain}{\pagestyle{fancy}}
 \renewcommand{\sectionmark}[1]{\markright{#1}}
@@ -107,8 +113,8 @@
     on line,
     boxsep=1pt,
     left=5pt,right=5pt,top=2pt,bottom=2pt,
-    colback=enBlue,
-    colframe=enBlue,
+    colback=brandD,
+    colframe=brandD,
     boxrule=0pt,
     arc=3pt,
     fontupper=\scriptsize\bfseries\color{white}
@@ -118,15 +124,15 @@
 \newcommand{\MakeArticleHeader}[5]{%
   \begin{tcolorbox}[
     en-card,
-    colback=enSand,
-    colframe=enLine,
-    borderline west={4pt}{0pt}{enBlue}
+    colback=xhsCream,
+    colframe=keybg,
+    borderline west={4pt}{0pt}{brandD}
   ]
-    {\small\sffamily\color{enSlate} #4 \hfill #3}\par
+    {\small\sffamily\color{ink!68} #4 \hfill #3}\par
     \vspace{0.4em}
-    {\bfseries\fontsize{24}{28}\selectfont\color{enInk} #1\par}
+    {\bfseries\fontsize{24}{28}\selectfont\color{keydark} #1\par}
     \vspace{0.2em}
-    {\large\color{enBlue} #2\par}
+    {\large\color{brandD} #2\par}
     \vspace{0.65em}
     \foreach \Tag in {#5}{\tcbox[meta-tag]{\Tag}\hspace{0.35em}}
   \end{tcolorbox}
@@ -135,29 +141,29 @@
 
 \newtcolorbox{RoadmapBox}{
   en-card,
-  colback=enBlueBg,
-  colframe=enBlue,
+  colback=keybg,
+  colframe=brandD,
   title=\textbf{Roadmap},
   fonttitle=\bfseries,
   coltitle=white,
-  colbacktitle=enBlue
+  colbacktitle=brandD
 }
 
 \newtcolorbox{InsightBox}{
-  en-soft=enTeal,
+  en-soft=brandD,
   title=\textbf{Insight},
   fonttitle=\bfseries,
-  coltitle=enTeal
+  coltitle=brandD
 }
 
 \newtcolorbox{ExampleBox}{
   en-card,
-  colback=enRoseBg,
-  colframe=enRose,
+  colback=xhsCream,
+  colframe=xhsRed,
   title=\textbf{Example},
   fonttitle=\bfseries,
   coltitle=white,
-  colbacktitle=enRose
+  colbacktitle=xhsRed
 }
 
 \theoremstyle{plain}
@@ -170,12 +176,12 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 
-\tcolorboxenvironment{theorem}{en-card,colback=enBlueBg,colframe=enBlue,borderline west={3pt}{0pt}{enBlue}}
-\tcolorboxenvironment{lemma}{en-card,colback=enBlueBg,colframe=enBlue,borderline west={3pt}{0pt}{enBlue}}
-\tcolorboxenvironment{proposition}{en-card,colback=enBlueBg,colframe=enBlue,borderline west={3pt}{0pt}{enBlue}}
-\tcolorboxenvironment{corollary}{en-card,colback=enBlueBg,colframe=enBlue,borderline west={3pt}{0pt}{enBlue}}
-\tcolorboxenvironment{definition}{en-soft=enGold,title=\textbf{Definition},fonttitle=\bfseries,coltitle=enGold}
-\tcolorboxenvironment{remark}{en-soft=enRose,title=\textbf{Remark},fonttitle=\bfseries,coltitle=enRose}
+\tcolorboxenvironment{theorem}{en-card,colback=thmBg,colframe=secblue,borderline west={3pt}{0pt}{secblue}}
+\tcolorboxenvironment{lemma}{en-card,colback=lemBg,colframe=accentD,borderline west={3pt}{0pt}{accentD}}
+\tcolorboxenvironment{proposition}{en-card,colback=thmBg,colframe=brandD,borderline west={3pt}{0pt}{brandD}}
+\tcolorboxenvironment{corollary}{en-card,colback=defBg,colframe=brand,borderline west={3pt}{0pt}{brand}}
+\tcolorboxenvironment{definition}{en-soft=brandD,title=\textbf{Definition},fonttitle=\bfseries,coltitle=brandD}
+\tcolorboxenvironment{remark}{en-soft=accentD,title=\textbf{Remark},fonttitle=\bfseries,coltitle=accentD}
 
 \DeclareMathOperator{\Var}{Var}
 \newcommand{\E}{\mathbb{E}}
@@ -259,4 +265,3 @@ then strong convexity of $F_S$ and the Lipschitz property of $\ell$ combine to s
 \end{itemize}
 
 \end{document}
-
