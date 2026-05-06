@@ -260,17 +260,24 @@
           return { text: protectedText, segments };
         }
 
+        function escapeHtmlText(value) {
+          return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
         function restoreMathSegments(text, segments) {
           return segments.reduce((acc, segment, index) => {
             const token = `MATHSEGMENTTOKEN${index}END`;
-            return acc.split(token).join(segment);
+            return acc.split(token).join(escapeHtmlText(segment));
           }, text);
         }
 
         // ✅ 文章缓存（提升点击进入速度）
         const ARTICLE_CACHE = window.__ARTICLE_CACHE__ || (window.__ARTICLE_CACHE__ = new Map());
         const ARTICLE_FETCH_PROMISES = window.__ARTICLE_FETCH_PROMISES__ || (window.__ARTICLE_FETCH_PROMISES__ = new Map());
-        const ARTICLE_PARSE_VERSION = 3;
+        const ARTICLE_PARSE_VERSION = 4;
 
         async function fetchArticleRecord(filePath) {
           const normalizedPath = normalizeContentPath(filePath);
