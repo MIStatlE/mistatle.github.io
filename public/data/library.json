@@ -25,8 +25,8 @@
       "id": "rl",
       "title": "Reinforcement Learning",
       "icon": "gamepad-2",
-      "desc": "MDP、策略梯度与价值函数方法。",
-      "count": "0 Courses"
+      "desc": "MDP、策略梯度、价值函数方法与 RLHF 基础。",
+      "count": "1 Course"
     },
     {
       "id": "ml",
@@ -54,7 +54,26 @@
     "opt": [],
     "prob": [],
     "stat": [],
-    "rl": [],
+    "rl": [
+      {
+        "title": "Reinforcement Learning",
+        "chapters": [
+          {
+            "title": "Policy Gradient Methods",
+            "lessons": [
+              {
+                "id": "rl_policy_gradient_optimization",
+                "title": "Policy Gradient 的优化视角",
+                "type": "note",
+                "highlight": true,
+                "filePath": "public/data/library/rl/policy-gradient-optimization.md",
+                "desc": "从 RL 目标函数到 Policy Gradient Theorem、REINFORCE、PPO 与 stochastic gradient convergence。"
+              }
+            ]
+          }
+        ]
+      }
+    ],
     "ml": [],
     "info": [
       {
