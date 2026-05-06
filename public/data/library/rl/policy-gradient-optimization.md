@@ -147,38 +147,21 @@ $$
 In the nonconvex case, the natural guarantee is not global optimality but a stationarity measure:
 
 $$
-\min_{0\le t<T}
-\mathbb E
-\left[
-\|\nabla J(\theta_t)\|^2
-\right].
+\min_{0\le t<T}\mathbb E\!\left[\lVert\nabla J(\theta_t)\rVert^2\right].
 $$
 
 If $J$ is $\beta$-smooth and the gradient estimator satisfies
 
 $$
-\mathbb E
-\left[
-\|g_t-\nabla J(\theta_t)\|^2
-\mid
-\theta_t
-\right]
-\le
-\sigma^2,
+\mathbb E\!\left[\lVert g_t-\nabla J(\theta_t)\rVert^2\mid\theta_t\right]\le\sigma^2,
 $$
 
 then telescoping the smoothness inequality gives
 
 $$
-\min_{0\le t<T}
-\mathbb E
-\|\nabla J_t\|^2
+\min_{0\le t<T}\mathbb E\lVert\nabla J_t\rVert^2
 \le
-\frac{
-\Delta+\frac{\beta\eta^2\sigma^2T}{2}
-}{
-T(\eta-\beta\eta^2/2)
-},
+\frac{\Delta+\frac{\beta\eta^2\sigma^2T}{2}}{T(\eta-\beta\eta^2/2)}.
 $$
 
 where $\Delta=J^*-J(\theta_0)$.
