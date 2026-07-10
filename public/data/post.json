@@ -1,16 +1,18 @@
 [
   {
-    "id": "math-intuition",
-    "date": "Nov 10",
-    "category": "PHILOSOPHY",
-    "title": "在数学的严谨与直觉之间",
-    "desc": "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在 AI 研究中发挥作用。"
+    "id": "typical-set",
+    "date": "Jan 21, 2026",
+    "category": "INFORMATION THEORY",
+    "title": "Typical Set：高维空间中的概率集中",
+    "desc": "概率质量为什么不集中在密度最高的点，而会落在高维空间中的薄壳上？从 AEP、熵与高斯几何出发理解典型集。",
+    "filePath": "public/data/posts/typical_set.md"
   },
   {
-    "id": "why-entropy",
-    "date": "Oct 24",
-    "category": "INFORMATION THEORY",
-    "title": "熵：不仅仅是混乱度",
-    "desc": "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。"
+    "id": "scaled-dot-product-attention",
+    "date": "Nov 23, 2025",
+    "category": "DEEP LEARNING",
+    "title": "缩放点积注意力：为什么除以 √dₖ？",
+    "desc": "从点积方差、Softmax 饱和与梯度稳定性出发，推导 Transformer 中缩放因子的来历，并给出 PyTorch 实现。",
+    "filePath": "public/data/posts/vae_elbo.md"
   }
 ]

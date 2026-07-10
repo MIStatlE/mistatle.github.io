@@ -1,0 +1,406 @@
+% =========================
+%  XHS 封面模板（模板文件）
+%  仅包含宏/样式，可被 main.tex 用 \input 引用
+%  需要 XeLaTeX 或 LuaLaTeX
+% =========================
+
+% --- 基础包与库（不含 \documentclass） ---
+\usepackage{ifxetex,ifluatex}
+\usepackage{everypage}
+\usepackage[fontset=none]{ctex}
+\usepackage{fontspec,geometry,xcolor}
+\usepackage{titlesec}
+\usepackage{tikz,eso-pic}
+\usetikzlibrary{positioning,calc,shadows}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{mdframed}
+\usepackage{amsmath,amssymb,bm,amsthm}
+\usepackage{framed}
+
+% --- 版面与字体（可被 main.tex 覆盖） ---
+\geometry{paperwidth=7.5in,paperheight=10in, margin=0.7in}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{Latin Modern Roman}}
+\IfFontExistsTF{Noto Serif CJK SC}{%
+  \setCJKmainfont{Noto Serif CJK SC}%
+}{%
+  \IfFontExistsTF{Songti SC}{\setCJKmainfont{Songti SC}}{\setCJKmainfont{FandolSong-Regular}}%
+}
+\linespread{1.4}
+\pagecolor{white}\color{black}
+
+% --- 颜色 ---
+\definecolor{brand}{HTML}{1A9D8F}
+\definecolor{brandD}{HTML}{2A7F6F}
+\definecolor{ink}{HTML}{1A1A1A}
+\definecolor{keybg}{HTML}{E8F4F1}
+\definecolor{keydark}{HTML}{2F5E58}
+\definecolor{accent}{HTML}{FF6B6B}
+\definecolor{accentD}{HTML}{D94F4F}
+\definecolor{soft}{HTML}{F3F8F7}
+\definecolor{xhsRed}{HTML}{FF4D4F}
+\definecolor{xhsDark}{HTML}{1F1F1F}
+\definecolor{xhsCream}{HTML}{FFF8F0}
+\definecolor{xhsBlue}{HTML}{2F54EB}
+\definecolor{xhsYellow}{HTML}{FFB800}
+
+% --- 日期宏 ---
+\newcommand{\padzero}[1]{\ifnum#1<10 0\fi\number#1}
+\newcommand{\BrandYMD}{{\the\year·\padzero{\the\month}·\padzero{\the\day}}}
+\providecommand{\PublicTemplateBrand}{@YourName}
+\providecommand{\PublicTemplateTopic}{Topic}
+\providecommand{\PublicTemplateSeries}{Series}
+\providecommand{\CoverCoreTitle}{Core Idea}
+\providecommand{\CoverCoreBody}{Replace this paragraph with the main mathematical idea of the note.}
+\providecommand{\CoverCoreIntuition}{Write the intuition in one or two short sentences.}
+\providecommand{\CoverCoreApplications}{List one or two places where the idea is useful.}
+\providecommand{\CoverWidth}{0.82\paperwidth}
+\providecommand{\CoverTitleSize}{\fontsize{30pt}{34pt}\selectfont}
+\providecommand{\CoverSubtitleSize}{\fontsize{14pt}{18pt}\selectfont}
+\providecommand{\CoverYOffset}{0.00\paperheight}
+\providecommand{\CoverProgressBar}[2]{}
+\providecommand{\CoverAvatar}[1]{}
+\providecommand{\MakeCoverBrandChapterPB}[8]{}
+
+% --- 标题样式 ---
+\titleformat{\section}[block]{\centering\bfseries\color{keydark}\fontsize{24pt}{26pt}\selectfont}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{0.9em}{0.5em}
+\titleformat{\subsection}{\Large\bfseries\color{brand}}{\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{0.8em}{0.4em}
+
+% --- 左侧彩带（每页） ---
+\newcommand{\LeftBandA}{0.12in}
+\newcommand{\LeftBandB}{0.28in}
+\newcommand{\PutLeftBands}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[keydark] ([xshift=0cm]current page.north west) rectangle ([xshift=\LeftBandA]current page.south west);
+    \fill[keybg]   ([xshift=\LeftBandA]current page.north west) rectangle ([xshift=\LeftBandB]current page.south west);
+  \end{tikzpicture}%
+}
+\AddEverypageHook{\PutLeftBands}
+
+% --- 页眉页脚 ---
+\fancypagestyle{coverstyle}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\fancyhead[R]{\nouppercase{\rightmark}}
+\fancyfoot[L]{\textcolor{brand}{\PublicTemplateBrand}｜\PublicTemplateTopic}
+\fancyfoot[R]{\textcolor{brand}{\thepage}}
+\pagestyle{fancy}
+
+% --- 系列编号参数 ---
+\newcommand{\seriesnum}{I}
+
+% --- tcolorbox 公共样式 ---
+\tcbset{enhanced, boxrule=0.9pt, arc=3pt, left=10pt,right=10pt,top=10pt,bottom=10pt}
+\newtcolorbox{KeyBox}{colback=keybg, colframe=brandD, colbacktitle=brandD, title=\textbf{\color{white}Key Idea}, fonttitle=\bfseries\large, coltitle=white, breakable}
+\newtcolorbox{Takeaway}{colback=accent!12, colframe=accentD, colbacktitle=accentD, title=\textbf{\color{white}Takeaway}, fonttitle=\bfseries\large, coltitle=white, breakable}
+
+% --- 侧边栏 ---
+\newmdenv[topline=false, bottomline=false, rightline=false, linewidth=4pt, linecolor=brand, backgroundcolor=soft, innerleftmargin=10pt, innerrightmargin=10pt, skipabove=6pt, skipbelow=6pt]{SideBar}
+
+% --- 数学 & 定理（仅定义一次） ---
+\DeclareMathOperator{\Var}{Var}
+\newcommand{\E}{\mathbb{E}}
+\definecolor{shadecolor}{RGB}{235,245,255}
+\newenvironment{ShadedTheorem}[1][]{\begin{shaded}\begin{theorem}[#1]}{\end{theorem}\end{shaded}}
+\newtheoremstyle{customthm}{0.8em}{0.8em}{\itshape}{}{\bfseries}{.}{0.5em}{}
+\newtheoremstyle{customdef}{0.8em}{0.8em}{}{}{\bfseries}{.}{0.5em}{}
+\theoremstyle{customthm}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{customdef}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{remark}[theorem]{注释}
+
+% --- 章节机制 ---
+\makeatletter
+\@ifundefined{c@chapter}{\newcounter{chapter}}{}
+\makeatother
+\newcommand{\setchapter}[2]{\setcounter{chapter}{#1}\setcounter{section}{0}\def\ChapterTitle{#2}}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+\newcommand{\ChapterHeading}{\vspace*{0.6cm}{\fontsize{26pt}{28pt}\selectfont\bfseries\color{keydark} 第\arabic{chapter}章\ \ChapterTitle\par}\vspace{0.6cm}}
+\newcommand{\BeginChapter}[2]{\clearpage\setchapter{#1}{#2}\ChapterHeading}
+
+% --- Series end 卡片 ---
+\newcommand{\SeriesCardEnd}[3]{%
+  \vspace{1.4em}\noindent
+  \setlength{\fboxsep}{8pt}\setlength{\fboxrule}{0.8pt}%
+  \fcolorbox{brand}{soft}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{%
+      \textbf{\PublicTemplateSeries · 第 #1 篇}\par\vspace{0.3em}%
+      \noindent
+      \begin{minipage}[t]{0.49\linewidth}\raggedright \textit{上一篇：}#2\end{minipage}\hfill
+      \begin{minipage}[t]{0.49\linewidth}\raggedleft \textit{下一篇：}#3\end{minipage}%
+    }%
+  }%
+}
+
+% --- 公共小宏 ---
+\newcommand{\CoverKeyline}{\vspace{0.5em}{\color{brandD!35}\rule[0.6ex]{0.92\linewidth}{0.5pt}}\vspace{0.2em}}
+\newcommand{\CoverCore}[1]{{\small\bfseries\color{keydark} 核心结论}\quad{\small\color{ink!95} #1}}
+
+% --- 逻辑路径（只定义一次，避免重复） ---
+\tikzset{cpathdot/.style={circle,fill=brand,minimum size=4pt,inner sep=0pt},
+         cpathtext/.style={font=\footnotesize\bfseries\color{keydark}},
+         cpathline/.style={line width=0.7pt,draw=brand!75}}
+\newcommand{\CoverPath}[4]{%
+  \begin{tikzpicture}[baseline=-0.4ex, x=1cm]
+    \def\gap{3.1}
+    \node[cpathdot] (p1) at (0,0) {};
+    \node[cpathdot] (p2) at (\gap,0) {};
+    \node[cpathdot] (p3) at (2*\gap,0) {};
+    \node[cpathdot] (p4) at (3*\gap,0) {};
+    \draw[cpathline] (p1) -- (p2);\draw[cpathline] (p2) -- (p3);\draw[cpathline] (p3) -- (p4);
+    \node[cpathtext, below=3pt of p1] {#1};
+    \node[cpathtext, below=3pt of p2] {#2};
+    \node[cpathtext, below=3pt of p3] {#3};
+    \node[cpathtext, below=3pt of p4] {#4};
+  \end{tikzpicture}%
+}
+
+% --- XHS 移动端优化 ---
+% ==== XHS（移动端优化）====
+\newif\ifXHSMode
+\XHSModetrue
+% \XHSModefalse
+\ifXHSMode
+  \renewcommand{\CoverWidth}{0.90\paperwidth}
+  \renewcommand{\CoverTitleSize}{\fontsize{42pt}{48pt}\selectfont}
+  \renewcommand{\CoverSubtitleSize}{\fontsize{18pt}{24pt}\selectfont}
+  \renewcommand{\CoverYOffset}{0.02\paperheight}
+  \renewcommand{\CoverProgressBar}[2]{%
+    \begin{tikzpicture}[baseline]
+      \pgfmathsetmacro{\p}{(#1)/max(1,#2)}
+      \def\W{8.8cm}\def\H{0.36cm}
+      \fill[brand!18,rounded corners=3pt] (0,0) rectangle (\W,\H);
+      \fill[brand,rounded corners=3pt] (0,0) rectangle (\p*\W,\H);
+    \end{tikzpicture}%
+  }
+\else
+  \renewcommand{\CoverWidth}{0.82\paperwidth}
+  \renewcommand{\CoverTitleSize}{\fontsize{30pt}{34pt}\selectfont}
+  \renewcommand{\CoverSubtitleSize}{\fontsize{14pt}{18pt}\selectfont}
+  \renewcommand{\CoverYOffset}{0.00\paperheight}
+\fi
+
+% ==== Avatar ====
+\renewcommand{\CoverAvatar}[1]{%
+  \node[
+    anchor=center,
+    circle,
+    minimum size=\ifXHSMode 3.8cm\else 3.2cm\fi,
+    path picture={
+      \node at (path picture bounding box.center){
+        \includegraphics[width=\ifXHSMode 3.8cm\else 3.2cm\fi]{#1}};
+    },
+    draw=brandD!55, line width=\ifXHSMode 0.9pt\else 0.6pt\fi
+  ] at ($ (current page.center) + (0.30\paperwidth,0.20\paperheight) $) {};
+}
+
+% ==== Core box used INSIDE the cover card ====
+% ==== 摘要卡：一页看懂（替换原 CoreLogicCoverCard）====
+
+
+
+\newtcolorbox{CoreLogicCoverCard}[1][]{%
+  enhanced,
+  breakable,
+  colback=white,              % 更干净的白底
+  colframe=brandD,            % 深色描边
+  boxrule=1.2pt,
+  arc=10pt, outer arc=9pt,
+  left=14pt, right=14pt, top=12pt, bottom=12pt,
+  borderline west={4pt}{0pt}{brand}, % 竖色条
+  colbacktitle=brandD, coltitle=white,
+  fonttitle=\bfseries\Large,
+  title={\textbf{本节快览}},
+  attach boxed title to top left = {xshift=2mm, yshift*=-2mm},
+  % 无阴影，保证导出清晰
+  #1
+}
+
+% ==== 封面宏（保留你现有结构与内嵌 Core 卡片）====
+% —— 短篇封面：保留原风格；去掉章节/节号/进度 ——
+% 兼容原有调用：#1=标题 #2=副标题 #3=标签；#4–#8 忽略
+\renewcommand{\MakeCoverBrandChapterPB}[8]{%
+  \thispagestyle{coverstyle}%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[keybg] ($(current page.north east)+(-0.55\paperwidth,0)$)
+                 rectangle (current page.south east);
+    \foreach \x in {0.50,0.66,0.82}{
+      \draw[brand!08,line width=\ifXHSMode 0.25pt\else 0.3pt\fi]
+        ($(current page.south west)+(\x\paperwidth,0.9cm)$) --
+        ($(current page.north west)+(\x\paperwidth,-0.9cm)$);
+    }
+    \foreach \y in {0.32,0.60}{
+      \draw[brand!07,line width=\ifXHSMode 0.25pt\else 0.3pt\fi]
+        ($(current page.south west)+(0.45in,\y\paperheight)$) --
+        ($(current page.south east)+(-0.45in,\y\paperheight)$);
+    }
+
+    \node[anchor=north west, text=keydark!18, font=\normalsize, align=left]
+      at ($(current page.north west)+(1.3cm,-2.9cm)$) {%
+      $\Pr(\overline{X}-\mu \ge t) \le e^{-2nt^2}$ \\[0.6em]
+      $\Pr(|S_n| \ge t) \le 2\exp\!\left(-\tfrac{t^2}{2\sigma^2}\right)$
+    };
+
+    \node[anchor=center,
+          fill=white, draw=brandD!30, rounded corners=\ifXHSMode 12pt\else 8pt\fi,
+          inner sep=\ifXHSMode 18pt\else 14pt\fi,
+          drop shadow={opacity=0.10,fill=black}]
+      at ($ (current page.center) + (0,\CoverYOffset) $)
+      {%
+        \begin{minipage}{\CoverWidth}\raggedright
+          \tikz[baseline]{
+            \node[
+              fill=brand, rounded corners=3pt,
+              inner xsep=\ifXHSMode 10pt\else 7pt\fi,
+              inner ysep=\ifXHSMode 5pt\else 3pt\fi,
+              text=white, font=\bfseries\ifXHSMode \normalsize\else \small\fi
+            ] {\PublicTemplateBrand｜\PublicTemplateTopic};
+          }\hfill
+          \tikz[baseline]{
+            \node[
+              fill=keybg, draw=brandD, rounded corners=3pt,
+              inner xsep=\ifXHSMode 10pt\else 8pt\fi,
+              inner ysep=\ifXHSMode 5pt\else 3pt\fi,
+              text=keydark, font=\bfseries\ifXHSMode \normalsize\else \small\fi
+            ] {\PublicTemplateTopic · 笔记};
+          }\par
+
+          \tikz[baseline]{
+            \node[draw=brandD, rounded corners=3pt,
+                  inner xsep=\ifXHSMode 8pt\else 6pt\fi,
+                  inner ysep=\ifXHSMode 4pt\else 2.6pt\fi,
+                  text=keydark, font=\bfseries\ifXHSMode \normalsize\else \footnotesize\fi,
+                  fill=keybg] {#4};
+          }\hspace{0.35em}
+          \tikz[baseline]{
+            \node[draw=brandD, rounded corners=3pt,
+                  inner xsep=\ifXHSMode 8pt\else 6pt\fi,
+                  inner ysep=\ifXHSMode 4pt\else 2.6pt\fi,
+                  text=keydark, font=\bfseries\ifXHSMode \normalsize\else \footnotesize\fi,
+                  fill=white] {#5};
+          }
+          \ifblank{#6}{}{%
+            \hspace{0.35em}
+            \tikz[baseline]{
+              \node[draw=brandD!70, rounded corners=3pt,
+                    inner xsep=\ifXHSMode 8pt\else 6pt\fi,
+                    inner ysep=\ifXHSMode 4pt\else 2.6pt\fi,
+                    text=brandD!95, font=\bfseries\ifXHSMode \normalsize\else \footnotesize\fi,
+                    fill=white] {#6};
+            }
+          }
+          \par
+
+          \vspace{\ifXHSMode 0.7em\else 0.6em\fi}
+          {{\CoverTitleSize\bfseries\color{keydark} #1\par}}
+
+          \newlength{\CoverSepLen}
+          \newlength{\CoverSepMax}
+          \newlength{\CoverSepMin}
+          \setlength{\CoverSepMax}{0.85\linewidth}
+          \setlength{\CoverSepMin}{\ifXHSMode 5.2cm\else 3.2cm\fi}
+          \settowidth{\CoverSepLen}{{\CoverTitleSize\bfseries #1}}
+          \ifdim\CoverSepLen>\CoverSepMax \setlength{\CoverSepLen}{\CoverSepMax}\fi
+          \ifdim\CoverSepLen<\CoverSepMin \setlength{\CoverSepLen}{\CoverSepMin}\fi
+          \vspace{0.35em}
+          {\color{brandD!60}\rule[0.5ex]{\CoverSepLen}{\ifXHSMode 1.2pt\else 0.6pt\fi}}\par
+
+          {\normalsize
+            \tikz[baseline]{\fill[brand] (0,0) circle (\ifXHSMode 0.07cm\else 0.05cm\fi);} \hspace{0.30em}
+            \tikz[baseline]{\fill[brand!80!keydark] (0,0) circle (\ifXHSMode 0.07cm\else 0.05cm\fi);} \hspace{0.30em}
+            \tikz[baseline]{\fill[brand!60!keydark] (0,0) circle (\ifXHSMode 0.07cm\else 0.05cm\fi);}
+          }\par
+
+          \vspace{0.35em}
+          {{\CoverSubtitleSize\bfseries\color{ink!95} #2\par}}
+
+          % —— 内嵌“核心结论与逻辑”卡片 ——
+          \vspace{0.6em}
+\begin{CoreLogicCoverCard}
+{\bfseries\color{keydark} \CoverCoreTitle}\\[-0.2em]
+{\color{ink!95}\small \CoverCoreBody}
+
+\vspace{0.6em}
+{\bfseries\color{keydark} 直觉}\\[-0.2em]
+{\color{ink!95}\small \CoverCoreIntuition}
+
+\vspace{0.6em}
+{\bfseries\color{keydark} 应用}\\[-0.2em]
+{\color{ink!95}\small \CoverCoreApplications}
+\end{CoreLogicCoverCard}
+
+          \ifblank{#3}{}{%
+            \vspace{0.75em}
+            \tikz[baseline]{
+              \node[
+                fill=white, draw=brandD, rounded corners=4pt,
+                inner xsep=\ifXHSMode 10pt\else 8pt\fi,
+                inner ysep=\ifXHSMode 5pt\else 4pt\fi,
+                text=brandD, font=\bfseries\ifXHSMode \normalsize\else \small\fi
+              ] {#3};
+            }
+          }
+
+          \ifblank{#8}{}{%
+            \vspace{\ifXHSMode 1.0em\else 0.9em\fi}
+            {\footnotesize\color{keydark!80} 本章进度：第 #7 / #8 节}\par
+            \vspace{0.35em}
+            \CoverProgressBar{#7}{#8}
+          }
+        \end{minipage}
+      };
+
+    \IfFileExists{WechatIMG522.jpg}{\CoverAvatar{WechatIMG522.jpg}}{}
+
+    \node[anchor=south east,align=right,text=keydark!80,font=\ifXHSMode \normalsize\else \small\fi]
+      at ([xshift=-0.5cm,yshift=0.6cm]current page.south east) {\BrandYMD};
+  \end{tikzpicture}
+  \vspace*{\ifXHSMode 1.0cm\else 1.2cm\fi}%
+}
+
+
+
+% --- 封底页（可选） ---
+\newcommand{\MakeEndPage}[5]{%
+  \clearpage\thispagestyle{empty}%
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[keybg] ($(current page.north east)+(-0.55\paperwidth,0)$) rectangle (current page.south east);
+    \foreach \x in {0.48,0.58,0.68,0.78,0.88}{\draw[brand!10,line width=0.3pt] ($(current page.south west)+(\x\paperwidth,0.8cm)$) -- ($(current page.north west)+(\x\paperwidth,-0.8cm)$);}
+    \foreach \y in {0.25,0.40,0.55,0.70}{\draw[brand!08,line width=0.3pt] ($(current page.south west)+(0.45in,\y\paperheight)$) -- ($(current page.south east)+(-0.45in,\y\paperheight)$);}
+    \foreach \r/\xx/\yy in {0.75/1.2/2.0, 0.55/2.2/1.2, 0.65/6.4/2.6}{\draw[keydark!10,line width=7pt] ($(current page.south west)+(\xx,\yy)$) circle (\r);}
+
+    \node[rotate=15, scale=1.0, text opacity=0.06] at ($(current page.center)+(0,2.7cm)$) {$\mathbb{E}[e^{\lambda X}] \le \exp(\lambda^2\sigma^2/2)$};
+    \node[rotate=-18, scale=0.95, text opacity=0.055] at ($(current page.center)+(-6.2cm,-5.0cm)$) {$\Pr(|X^\top A X-\mathbb{E}X^\top A X|\ge t)\le 2e^{-c\min(\frac{t^2}{K^4\|A\|_F^2},\frac{t}{K^2\|A\|})}$};
+
+    \node[anchor=center, fill=white, draw=brandD!30, rounded corners=9pt, inner sep=16pt, minimum width=0.78\paperwidth]
+      at (current page.center)
+      {%
+        \begin{minipage}{0.78\paperwidth}\raggedright
+          \noindent\makebox[\linewidth][l]{\tikz[baseline]{\node[fill=brand, rounded corners=3pt, inner xsep=8pt, inner ysep=4pt, text=white, font=\bfseries\small]{\PublicTemplateBrand｜\PublicTemplateTopic};}}\par
+          \vspace{0.8em}{\fontsize{28pt}{32pt}\selectfont\bfseries\color{keydark} #1\par}
+          \vspace{0.35em}{\large\color{ink!85} #2\par}
+          \vspace{0.6em}{\itshape\color{brandD!70} “With the light of mathematics, may we illuminate the lucid order that lies beneath the world's complexity.”}\par
+          \vspace{0.5em}{\color{brandD!45}\rule[0.6ex]{7.2cm}{0.6pt}}\par
+          \vspace{0.6em}{\normalsize\color{ink!92} #3\par}
+          \ifblank{#4}{}{\vspace{0.6em}{\small\bfseries\color{keydark} 本系列还涵盖：}\par\vspace{0.2em}{\small\color{ink!90} #4}}
+          \vspace{0.8em}{\small\bfseries\color{keydark} 联系与关注}\par\vspace{0.2em}{\small\color{ink!92} #5}
+          \vspace{0.9em}{\footnotesize\color{ink!60} 本文档仅供学习与学术交流，未经授权请勿商用或转载。}
+        \end{minipage}
+      };
+
+    \node[anchor=south east,align=right,text=keydark!70,font=\small] at ([xshift=-0.5cm,yshift=0.6cm]current page.south east) {\BrandYMD};
+  \end{tikzpicture}
+}
+% ==== 隐藏 Chapter / Section 编号（用于短篇文章）====
+\renewcommand{\thesection}{}          % 不显示 section 编号
+\renewcommand{\thesubsection}{}       % 不显示 subsection 编号
+\titleformat{\section}[block]{\centering\bfseries\color{keydark}\fontsize{24pt}{26pt}\selectfont}{}{0em}{} % 去掉编号间距
+\titleformat{\subsection}{\Large\bfseries\color{brand}}{}{0em}{} % 同上

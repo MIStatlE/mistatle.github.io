@@ -15,6 +15,17 @@
     "link": null
   },
   {
+    "id": "xhs-cover-note",
+    "title": "XHS Cover Note",
+    "desc": "面向公开学术笔记和小红书卡片导出的 LaTeX 封面与笔记样式源包。",
+    "icon": "panel-top",
+    "tags": ["LaTeX", "XeLaTeX", "XHS"],
+    "filePath": "public/data/templates/xhs_cover_note.md",
+    "previewImage": null,
+    "previewImages": [],
+    "link": null
+  },
+  {
     "id": "cn-lecture-note",
     "title": "CN Lecture Note",
     "desc": "中文 lecture note 模板，适合课程讲义、系列笔记和长篇推导。",

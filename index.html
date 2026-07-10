@@ -4,8 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIStatlE | Math & Intelligence</title>
-    <meta name="description" content="Bridging the gap between Abstract Theory & Concrete Reality.">
+    <meta name="description" content="An independent, pseudonymous research archive for learning theory, reinforcement learning, mathematical intuition, and reusable tools.">
+    <meta name="theme-color" content="#fafaf9">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link rel="canonical" href="https://mistatle.github.io/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MIStatlE">
+    <meta property="og:title" content="MIStatlE | Math & Intelligence">
+    <meta property="og:description" content="Derivations, research notes, and reusable tools at the boundary of mathematics and intelligence.">
+    <meta property="og:url" content="https://mistatle.github.io/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="MIStatlE | Math & Intelligence">
+    <meta name="twitter:description" content="Derivations, research notes, and reusable tools at the boundary of mathematics and intelligence.">
     <link rel="icon" type="image/svg+xml" href="assets/icons/mistatle-mark.svg">
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "MIStatlE",
+        "url": "https://mistatle.github.io/",
+        "description": "An independent, pseudonymous research archive for learning theory, reinforcement learning, mathematical intuition, and reusable tools.",
+        "inLanguage": ["zh-CN", "en"]
+      }
+    </script>
 
     <!-- ✅ 连接预热：减少 DNS/TLS 时间 -->
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
@@ -42,6 +65,11 @@
         }
         h1, h2, h3, h4, .serif { font-family: var(--font-serif); }
         .mono { font-family: var(--font-mono); }
+
+        :focus-visible {
+            outline: 2px solid #1e3a8a;
+            outline-offset: 4px;
+        }
 
         .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -98,6 +126,15 @@
         /* 移动端菜单动画 */
         .slide-down { animation: slideDown 0.3s ease-out forwards; transform-origin: top; }
         @keyframes slideDown { from { opacity: 0; transform: scaleY(0.95); } to { opacity: 1; transform: scaleY(1); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -401,6 +438,74 @@
           };
         }
 
+        const VALID_TABS = ["home", "library", "papers", "lab", "posts", "tools", "about"];
+
+        function parseLocationRoute() {
+          const raw = window.location.hash.replace(/^#\/?/, "");
+          if (!raw) return { tab: "home", filePath: "" };
+
+          const [tabCandidate, action, encodedPath] = raw.split("/");
+          const tab = VALID_TABS.includes(tabCandidate) ? tabCandidate : "home";
+          const filePath = action === "read" && encodedPath
+            ? normalizeContentPath(decodeURIComponent(encodedPath))
+            : "";
+
+          return { tab, filePath };
+        }
+
+        function routeHashFor(tab, item = null) {
+          const safeTab = VALID_TABS.includes(tab) ? tab : "home";
+          const filePath = normalizeContentPath(item?.filePath);
+          if (filePath) return `#/${safeTab}/read/${encodeURIComponent(filePath)}`;
+          return safeTab === "home" ? "#/" : `#/${safeTab}`;
+        }
+
+        function findReadingItemByPath(db, filePath, preferredTab) {
+          const targetPath = normalizeContentPath(filePath);
+          if (!targetPath) return null;
+
+          const candidates = [];
+          const disciplines = db?.library?.disciplines || [];
+          const coursesByDiscipline = db?.library?.courses || {};
+
+          disciplines.forEach((discipline) => {
+            (coursesByDiscipline[discipline.id] || []).forEach((course) => {
+              (course.chapters || []).forEach((chapter) => {
+                (chapter.lessons || []).forEach((lesson) => {
+                  if (hasReadableContent(lesson.filePath)) {
+                    candidates.push({
+                      tab: "library",
+                      item: buildLibraryReadingItem(lesson, discipline, course)
+                    });
+                  }
+                });
+              });
+            });
+          });
+
+          Object.values(db?.papers?.lists || {}).flat().forEach((item) => {
+            if (hasReadableContent(item.filePath)) candidates.push({ tab: "papers", item });
+          });
+
+          (db?.posts || []).forEach((item) => {
+            if (hasReadableContent(item.filePath)) candidates.push({ tab: "posts", item });
+          });
+
+          [...(db?.tools?.latex || []), ...(db?.tools?.general || [])].forEach((item) => {
+            if (hasReadableContent(item.filePath)) candidates.push({ tab: "tools", item });
+          });
+
+          const preferred = candidates.find(({ tab, item }) =>
+            tab === preferredTab && normalizeContentPath(item.filePath) === targetPath
+          );
+          const fallback = candidates.find(({ item }) => normalizeContentPath(item.filePath) === targetPath);
+          const match = preferred || fallback;
+
+          return match
+            ? { ...match.item, filePath: targetPath, sourceTab: match.tab }
+            : { filePath: targetPath, sourceTab: preferredTab };
+        }
+
         // --- 默认回退数据 (Backup Data) ---
         const DEFAULT_DB = {
             library: {
@@ -425,37 +530,32 @@
             },
             papers: {
                 themes: [
-                    { id: "gen-ai", title: "Generative AI", count: 12, desc: "Diffusion, GANs, VAEs." },
-                    { id: "opt", title: "Optimization", count: 8, desc: "Gradient Descent variants." }
+                    { id: "gen-ai", title: "Generative Models & World Models", count: 1, desc: "Mechanisms, objectives, and representation geometry." }
                 ],
                 lists: {
                     "gen-ai": [
-                        { title: "Denoising Diffusion Probabilistic Models", authors: "Ho et al., 2020", tags: ["Foundation", "Generative"], read: true, filePath: "" },
-                        { title: "Score-Based Generative Modeling through SDEs", authors: "Song et al., 2021", tags: ["SDE", "Theory"], filePath: "" }
-                    ],
-                    "opt": []
+                        { title: "LeWorldModel / SIGReg：为什么不会塌缩？", authors: "Maes et al., 2026", tags: ["World Model", "JEPA", "Note"], read: true, filePath: "public/data/papers/leworldmodel_sigreg.md" }
+                    ]
                 }
             },
             lab: [
-                { id: "micro-diff", language: "PYTHON", stack: ["PyTorch", "NumPy"], title: "micro-diffusion", desc: "200行代码实现的极简 Diffusion Model，基于 PyTorch 的从零实现。", link: "#", featured: true },
-                { id: "bayes-opt", language: "MATLAB", stack: ["GPOps", "Viz"], title: "Bayesian Optimization Viz", desc: "高斯过程可视化交互演示，探索采集函数与后验分布。", link: "#", featured: false }
+                { id: "article-reader", language: "REACT", title: "MIStatlE Article Reader", desc: "支持 Markdown、KaTeX、代码高亮、文章目录与 PDF 附件的研究笔记阅读器。", link: "https://github.com/MIStatlE/mistatle.github.io", featured: true },
+                { id: "latex-template-system", language: "TEX", title: "LaTeX Template System", desc: "用于短笔记、课程讲义、长篇数学写作与公开内容卡片的排版源包。", link: "https://github.com/MIStatlE/mistatle.github.io/tree/main/public/data/templates", featured: true }
             ],
             posts: [
-                { id: "math-intuition", date: "Nov 10, 2024", category: "PHILOSOPHY", title: "在数学的严谨与直觉之间", desc: "探讨数学证明背后的思维图景与直觉的重要性，以及它们如何在AI研究中发挥作用。" },
-                { id: "why-entropy", date: "Oct 24, 2024", category: "INFORMATION THEORY", title: "熵：不仅仅是混乱度", desc: "重新理解热力学熵与信息熵的本质联系，从玻尔兹曼到香农的跨越。" }
+                { id: "typical-set", date: "Jan 21, 2026", category: "INFORMATION THEORY", title: "Typical Set：高维空间中的概率集中", desc: "从 AEP、熵与高斯几何出发理解典型集。", filePath: "public/data/posts/typical_set.md" },
+                { id: "scaled-dot-product-attention", date: "Nov 23, 2025", category: "DEEP LEARNING", title: "缩放点积注意力：为什么除以 √dₖ？", desc: "从点积方差、Softmax 饱和与梯度稳定性推导缩放因子的来历。", filePath: "public/data/posts/vae_elbo.md" }
             ],
             tools: {
-                general: [
-                    { id: "zotero", icon: "book-marked", title: "Zotero Guide", desc: "高效管理参考文献与笔记流。", link: "https://www.zotero.org/" }
-                ],
+                general: [],
                 latex: [
                     { 
-                        id: "demo-template", 
-                        title: "Template Placeholder", 
-                        desc: "If you see this, the code logic is correct but fetch failed.", 
-                        icon: "layout", 
-                        tags: ["Debug"], 
-                        filePath: "" 
+                        id: "short-note",
+                        title: "Short Note",
+                        desc: "极简模板，适合短篇推导、研究摘要与公开内容卡片。",
+                        icon: "file-text",
+                        tags: ["Cheatsheet", "TColorBox"],
+                        filePath: "public/data/templates/short_note.md"
                     }
                 ]
             }
@@ -547,11 +647,18 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             </section>
         );
 
-        const SectionPanel = ({ children, className = "", ...props }) => (
-            <div className={`${sectionSurfaceClass} ${className}`.trim()} {...props}>
+        const SectionPanel = ({ children, className = "", as: Component = "div", ...props }) => (
+            <Component className={`${sectionSurfaceClass} ${className}`.trim()} {...props}>
                 {children}
-            </div>
+            </Component>
         );
+
+        const handleKeyboardActivation = (event, action) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                action();
+            }
+        };
 
         const SectionHeader = ({ eyebrow, title, description, aside, centered = false, className = "" }) => (
             <div className={`mb-12 md:mb-14 ${className}`.trim()}>
@@ -720,6 +827,14 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             );
         };
 
+        const NAV_ITEMS = [
+            { id: "library", label: "Library" },
+            { id: "papers", label: "Reading" },
+            { id: "lab", label: "Lab" },
+            { id: "posts", label: "Journal" },
+            { id: "tools", label: "Tools" }
+        ];
+
         // --- 导航栏 (Navbar) ---
         const Navbar = ({ activeTab, setActiveTab }) => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -732,17 +847,19 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return (
                 <nav className="sticky top-0 z-50 glass-nav transition-all duration-300">
                     <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                        <div onClick={() => handleTabClick('home')}><Logo /></div>
+                        <button type="button" onClick={() => handleTabClick('home')} aria-label="Go to home" className="rounded-xl">
+                            <Logo />
+                        </button>
                         
                         <div className="hidden lg:flex items-center gap-1 bg-stone-100/50 p-1 rounded-full border border-stone-200/50">
-                            {['library', 'papers', 'lab', 'posts', 'tools'].map((item) => (
+                            {NAV_ITEMS.map((item) => (
                                 <button
-                                  key={item}
-                                  onClick={() => setActiveTab(item)} 
-                                  aria-current={activeTab === item ? "page" : undefined}
-                                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}
+                                  key={item.id}
+                                  onClick={() => setActiveTab(item.id)}
+                                  aria-current={activeTab === item.id ? "page" : undefined}
+                                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item.id ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}
                                 >
-                                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                                    {item.label}
                                 </button>
                             ))}
                         </div>
@@ -767,14 +884,14 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                     {isMenuOpen && (
                         <div id="mobile-menu" className="lg:hidden absolute top-20 left-0 w-full bg-[#fafaf9] border-b border-stone-200 shadow-xl p-4 flex flex-col gap-2 slide-down">
-                            {['library', 'papers', 'lab', 'posts', 'tools', 'about'].map((item) => (
+                            {[...NAV_ITEMS, { id: "about", label: "About" }].map((item) => (
                                 <button
-                                  key={item}
-                                  onClick={() => handleTabClick(item)} 
-                                  aria-current={activeTab === item ? "page" : undefined}
-                                  className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}
+                                  key={item.id}
+                                  onClick={() => handleTabClick(item.id)}
+                                  aria-current={activeTab === item.id ? "page" : undefined}
+                                  className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item.id ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}
                                 >
-                                    {item.toUpperCase()}
+                                    {item.label.toUpperCase()}
                                 </button>
                             ))}
                         </div>
@@ -1213,43 +1330,108 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             );
         };
 
+        const FEATURED_ITEMS = [
+          {
+            id: "featured-policy-gradient",
+            sourceTab: "library",
+            eyebrow: "Theory Note",
+            title: "Policy Gradient 的优化视角",
+            desc: "从 RL 目标到梯度估计、方差与步长选择，建立一条可复用的优化主线。",
+            filePath: "public/data/library/rl/policy-gradient-optimization.md"
+          },
+          {
+            id: "featured-leworldmodel",
+            sourceTab: "papers",
+            eyebrow: "Paper Note",
+            title: "LeWorldModel / SIGReg",
+            desc: "讲清 latent prediction、表示塌缩与 SIGReg 之间的机制联系。",
+            filePath: "public/data/papers/leworldmodel_sigreg.md"
+          },
+          {
+            id: "featured-short-note",
+            sourceTab: "tools",
+            eyebrow: "Reusable Template",
+            title: "Short Note",
+            desc: "为短篇推导、研究摘要与公开卡片准备的极简 LaTeX 模板。",
+            filePath: "public/data/templates/short_note.md"
+          }
+        ];
+
         // --- Hero ---
         const Hero = ({ setActiveTab }) => (
-          <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[75vh] relative">
+          <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[78vh] relative">
             <div className="absolute right-0 top-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
             <div className="absolute left-10 bottom-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-stone-900 hidden md:block">∑</div>
 
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 shadow-sm text-stone-500 text-xs font-mono mb-8 w-fit self-start">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span className="tracking-wider">LONG-TERM RESEARCH</span>
+              <span className="tracking-wider">INDEPENDENT RESEARCH ARCHIVE</span>
             </div>
 
             <h1 className="text-5xl md:text-8xl font-bold text-stone-900 leading-[1.1] mb-8 font-serif tracking-tight">Bridging <br/><span className="text-stone-300">Abstract</span> & <span className="italic text-blue-900">Reality</span>.</h1>
-            <p className="text-xl md:text-2xl text-stone-500 leading-relaxed max-w-2xl mb-16 font-serif italic"> “推导，直到直觉显现。”</p>
+            <p className="max-w-2xl text-lg md:text-xl text-stone-600 leading-relaxed mb-5">
+              一个关于学习理论、强化学习与数学直觉的长期公开档案。只保留值得复用的推导、笔记与工具。
+            </p>
+            <p className="text-lg md:text-xl text-stone-400 leading-relaxed max-w-2xl mb-14 font-serif italic">“推导，直到直觉显现。”</p>
 
-            <div className="flex flex-wrap gap-6 mb-16">
+            <div className="flex flex-wrap gap-4 md:gap-6 mb-16">
               <button onClick={() => setActiveTab('library')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE LIBRARY <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
-              <button onClick={() => setActiveTab('about')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">ABOUT</button>
+              <button onClick={() => setActiveTab('posts')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">LATEST NOTES</button>
             </div>
 
             <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
                 <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">FOLLOW US:</span>
                 <div className="flex gap-4">
                     <SocialLink platform="bilibili" label="Bilibili" href="https://space.bilibili.com/496530225?spm_id_from=333.1007.0.0" colorClass="group-hover:text-[#00AEEC] group-hover:border-[#00AEEC]" />
-                    <SocialLink platform="youtube" label="YouTube" href="#" colorClass="group-hover:text-[#FF0000] group-hover:border-[#FF0000]" />
                     <SocialLink platform="github" label="GitHub" href="https://github.com/mistatle" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
                     <SocialLink platform="xiaohongshu" label="小红书" href="https://www.xiaohongshu.com/user/profile/64d362e1000000000b0087a6" colorClass="group-hover:text-[#FF2442] group-hover:border-[#FF2442]" />
                     <SocialLink platform="zhihu" label="知乎" href="https://www.zhihu.com/people/kkk-36-70-64" colorClass="group-hover:text-[#0084FF] group-hover:border-[#0084FF]" />
-                    <SocialLink platform="wechat" label="公众号" href="" note="QR pending" colorClass="group-hover:text-[#07C160] group-hover:border-[#07C160]" />
                 </div>
             </div>
 
-            <div className="mt-8 flex justify-between text-xs font-mono text-stone-400 uppercase tracking-widest">
+            <div className="mt-8 flex flex-wrap justify-between gap-x-8 gap-y-2 text-xs font-mono text-stone-400 uppercase tracking-widest">
                 <span>Est. 2025</span>
                 <span>Artificial Intelligence</span>
                 <span>Shanghai</span>
             </div>
           </div>
+        );
+
+        const Home = ({ setActiveTab, onRead }) => (
+          <>
+            <Hero setActiveTab={setActiveTab} />
+            <SectionShell className="min-h-0 pt-10 md:pt-14">
+              <SectionHeader
+                eyebrow="Start Here"
+                title="Selected Work"
+                description="Three finished pieces that best represent the archive: one theoretical note, one paper reading, and one reusable tool."
+                aside="curated, not exhaustive"
+              />
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {FEATURED_ITEMS.map((item, index) => (
+                  <SectionPanel
+                    key={item.id}
+                    onClick={() => onRead(item)}
+                    onKeyDown={(event) => handleKeyboardActivation(event, () => onRead(item))}
+                    role="button"
+                    tabIndex={0}
+                    className="group flex min-h-[19rem] cursor-pointer flex-col p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+                  >
+                    <div className="mb-10 flex items-center justify-between">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-900">{item.eyebrow}</span>
+                      <span className="font-serif text-sm italic text-stone-300">0{index + 1}</span>
+                    </div>
+                    <h2 className="mb-4 text-2xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{item.title}</h2>
+                    <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{item.desc}</p>
+                    <div className="border-t border-stone-100 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors group-hover:text-blue-900">
+                      Open note <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+                    </div>
+                  </SectionPanel>
+                ))}
+              </div>
+            </SectionShell>
+          </>
         );
 
         // --- Library（✅ hover/touch 预取） ---
@@ -1260,21 +1442,33 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return <div className="p-12 text-center text-stone-400">Library data is empty.</div>;
           }
 
+          const visibleDisciplines = data.disciplines.filter((discipline) => {
+            const courses = data.courses?.[discipline.id] || [];
+            return courses.some((course) =>
+              (course.chapters || []).some((chapter) =>
+                (chapter.lessons || []).some((lesson) => hasReadableContent(lesson.filePath))
+              )
+            );
+          });
+
           if (!selectedDiscipline) {
             return (
                 <SectionShell>
                     <SectionHeader
                       eyebrow="Knowledge Base"
                       title="Library"
-                      description="Courses, notes, and conceptual maps organized by discipline."
-                      aside={`${data.disciplines.length} disciplines`}
+                      description="Finished notes and conceptual maps, organized only when there is something substantial to read."
+                      aside={`${visibleDisciplines.length} active disciplines`}
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {data.disciplines.map(d => (
+                        {visibleDisciplines.map(d => (
                             <SectionPanel
                               key={d.id}
-                              className="group relative cursor-pointer overflow-hidden p-8 transition-all hover:-translate-y-1 hover:border-blue-900/30 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+                              className="group relative w-full cursor-pointer overflow-hidden p-8 text-left transition-all hover:-translate-y-1 hover:border-blue-900/30 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
                               onClick={() => setSelectedDiscipline(d.id)}
+                              onKeyDown={(event) => handleKeyboardActivation(event, () => setSelectedDiscipline(d.id))}
+                              role="button"
+                              tabIndex={0}
                             >
                                 <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-stone-50 transition-transform duration-700 group-hover:scale-[1.55] group-hover:bg-blue-50/80"></div>
                                 <div className="pointer-events-none absolute inset-x-10 bottom-0 h-16 bg-gradient-to-t from-blue-50/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
@@ -1283,7 +1477,11 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                     <div className="w-12 h-12 bg-stone-100 text-stone-600 rounded-lg flex items-center justify-center mb-6 transition-all duration-500 group-hover:scale-105 group-hover:bg-blue-900 group-hover:text-white"><Icon name={d.icon} size={24} /></div>
                                     <h3 className="text-2xl font-bold text-stone-900 mb-2 font-serif">{d.title}</h3>
                                     <p className="text-stone-500 mb-6">{d.desc}</p>
-                                    <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider"><Icon name="book-open" size={12} className="mr-2"/> {d.count} <span className="ml-auto text-blue-900/70 opacity-0 group-hover:opacity-100 transition-opacity">→</span></div>
+                                    <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-wider">
+                                      <Icon name="book-open" size={12} className="mr-2"/>
+                                      {(data.courses?.[d.id] || []).reduce((total, course) => total + (course.chapters || []).reduce((chapterTotal, chapter) => chapterTotal + (chapter.lessons || []).filter((lesson) => hasReadableContent(lesson.filePath)).length, 0), 0)} Notes
+                                      <span className="ml-auto text-blue-900/70 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                                    </div>
                                 </div>
                             </SectionPanel>
                         ))}
@@ -1313,20 +1511,23 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                   <span className="w-fit text-xs font-mono bg-white border border-stone-200 px-2.5 py-1 rounded-full text-stone-500 uppercase tracking-[0.18em]">Course {idx + 1}</span>
                               </div>
                               <div className="p-8">
-                                  {course.chapters.map((chapter, cIdx) => (
+                                  {course.chapters.filter((chapter) => (chapter.lessons || []).some((lesson) => hasReadableContent(lesson.filePath))).map((chapter, cIdx) => (
                                       <div key={cIdx} className="mb-8 last:mb-0">
                                           <div className="flex items-center gap-3 mb-4">
                                               <span className="text-xs font-bold text-blue-900 uppercase tracking-widest">{chapter.title}</span>
                                               <div className="h-px flex-1 bg-stone-200"></div>
                                           </div>
                                           <div className="grid gap-2">
-                                              {chapter.lessons.map(lesson => (
+                                              {chapter.lessons.filter((lesson) => hasReadableContent(lesson.filePath)).map(lesson => (
                                                   <div
                                                     key={lesson.id}
                                                     onMouseEnter={() => prefetchArticle(lesson.filePath)}
                                                     onTouchStart={() => prefetchArticle(lesson.filePath)}
                                                     onClick={() => hasReadableContent(lesson.filePath) && onRead(buildLibraryReadingItem(lesson, currentInfo, course))}
-                                                    className={`flex items-center justify-between p-3 rounded-lg group transition-colors border ${hasReadableContent(lesson.filePath) ? "cursor-pointer hover:bg-stone-50 border-transparent hover:border-stone-100" : "cursor-not-allowed border-stone-100 bg-stone-50/60 opacity-70"}`}
+                                                    onKeyDown={(event) => handleKeyboardActivation(event, () => onRead(buildLibraryReadingItem(lesson, currentInfo, course)))}
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    className={`flex w-full items-center justify-between p-3 text-left rounded-lg group transition-colors border ${hasReadableContent(lesson.filePath) ? "cursor-pointer hover:bg-stone-50 border-transparent hover:border-stone-100" : "cursor-not-allowed border-stone-100 bg-stone-50/60 opacity-70"}`}
                                                   >
                                                       <div className="flex items-center gap-3">
                                                         <Icon name="file-text" size={18} className={lesson.highlight ? "text-blue-600" : "text-stone-300"}/>
@@ -1355,17 +1556,19 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             if (!data || !data.themes) return <div className="p-12 text-center text-stone-400">No papers data loaded.</div>;
 
+            const visibleThemes = data.themes.filter((theme) => (data.lists?.[theme.id] || []).some((item) => hasReadableContent(item.filePath)));
+
             if(!selectedTheme) return (
                 <SectionShell maxWidth="max-w-6xl">
                     <SectionHeader
                       eyebrow="Reading Collections"
-                      title="Papers"
-                      description="Themes, curated lists, and notes worth returning to."
-                      aside={`${data.themes.length} themes`}
+                      title="Paper Notes"
+                      description="Curated readings with an emphasis on mechanisms, proof ideas, and what changes after reading."
+                      aside={`${visibleThemes.length} active themes`}
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {data.themes.map(t => (
-                            <SectionPanel key={t.id} onClick={() => setSelectedTheme(t.id)} className="group cursor-pointer p-8 transition-all hover:-translate-y-1 hover:border-blue-900/25">
+                        {visibleThemes.map(t => (
+                            <SectionPanel key={t.id} onClick={() => setSelectedTheme(t.id)} onKeyDown={(event) => handleKeyboardActivation(event, () => setSelectedTheme(t.id))} role="button" tabIndex={0} className="group w-full cursor-pointer p-8 text-left transition-all hover:-translate-y-1 hover:border-blue-900/25">
                                 <div className="flex items-center gap-3 mb-5">
                                     <div className="w-10 h-10 rounded-full border border-stone-200 bg-stone-50 flex items-center justify-center text-blue-900">
                                         <Icon name="book-open" size={18} />
@@ -1374,7 +1577,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                 </div>
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="text-2xl font-serif font-bold text-stone-900 group-hover:text-blue-900 transition-colors">{t.title}</h3>
-                                    <span className="font-mono text-xs text-stone-400 bg-stone-50 px-2.5 py-1 border border-stone-200 rounded-full">{t.count}</span>
+                                    <span className="font-mono text-xs text-stone-400 bg-stone-50 px-2.5 py-1 border border-stone-200 rounded-full">{(data.lists?.[t.id] || []).filter((item) => hasReadableContent(item.filePath)).length}</span>
                                 </div>
                                 <p className="text-sm text-stone-500 font-serif italic mb-8">{t.desc}</p>
                                 <div className="flex items-center text-xs font-mono text-stone-400 uppercase tracking-widest group-hover:text-stone-900 transition-colors">
@@ -1386,7 +1589,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                 </SectionShell>
             );
 
-            const list = data.lists[selectedTheme] || [];
+            const list = (data.lists[selectedTheme] || []).filter((item) => hasReadableContent(item.filePath));
             const selectedThemeInfo = data.themes.find(t => t.id === selectedTheme);
             return (
                 <SectionShell maxWidth="max-w-5xl">
@@ -1406,7 +1609,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                               onMouseEnter={() => prefetchArticle(p.filePath)}
                               onTouchStart={() => prefetchArticle(p.filePath)}
                               onClick={() => hasReadableContent(p.filePath) && onRead({ ...p, filePath: normalizeContentPath(p.filePath) })}
-                              className={`group relative p-6 transition-colors ${hasReadableContent(p.filePath) ? "cursor-pointer hover:bg-stone-50/70" : "cursor-not-allowed opacity-75"}`}
+                              onKeyDown={(event) => handleKeyboardActivation(event, () => onRead({ ...p, filePath: normalizeContentPath(p.filePath) }))}
+                              role="button"
+                              tabIndex={0}
+                              className={`group relative w-full p-6 text-left transition-colors ${hasReadableContent(p.filePath) ? "cursor-pointer hover:bg-stone-50/70" : "cursor-not-allowed opacity-75"}`}
                             >
                                 <div className="flex flex-col md:flex-row gap-4 justify-between">
                                     <div className="flex-grow pr-8">
@@ -1488,8 +1694,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             <SectionShell maxWidth="max-w-4xl" className="flex flex-col justify-center">
                 <SectionHeader
                   eyebrow="About"
-                  title="INFP & Learning Theory"
-                  description="A small corner for rigorous ideas, quiet persistence, and work that should still matter later."
+                  title="Independent by Design"
+                  description="MIStatlE is a pseudonymous public archive for mathematical ideas in AI—built around clarity, reuse, and work that remains worth returning to."
                   centered={true}
                 />
 
@@ -1499,12 +1705,26 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-stone-200 bg-stone-50 text-4xl text-stone-800">∞</div>
                     </div>
 
-                    <div className="space-y-6 text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light max-w-2xl mx-auto">
-                        <p>
-                            I’m drawn to rigorous ideas, quiet persistence, and work that remains meaningful over time.
+                    <div className="max-w-2xl mx-auto">
+                        <p className="text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
+                            The archive is intentionally separated from a personal identity. What matters here is whether an idea becomes clearer, more auditable, and more reusable after it is published.
                         </p>
-                        <p className="text-base text-stone-500">
-                            希望我们能够真诚、清晰、理想。
+
+                        <div className="mt-10 grid gap-4 text-left md:grid-cols-3">
+                            {[
+                              ["Derive", "Show the mechanism, not only the conclusion."],
+                              ["Distill", "Compress without flattening the difficult parts."],
+                              ["Return", "Publish notes and tools that remain useful later."]
+                            ].map(([title, copy]) => (
+                              <div key={title} className="rounded-2xl border border-stone-100 bg-stone-50/70 p-5">
+                                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-blue-900">{title}</div>
+                                <p className="text-sm leading-relaxed text-stone-500">{copy}</p>
+                              </div>
+                            ))}
+                        </div>
+
+                        <p className="mt-10 text-base font-serif text-stone-500">
+                            希望这里能够真诚、清晰，并且经得起时间。
                         </p>
                     </div>
 
@@ -1530,17 +1750,20 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                    eyebrow="Selected Writings"
                    title="Journal"
                    description="Longer notes, essays, and fragments worth keeping."
-                   aside={data && data.length > 0 ? `${data.length} entries` : "in progress"}
+                   aside={(data || []).filter((post) => hasReadableContent(post.filePath)).length > 0 ? `${(data || []).filter((post) => hasReadableContent(post.filePath)).length} entries` : "in progress"}
                  />
 
                  <SectionPanel className="overflow-hidden">
                      <div className="flex flex-col gap-0">
-                         {data && data.length > 0 ? data.map((post, index) => (
-                             <article
+                         {(data || []).filter((post) => hasReadableContent(post.filePath)).length > 0 ? (data || []).filter((post) => hasReadableContent(post.filePath)).map((post, index) => (
+                            <article
                                key={post.id}
                                onMouseEnter={() => prefetchArticle(post.filePath)}
                                onTouchStart={() => prefetchArticle(post.filePath)}
                                onClick={() => hasReadableContent(post.filePath) && onRead({ ...post, filePath: normalizeContentPath(post.filePath) })}
+                               onKeyDown={(event) => hasReadableContent(post.filePath) && handleKeyboardActivation(event, () => onRead({ ...post, filePath: normalizeContentPath(post.filePath) }))}
+                               role={hasReadableContent(post.filePath) ? "button" : undefined}
+                               tabIndex={hasReadableContent(post.filePath) ? 0 : undefined}
                                className={`group flex flex-col md:flex-row gap-8 items-baseline px-8 py-8 transition-colors duration-500 ${index > 0 ? "border-t border-stone-100" : ""} ${hasReadableContent(post.filePath) ? "cursor-pointer hover:bg-stone-50/70" : "cursor-default opacity-80"}`}
                              >
                                  <div className="w-full md:w-1/4 flex flex-row md:flex-col justify-between md:justify-start gap-2">
@@ -1555,8 +1778,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                      <p className="text-stone-600 font-light text-lg leading-relaxed mb-6 font-serif">
                                          {post.desc}
                                      </p>
-                                     <div className={`inline-flex items-center text-xs font-mono font-bold uppercase tracking-widest border-b pb-0.5 ${hasReadableContent(post.filePath) ? "text-stone-400 group-hover:text-stone-900 transition-colors border-transparent group-hover:border-stone-900" : "text-stone-400 border-stone-200"}`}>
-                                         {hasReadableContent(post.filePath) ? "Read Essay" : "Coming Soon"} <span className={`ml-2 ${hasReadableContent(post.filePath) ? "group-hover:ml-3 transition-all" : ""}`}>{hasReadableContent(post.filePath) ? "→" : ""}</span>
+                                     <div className="inline-flex items-center border-b border-transparent pb-0.5 text-xs font-mono font-bold uppercase tracking-widest text-stone-400 transition-colors group-hover:border-stone-900 group-hover:text-stone-900">
+                                         Read Essay <span className="ml-2 transition-all group-hover:ml-3">→</span>
                                      </div>
                                  </div>
                              </article>
@@ -1571,20 +1794,26 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             const generalTools = data.general || data || [];
             const latexTemplates = data.latex || [];
 
-            const ToolCard = ({ item }) => (
+            const ToolCard = ({ item }) => {
+                const isReadable = hasReadableContent(item.filePath);
+                const cardProps = isReadable
+                  ? {
+                      as: "div",
+                      onClick: () => onRead(item),
+                      onKeyDown: (event) => handleKeyboardActivation(event, () => onRead(item)),
+                      role: "button",
+                      tabIndex: 0,
+                      onMouseEnter: () => prefetchArticle(item.filePath),
+                      onTouchStart: () => prefetchArticle(item.filePath)
+                    }
+                  : item.link
+                    ? { as: "a", href: item.link, target: "_blank", rel: "noopener noreferrer" }
+                    : { as: "div" };
+
+                return (
                 <SectionPanel
-                  onMouseEnter={() => prefetchArticle(item.filePath)}
-                  onTouchStart={() => prefetchArticle(item.filePath)}
-                  onClick={() => {
-                      if (item.filePath) {
-                          onRead(item);
-                          return;
-                      }
-                      if (item.link) {
-                          window.open(item.link, '_blank', 'noopener,noreferrer');
-                      }
-                  }}
-                  className="group relative flex h-full cursor-pointer flex-col p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+                  {...cardProps}
+                  className="group relative flex h-full w-full cursor-pointer flex-col p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
                 >
                     {item.previewImage && (
                         <div className="mb-6 overflow-hidden rounded-[1.2rem] border border-stone-100 bg-stone-50 aspect-[4/5]">
@@ -1599,16 +1828,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     )}
 
                     {item.link && (
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="absolute top-4 right-4 text-stone-300 hover:text-blue-900 transition-colors p-2"
-                          aria-label="Open external link"
-                        >
+                        <span className="absolute top-4 right-4 p-2 text-stone-300 transition-colors group-hover:text-blue-900" aria-hidden="true">
                             <Icon name="external-link" size={16} />
-                        </a>
+                        </span>
                     )}
 
                     <div className="mb-6 flex items-center justify-between">
@@ -1641,7 +1863,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                     </div>
                 </SectionPanel>
-            );
+                );
+            };
 
             return (
                 <SectionShell>
@@ -1664,24 +1887,24 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         </div>
                     </div>
 
-                    <div>
+                    {generalTools.length > 0 && <div>
                         <div className="flex items-center gap-3 mb-8">
-                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">General Utilities</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">Reference Utilities</span>
                             <div className="h-px flex-1 bg-stone-200"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {generalTools.length > 0 ? generalTools.map(t => (
+                            {generalTools.map(t => (
                                 <ToolCard key={t.id} item={t} />
-                            )) : <div className="text-stone-400">No general tools loaded.</div>}
+                            ))}
                         </div>
-                    </div>
+                    </div>}
                 </SectionShell>
             );
         };
 
         // --- App（✅ 不再用全屏 loading 阻塞首屏；用 DEFAULT_DB 立即可渲染） ---
         const App = () => {
-          const [activeTab, setActiveTab] = useState('home');
+          const [activeTab, setActiveTab] = useState(() => parseLocationRoute().tab);
           const [readingItem, setReadingItem] = useState(null);
           const [db, setDb] = useState(DEFAULT_DB);
           const [loading, setLoading] = useState(true);
@@ -1691,6 +1914,29 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
             window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
           }, [activeTab, readingItem]);
+
+          useEffect(() => {
+            if (readingItem?.title) {
+              document.title = `${readingItem.title} | MIStatlE`;
+              return;
+            }
+            const tabLabel = activeTab === "home"
+              ? "Math & Intelligence"
+              : ([...NAV_ITEMS, { id: "about", label: "About" }].find((item) => item.id === activeTab)?.label || "Archive");
+            document.title = `MIStatlE | ${tabLabel}`;
+          }, [activeTab, readingItem]);
+
+          useEffect(() => {
+            const syncRoute = () => {
+              const route = parseLocationRoute();
+              setActiveTab(route.tab);
+              setReadingItem(route.filePath ? findReadingItemByPath(db, route.filePath, route.tab) : null);
+            };
+
+            window.addEventListener("hashchange", syncRoute);
+            syncRoute();
+            return () => window.removeEventListener("hashchange", syncRoute);
+          }, [db]);
 
           useEffect(() => {
             const safeFetch = async (url) => {
@@ -1731,25 +1977,47 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             });
           }, []);
 
+          const navigateToTab = (tab) => {
+            const nextHash = routeHashFor(tab);
+            if (window.location.hash === nextHash) {
+              setActiveTab(tab);
+              setReadingItem(null);
+              return;
+            }
+            window.location.hash = nextHash;
+          };
+
+          const openReadingItem = (item) => {
+            const sourceTab = item?.sourceTab || activeTab || "library";
+            const normalizedItem = { ...item, filePath: normalizeContentPath(item?.filePath), sourceTab };
+            const nextHash = routeHashFor(sourceTab, normalizedItem);
+            if (window.location.hash === nextHash) {
+              setActiveTab(sourceTab);
+              setReadingItem(normalizedItem);
+              return;
+            }
+            window.location.hash = nextHash;
+          };
+
           const renderContent = () => {
-            if (readingItem) return <ArticleReader item={readingItem} onBack={() => setReadingItem(null)} onSelectItem={setReadingItem} />;
+            if (readingItem) return <ArticleReader item={readingItem} onBack={() => navigateToTab(activeTab)} onSelectItem={openReadingItem} />;
 
             switch(activeTab) {
-              case 'home': return <Hero setActiveTab={setActiveTab} />;
-              case 'library': return <Library data={db.library} onRead={setReadingItem} />;
-              case 'papers': return <Papers data={db.papers} onRead={setReadingItem} />;
+              case 'home': return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
+              case 'library': return <Library data={db.library} onRead={openReadingItem} />;
+              case 'papers': return <Papers data={db.papers} onRead={openReadingItem} />;
               case 'lab': return <Lab data={db.lab} />;
-              case 'posts': return <Posts data={db.posts} onRead={setReadingItem} />;
-              case 'tools': return <Tools data={db.tools} onRead={setReadingItem} />;
+              case 'posts': return <Posts data={db.posts} onRead={openReadingItem} />;
+              case 'tools': return <Tools data={db.tools} onRead={openReadingItem} />;
               case 'about': return <About />;
-              default: return <Hero setActiveTab={setActiveTab} />;
+              default: return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
             }
           };
 
           return (
             <div className="min-h-screen flex flex-col selection:bg-blue-900 selection:text-white">
-              <Navbar activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setReadingItem(null); }} />
-              <main className="flex-grow">{renderContent()}</main>
+              <Navbar activeTab={activeTab} setActiveTab={navigateToTab} />
+              <main id="main-content" className="flex-grow">{renderContent()}</main>
               <footer className="bg-stone-50/90 border-t border-stone-200 py-12 mt-0 text-stone-400 text-xs font-mono">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>© {new Date().getFullYear()} MIStatlE. Built for the long term.</div>

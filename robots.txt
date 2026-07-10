@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mistatle.github.io/sitemap.xml

@@ -2,15 +2,9 @@
   "themes": [
     { 
       "id": "gen-ai", 
-      "title": "Generative AI", 
-      "count": 13, 
-      "desc": "Diffusion, GANs, VAEs." 
-    },
-    { 
-      "id": "opt", 
-      "title": "Optimization", 
-      "count": 8, 
-      "desc": "Gradient Descent variants." 
+      "title": "Generative Models & World Models",
+      "count": 3,
+      "desc": "Mechanisms, objectives, and representation geometry."
     }
   ],
   "lists": {
@@ -33,7 +27,6 @@
         "authors": "Song et al., 2021",
         "tags": ["SDE", "Theory"]
       }
-    ],
-    "opt": []
+    ]
   }
 }

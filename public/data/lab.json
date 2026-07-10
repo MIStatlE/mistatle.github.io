@@ -1,18 +1,18 @@
 [
   {
-    "id": "micro-diff",
-    "language": "PYTHON",
-    "title": "micro-diffusion",
-    "desc": "200行代码实现的极简 Diffusion Model，包含训练与采样脚本。",
-    "link": "https://github.com/yourusername/micro-diffusion",
+    "id": "article-reader",
+    "language": "REACT",
+    "title": "MIStatlE Article Reader",
+    "desc": "面向长篇研究笔记的轻量阅读器：支持 Markdown、KaTeX、代码高亮、文章目录与 PDF 附件。",
+    "link": "https://github.com/MIStatlE/mistatle.github.io",
     "featured": true
   },
   {
-    "id": "bayes-opt",
-    "language": "MATLAB",
-    "title": "Bayesian Optimization Viz",
-    "desc": "高斯过程可视化交互演示。",
-    "link": "#",
-    "featured": false
+    "id": "latex-template-system",
+    "language": "TEX",
+    "title": "LaTeX Template System",
+    "desc": "一组用于短笔记、课程讲义、长篇数学写作与公开内容卡片的可复用排版源包。",
+    "link": "https://github.com/MIStatlE/mistatle.github.io/tree/main/public/data/templates",
+    "featured": true
   }
 ]
