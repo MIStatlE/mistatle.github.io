@@ -1,5 +1,22 @@
 [
   {
+    "id": "reading-inquiry",
+    "title": "Reading & Inquiry",
+    "desc": "先建立初步判断，再由 AI 扩展假设空间，最后只写回经核验的修订。",
+    "icon": "notebook-pen",
+    "tags": ["Reading Notes", "XeLaTeX", "AI-Assisted"],
+    "filePath": "public/data/templates/reading_inquiry_note.md",
+    "previewImage": "assets/images/latex-template/reading-inquiry-preview-1.png",
+    "previewImages": [
+      "assets/images/latex-template/reading-inquiry-preview-1.png",
+      "assets/images/latex-template/reading-inquiry-preview-2.png",
+      "assets/images/latex-template/reading-inquiry-preview-3.png",
+      "assets/images/latex-template/reading-inquiry-preview-4.png",
+      "assets/images/latex-template/reading-inquiry-preview-5.png"
+    ],
+    "link": null
+  },
+  {
     "id": "ai-theory-note",
     "title": "AI-era Theory Note",
     "desc": "记录判断如何被证据改变：原判断、反证信号、AI 压力测试、人的决定与能力增量。",
