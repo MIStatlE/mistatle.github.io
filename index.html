@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIStatlE | Math & Intelligence</title>
-    <meta name="description" content="An independent, pseudonymous research archive for learning theory, reinforcement learning, mathematical intuition, and reusable tools.">
+    <title>MIStatlE | Theory, Algorithms & Learning Systems</title>
+    <meta name="description" content="A personal technical site on mathematical structure, algorithmic mechanisms, and learning systems.">
     <meta name="theme-color" content="#fafaf9">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="https://mistatle.github.io/">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MIStatlE">
-    <meta property="og:title" content="MIStatlE | Math & Intelligence">
-    <meta property="og:description" content="Derivations, research notes, and reusable tools at the boundary of mathematics and intelligence.">
+    <meta property="og:title" content="MIStatlE | Theory, Algorithms & Learning Systems">
+    <meta property="og:description" content="Mathematical structure, algorithmic mechanisms, and the boundaries of learning systems.">
     <meta property="og:url" content="https://mistatle.github.io/">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="MIStatlE | Math & Intelligence">
-    <meta name="twitter:description" content="Derivations, research notes, and reusable tools at the boundary of mathematics and intelligence.">
+    <meta name="twitter:title" content="MIStatlE | Theory, Algorithms & Learning Systems">
+    <meta name="twitter:description" content="Mathematical structure, algorithmic mechanisms, and the boundaries of learning systems.">
     <link rel="icon" type="image/svg+xml" href="assets/icons/mistatle-mark.svg">
 
     <script type="application/ld+json">
@@ -25,7 +25,7 @@
         "@type": "WebSite",
         "name": "MIStatlE",
         "url": "https://mistatle.github.io/",
-        "description": "An independent, pseudonymous research archive for learning theory, reinforcement learning, mathematical intuition, and reusable tools.",
+        "description": "A personal technical site on mathematical structure, algorithmic mechanisms, and learning systems.",
         "inLanguage": ["zh-CN", "en"]
       }
     </script>
@@ -1329,26 +1329,27 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         // --- Hero ---
         const Hero = ({ setActiveTab }) => (
           <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[78vh] relative">
-            <div className="absolute right-0 top-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
-            <div className="absolute left-10 bottom-20 opacity-5 pointer-events-none select-none font-serif text-9xl text-stone-900 hidden md:block">∑</div>
+            <div className="absolute right-0 top-20 opacity-[0.035] pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
+            <div className="absolute left-10 bottom-20 opacity-[0.035] pointer-events-none select-none font-serif text-9xl text-stone-900 hidden md:block">∑</div>
 
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 shadow-sm text-stone-500 text-xs font-mono mb-8 w-fit self-start">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-              <span className="tracking-wider">INDEPENDENT RESEARCH ARCHIVE</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 text-stone-500 text-xs font-mono mb-9 w-fit self-start">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-900"></span>
+              <span className="tracking-[0.16em]">PERSONAL TECHNICAL SITE</span>
             </div>
 
-            <h1 className="text-5xl md:text-8xl font-bold text-stone-900 leading-[1.1] mb-8 font-serif tracking-tight">Bridging <br/><span className="text-stone-300">Abstract</span> & <span className="italic text-blue-900">Reality</span>.</h1>
-            <p className="max-w-2xl text-lg md:text-xl text-stone-600 leading-relaxed mb-5">
-              一个关于学习理论、强化学习与数学直觉的长期公开档案。只保留值得复用的推导、笔记与工具。
-            </p>
-            <p className="text-lg md:text-xl text-stone-400 leading-relaxed max-w-2xl mb-14 font-serif italic">“推导，直到直觉显现。”</p>
+            <h1 className="max-w-5xl text-5xl md:text-8xl font-bold text-stone-900 leading-[1.05] mb-9 font-serif tracking-tight">
+              Theory, Algorithms<br/>& <span className="italic text-blue-900">Learning Systems</span>.
+            </h1>
+            <div className="mb-14 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">
+              <span>Structure</span><span className="text-stone-200">/</span><span>Mechanism</span><span className="text-stone-200">/</span><span>Boundary</span>
+            </div>
 
             <div className="flex flex-wrap gap-4 md:gap-6 mb-16">
               <button onClick={() => setActiveTab('library')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE LIBRARY <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
             </div>
 
             <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
-                <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">FOLLOW US:</span>
+                <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">ELSEWHERE:</span>
                 <div className="flex gap-4">
                     <SocialLink platform="bilibili" label="Bilibili" href="https://space.bilibili.com/496530225?spm_id_from=333.1007.0.0" colorClass="group-hover:text-[#00AEEC] group-hover:border-[#00AEEC]" />
                     <SocialLink platform="github" label="GitHub" href="https://github.com/mistatle" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
@@ -1359,7 +1360,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             <div className="mt-8 flex flex-wrap justify-between gap-x-8 gap-y-2 text-xs font-mono text-stone-400 uppercase tracking-widest">
                 <span>Est. 2025</span>
-                <span>Artificial Intelligence</span>
+                <span>Mathematics · Algorithms · AI</span>
                 <span>Shanghai</span>
             </div>
           </div>
@@ -1372,8 +1373,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               <SectionHeader
                 eyebrow="Start Here"
                 title="Selected Work"
-                description="Two finished pieces that best represent the archive: one theoretical note and one reusable tool."
-                aside="curated, not exhaustive"
+                description="Technical notes and reusable systems selected for clarity, rigor, and long-term use."
+                aside="2 selected entries"
               />
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -1393,7 +1394,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     <h2 className="mb-4 text-2xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{item.title}</h2>
                     <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{item.desc}</p>
                     <div className="border-t border-stone-100 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors group-hover:text-blue-900">
-                      Open note <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+                      Open <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
                     </div>
                   </SectionPanel>
                 ))}
@@ -1423,9 +1424,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return (
                 <SectionShell>
                     <SectionHeader
-                      eyebrow="Knowledge Base"
+                      eyebrow="Technical Library"
                       title="Library"
-                      description="Finished notes and conceptual maps, organized only when there is something substantial to read."
+                      description="Structured notes on mathematical foundations, optimization, and learning systems."
                       aside={`${visibleDisciplines.length} active disciplines`}
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -1617,7 +1618,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                 <SectionHeader
                   eyebrow="Experimental Projects"
                   title={embedded ? "Lab" : "The Laboratory"}
-                  description="Small builds, visual experiments, and tools that sharpen the workflow."
+                  description="Experiments and tools that test an argument, expose a mechanism, or improve the research workflow."
                   aside={data && data.length > 0 ? `${data.length} active items` : "in progress"}
                 />
 
@@ -1671,8 +1672,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             <SectionShell maxWidth="max-w-4xl" className="flex flex-col justify-center">
                 <SectionHeader
                   eyebrow="About"
-                  title="Independent by Design"
-                  description="MIStatlE is a pseudonymous public archive for mathematical ideas in AI—built around clarity, reuse, and work that remains worth returning to."
+                  title="A Personal Technical Site"
+                  description="MIStatlE focuses on mathematical structure, algorithmic mechanisms, and learning systems."
                   centered={true}
                 />
 
@@ -1684,14 +1685,14 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                     <div className="max-w-2xl mx-auto">
                         <p className="text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
-                            The archive is intentionally separated from a personal identity. What matters here is whether an idea becomes clearer, more auditable, and more reusable after it is published.
+                            The organizing principle is simple: begin from assumptions, make the mechanism explicit, and state where the conclusion stops. Notes are kept when they sharpen a reusable idea; tools are kept when they make the reasoning easier to inspect or reproduce.
                         </p>
 
                         <div className="mt-10 grid gap-4 text-left md:grid-cols-3">
                             {[
-                              ["Derive", "Show the mechanism, not only the conclusion."],
-                              ["Distill", "Compress without flattening the difficult parts."],
-                              ["Return", "Publish notes and tools that remain useful later."]
+                              ["Structure", "Identify the definitions and assumptions that carry the result."],
+                              ["Mechanism", "Explain how a proof or algorithm turns structure into behavior."],
+                              ["Boundary", "State the regime, evidence, and failure modes of each claim."]
                             ].map(([title, copy]) => (
                               <div key={title} className="rounded-2xl border border-stone-100 bg-stone-50/70 p-5">
                                 <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-blue-900">{title}</div>
@@ -1701,7 +1702,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         </div>
 
                         <p className="mt-10 text-base font-serif text-stone-500">
-                            希望这里能够真诚、清晰，并且经得起时间。
+                            内容可以扩展，判断标准保持一致。
                         </p>
                     </div>
 
@@ -1898,7 +1899,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               return;
             }
             const tabLabel = activeTab === "home"
-              ? "Math & Intelligence"
+              ? "Theory, Algorithms & Learning Systems"
               : ([...NAV_ITEMS, { id: "about", label: "About" }].find((item) => item.id === activeTab)?.label || "Archive");
             document.title = `MIStatlE | ${tabLabel}`;
           }, [activeTab, readingItem]);
@@ -2003,7 +2004,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                 Local Fallback · {fallbackSources.length}
                             </span>
                         ) : (
-                            <span>Theory · Practice · Continuity</span>
+                            <span>Structure · Mechanism · Boundary</span>
                         )}
                     </div>
                 </div>
