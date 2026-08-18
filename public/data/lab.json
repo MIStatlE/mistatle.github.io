@@ -3,7 +3,7 @@
     "id": "article-reader",
     "language": "REACT",
     "title": "MIStatlE Article Reader",
-    "desc": "面向长篇研究笔记的轻量阅读器：支持 Markdown、KaTeX、代码高亮、文章目录与 PDF 附件。",
+    "desc": "为长篇技术笔记设计的轻量阅读器：让公式、代码、目录与 PDF 在同一条阅读路径中保持清晰。",
     "link": "https://github.com/MIStatlE/mistatle.github.io",
     "featured": true
   },
@@ -11,7 +11,7 @@
     "id": "latex-template-system",
     "language": "TEX",
     "title": "LaTeX Template System",
-    "desc": "一组用于短笔记、课程讲义、长篇数学写作与公开内容卡片的可复用排版源包。",
+    "desc": "一组服务于不同写作尺度的 LaTeX 模板：从短篇推导到课程讲义与长篇数学写作。",
     "link": "https://github.com/MIStatlE/mistatle.github.io/tree/main/public/data/templates",
     "featured": true
   }

@@ -4,49 +4,49 @@
       "id": "opt",
       "title": "Optimization",
       "icon": "layers",
-      "desc": "凸优化、KKT 条件与一阶方法。",
+      "desc": "从凸性与最优性条件出发，理解一阶方法为什么有效。",
       "count": "0 Courses"
     },
     {
       "id": "prob",
       "title": "Probability",
       "icon": "sigma",
-      "desc": "概率空间、随机变量与极限定理。",
+      "desc": "从随机变量与极限定理出发，理解不确定性如何形成可计算的结构。",
       "count": "0 Courses"
     },
     {
       "id": "stat",
       "title": "Statistics",
       "icon": "bar-chart-3",
-      "desc": "统计推断、估计理论与实验设计。",
+      "desc": "围绕估计、检验与实验设计，理解证据能够支持多强的结论。",
       "count": "0 Courses"
     },
     {
       "id": "rl",
       "title": "Reinforcement Learning",
       "icon": "gamepad-2",
-      "desc": "MDP、策略梯度、价值函数方法与 RLHF 基础。",
+      "desc": "从 MDP、价值函数到策略优化，理解目标、估计与分布约束。",
       "count": "1 Course"
     },
     {
       "id": "ml",
       "title": "Machine Learning Theory",
       "icon": "infinity",
-      "desc": "泛化、复杂度与学习算法的理论基础。",
+      "desc": "从复杂度与泛化出发，追问学习算法为何能够超越训练样本。",
       "count": "0 Courses"
     },
     {
       "id": "info",
       "title": "Information Theory",
       "icon": "radio-tower",
-      "desc": "熵、相对熵与高维概率几何。",
+      "desc": "从熵与相对熵出发，理解信息量、概率集中与高维几何。",
       "count": "1 Course"
     },
     {
       "id": "diff",
       "title": "Diffusion",
       "icon": "sparkles",
-      "desc": "从 VAE/Score Matching 到 SDE 视角。",
+      "desc": "从潜变量模型、Score Matching 到 SDE，追踪生成目标之间的联系。",
       "count": "1 Course"
     }
   ],
@@ -67,7 +67,7 @@
                 "type": "note",
                 "highlight": true,
                 "filePath": "public/data/library/rl/policy-gradient-optimization.md",
-                "desc": "从 RL 目标函数到 Policy Gradient Theorem、REINFORCE、PPO 与 stochastic gradient convergence。"
+                "desc": "从性能目标与策略梯度定理出发，连接 REINFORCE、PPO 和随机梯度收敛。"
               }
             ]
           }
@@ -104,7 +104,7 @@
                 "type": "note",
                 "highlight": true,
                 "filePath": "public/data/posts/typical_set.md",
-                "desc": "Why -log p(x)? The geometry of high-dimensional probability."
+                "desc": "为什么典型样本并不位于密度最高处？从 AEP 走向高维概率几何。"
               }
             ]
           }
@@ -122,7 +122,8 @@
                 "id": "diff_01",
                 "title": "VAE & ELBO",
                 "type": "note",
-                "filePath": "public/data/posts/vae_elbo.md"
+                "filePath": "public/data/posts/vae_elbo.md",
+                "desc": "从潜变量模型与变分推断出发，理解 ELBO 的来源与优化含义。"
               },
               {
                 "id": "diff_02",

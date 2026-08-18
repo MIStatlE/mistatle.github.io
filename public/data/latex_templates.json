@@ -2,7 +2,7 @@
   {
     "id": "reading-inquiry",
     "title": "Problem-Led Reading",
-    "desc": "初读形成判断，由 AI 扩展候选，最后回到来源修订。",
+    "desc": "先形成自己的问题与判断，再请 AI 扩展可能性，最后回到原文核验和修订。",
     "icon": "notebook-pen",
     "tags": ["Reading Notes", "XeLaTeX", "AI-Assisted"],
     "filePath": "public/data/templates/reading_inquiry_note.md",
@@ -18,7 +18,7 @@
   {
     "id": "short-note",
     "title": "Short Note",
-    "desc": "极简模板，融合了小红书卡片美学与 Notion 风格。",
+    "desc": "为短篇推导与公开笔记准备的极简模板，强调结构、公式与留白。",
     "icon": "file-text", 
     "tags": ["Cheatsheet", "TColorBox"],
     "filePath": "public/data/templates/short_note.md",
@@ -33,7 +33,7 @@
   {
     "id": "cn-lecture-note",
     "title": "CN Lecture Note",
-    "desc": "中文 lecture note 模板，适合课程讲义、系列笔记和长篇推导。",
+    "desc": "面向中文课程讲义与系列笔记，统一正文层级、定理环境与长篇阅读节奏。",
     "icon": "notebook-pen",
     "tags": ["Lecture Note", "CTeX", "XeLaTeX"],
     "filePath": "public/data/templates/cn_lecture_note.md",
@@ -48,7 +48,7 @@
   {
     "id": "en-article-note",
     "title": "EN Article Note",
-    "desc": "英文 expository article 模板，适合理论说明文、handout 和长笔记。",
+    "desc": "面向英文技术说明与 expository writing，保持论证结构、公式和引用的清晰。",
     "icon": "scroll-text",
     "tags": ["Article", "Expository", "XeLaTeX"],
     "filePath": "public/data/templates/en_article_note.md",
@@ -63,7 +63,7 @@
   {
     "id": "mi-book-style",
     "title": "MI Book / Lecture Note",
-    "desc": "适合中文数学书、讲义和长笔记的书籍模板，统一了页眉、彩带、定理盒子和封面系统。",
+    "desc": "面向中文数学书与长篇讲义，在页眉、章节、定理与封面之间建立一致的阅读系统。",
     "icon": "book-open",
     "tags": ["Book", "XeLaTeX", "CTeX"],
     "filePath": "public/data/templates/mi_book_style.md",
