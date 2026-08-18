@@ -58,10 +58,10 @@
 % Reuse: change only the example source identity.
 % -----------------------------------------------------------------
 \newcommand{\SeriesNumber}{01}
-\newcommand{\SourceTitle}{The Bitter Lesson}
-\newcommand{\SourceAuthors}{Rich Sutton}
-\newcommand{\SourceContext}{online essay (2019)}
-\newcommand{\SourceURL}{http://www.incompleteideas.net/IncIdeas/BitterLesson.html}
+\newcommand{\SourceTitle}{Probability Inequalities for Sums of Bounded Random Variables}
+\newcommand{\SourceAuthors}{Wassily Hoeffding}
+\newcommand{\SourceContext}{JASA 58 (1963)}
+\newcommand{\SourceURL}{https://doi.org/10.1080/01621459.1963.10500830}
 \newcommand{\ReadDate}{2026.08.18}
 
 \hypersetup{
@@ -207,7 +207,7 @@
 \RuleHead{QUESTION}{Initial question}
 
 {\bfseries\fontsize{17pt}{22pt}\selectfont
-  何种方法能够将新增计算转化为持续进步？\par}
+  为什么有界独立变量之和会呈现二次指数衰减？\par}
 
 \vspace{0.16em}
 {\small\color{muted}
@@ -218,21 +218,27 @@
   \vspace{0pt}
   \RuleHead{TRACE}{Source notes}
 
-  \SourceNote{开篇}{claim}{
-    长期占优的，往往是能够持续利用新增计算的一般方法。}
+  \SourceNote{定理}{claim}{
+    若独立变量 $X_i\in[a_i,b_i]$，则对 $t>0$，
+    \[
+      \Pr\!\left(S_n-\mathbb ES_n\ge t\right)
+      \le \exp\!\left(-\frac{2t^2}{\sum_i(b_i-a_i)^2}\right).
+    \]}
   \vspace{0.55em}{\color{rule}\hrule height 0.4pt}\vspace{0.52em}
-  \SourceNote{中段}{evidence}{
-    棋类、语音与视觉呈现相似模式：手工知识改善早期性能，搜索与学习更能受益于规模扩张。}
+  \SourceNote{引理}{local bound}{
+    对单个有界变量，
+    $\log\mathbb E e^{\lambda(X_i-\mathbb EX_i)}
+    \le \lambda^2(b_i-a_i)^2/8$。}
   \vspace{0.55em}{\color{rule}\hrule height 0.4pt}\vspace{0.52em}
-  \SourceNote{结尾}{direction}{
-    重点不在手工编码复杂性，而在构造能够发现并吸收复杂性的过程。}
+  \SourceNote{证明}{mechanism}{
+    独立性将和的 MGF 分解为乘积；再用 Markov--Chernoff 界并优化 $\lambda$。}
 
   \RuleHead{MY READ}{A tension worth keeping}
   \begin{tcolorbox}[openbox]
-    {\bfseries 领域知识改善初始性能，也可能成为可扩展性的约束。}\par
+    {\bfseries 高斯型尾部似乎主要来自变量有界。}\par
     \vspace{0.35em}
     {\small\color{muted}
-      个人解释；原文未提供因果识别。}
+      个人解释；尚未区分有界性与独立性的作用。}
   \end{tcolorbox}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.26\linewidth}
@@ -243,18 +249,18 @@
       暂不生成结论，仅保留初读中的张力与问题。}
 
     \vspace{0.72em}
-    \MarginQuestion{concept}{“一般方法”的操作性含义是什么？}
+    \MarginQuestion{concept}{二次指数从哪一步出现？}
     \vspace{0.72em}
-    \MarginQuestion{evidence}{例证识别了规律，还是支持因果解释？}
+    \MarginQuestion{evidence}{独立性只方便证明，还是决定尺度？}
     \vspace{0.72em}
-    \MarginQuestion{boundary}{领域先验应位于何处？}
+    \MarginQuestion{boundary}{变量完全相关时会怎样？}
   \end{tcolorbox}
 \end{minipage}
 
 \vfill
 \RuleHead{STOP}{First-pass record}
 {\small
-  三处来源、一条解释、三个问题。初读到此为止。}
+  一个定理、一个引理、一条证明链、三个问题。初读到此为止。}
 \vspace{0.24in}
 
 \newpage
@@ -271,32 +277,32 @@
   \RuleHead{HANDOFF}{Inputs and constraints}
   \begin{tcolorbox}[openbox]
     {\small
-      输入：三处来源、初步判断与未决问题。\par
-      \color{muted}约束：仅生成候选，并标记原文依据、推断与待核验处。}
+      输入：定理、MGF 引理、证明链与初步判断。\par
+      \color{muted}约束：只拆分假设的作用；反例与推广必须明确标记。}
   \end{tcolorbox}
 
-  \RuleHead{BRANCH 01}{Clarify the distinction}
+  \RuleHead{BRANCH 01}{Separate the roles}
   {\bfseries 候选解释：}\;
-  核心区分或许不在“知识或计算”，而在知识被固化为答案，
-  还是用于构造可持续搜索与学习的过程。\par
+  有界性给出单变量的二次 MGF 控制；独立性使对数 MGF 可加。
+  两者共同产生平方和尺度。\par
   \vspace{0.25em}
   {\footnotesize\color{muted}
-    核验：原文支持的重述，还是新增分析框架？}
+    核验：逐步标出每个假设进入证明的位置。}
 
-  \RuleHead{BRANCH 02}{Oppose the claim}
+  \RuleHead{BRANCH 02}{Break independence}
   {\bfseries 候选反例：}\;
-  安全约束、物理结构与昂贵反馈可能长期依赖领域知识。\par
+  令 $Y$ 为 Rademacher 变量且 $X_i=Y$。各变量均有界，但 $S_n=nY$；
+  在 $t=n$ 处真实概率为 $1/2$，独立情形的指数界失效。\par
   \vspace{0.25em}
   {\footnotesize\color{muted}
-    追问：这些知识提供答案，还是定义边界与反馈？}
+    结论：独立性不是可以无条件删除的技术细节。}
 
   \RuleHead{BRANCH 03}{Transfer carefully}
   {\bfseries 候选迁移：}\;
-  在模型、工具与 agent 工作流中，哪些结构属于临时脚手架，
-  哪些构成长期接口？\par
+  对鞅差分，以条件 MGF 控制替代乘积分解，得到 Azuma--Hoeffding 型界。\par
   \vspace{0.25em}
   {\footnotesize\color{muted}
-    标记：后续迁移；不属于 2019 年原文结论。}
+    标记：这是后续推广，不属于原定理本身。}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.26\linewidth}
   \vspace{0pt}
@@ -306,21 +312,21 @@
       AI 仅扩展假设空间，不修改主笔记。}
 
     \vspace{0.70em}
-    \MarginQuestion{clarify}{给出最小必要的概念区分。}
+    \MarginQuestion{clarify}{分别指出有界性与独立性的作用。}
     \vspace{0.70em}
-    \MarginQuestion{alternate}{提出可竞争的替代机制。}
+    \MarginQuestion{alternate}{方差控制会导向什么替代界？}
     \vspace{0.70em}
-    \MarginQuestion{falsify}{何种证据足以改变当前判断？}
+    \MarginQuestion{falsify}{构造删除独立性后的反例。}
     \vspace{0.70em}
-    \MarginQuestion{provenance}{区分原文结论与后续迁移。}
+    \MarginQuestion{provenance}{区分原定理与鞅推广。}
   \end{tcolorbox}
 \end{minipage}
 
 \vfill
 \RuleHead{SELECT}{Selected branch}
 \begin{tcolorbox}[openbox]
-  仅推进分支 01：核查“人类知识 / 可扩展方法”是否构成真实二分。
-  其余分支暂不写回。
+  推进分支 02：用完全相关的 Rademacher 变量检验独立性是否只是技术条件。
+  推广分支暂不写回。
 \end{tcolorbox}
 \vspace{0.22in}
 
@@ -335,8 +341,8 @@
 
 \RuleHead{KEEP}{Source-backed}
 \begin{tcolorbox}[openbox,fontupper=\small]
-  原文持续对比两条路线：直接编码领域知识；
-  构造能够随计算扩展的搜索与学习方法。
+  原定理同时使用每个变量的取值范围与独立性；
+  尾部尺度由 $\sum_i(b_i-a_i)^2$ 控制。
 \end{tcolorbox}
 
 \RuleHead{REVISE}{Before / after}
@@ -344,21 +350,21 @@
   \vspace{0pt}\Tag{before}\par
   \vspace{0.25em}
   \begin{tcolorbox}[openbox,height=1.05in,valign=top,fontupper=\small]
-    领域知识改善初始性能，也可能成为可扩展性的约束。
+    高斯型尾部主要来自变量有界。
   \end{tcolorbox}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\linewidth}
   \vspace{0pt}\Tag{after}\par
   \vspace{0.25em}
   \begin{tcolorbox}[openbox,height=1.05in,valign=top,fontupper=\small]
-    更关键的区分不是知识与计算，而是固定答案与可扩展的学习过程。
+    有界性提供局部 MGF 控制；独立性使控制量可加。二者缺一不可。
   \end{tcolorbox}
 \end{minipage}
 
 \RuleHead{OPEN}{One question to carry}
 \begin{tcolorbox}[openbox,fontupper=\small]
-  在当前 AI 工作流中，哪些结构应保持稳定，哪些应随模型能力更新？
-  这是从原文延伸出的新问题，而非原文结论。
+  独立性可以在多大程度上被条件 MGF 控制、鞅差分或弱依赖结构替代？
+  这是从原证明结构延伸出的新问题。
 \end{tcolorbox}
 
 \vfill
