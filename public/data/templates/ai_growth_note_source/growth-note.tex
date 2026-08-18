@@ -1,0 +1,209 @@
+% AI-era Theory Note — one-page worked template.
+% The design records a change in judgment, not just the final proof.
+% Compile with XeLaTeX or LuaLaTeX.
+\documentclass[10pt,fontset=none]{ctexart}
+
+\usepackage{iftex}
+\ifPDFTeX\errmessage{Please compile with XeLaTeX or LuaLaTeX}\fi
+\usepackage{fontspec}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{tabularx,array}
+\usepackage{enumitem}
+
+\geometry{
+  paperwidth=7.5in,paperheight=10in,
+  left=0.58in,right=0.58in,top=0.34in,bottom=0.40in,
+  headsep=0in,footskip=0.18in
+}
+
+\IfFontExistsTF{Songti SC}
+  {\setCJKmainfont{Songti SC}[AutoFakeBold=2.2]}
+  {\IfFontExistsTF{Source Han Serif SC}
+    {\setCJKmainfont{Source Han Serif SC}[AutoFakeBold=2.2]}
+    {\IfFontExistsTF{Noto Serif CJK SC}
+      {\setCJKmainfont{Noto Serif CJK SC}[AutoFakeBold=2.2]}
+      {\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]}}}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Helvetica Neue}
+  {\setsansfont{Helvetica Neue}}
+  {\setsansfont{TeX Gyre Heros}}
+\IfFontExistsTF{Hiragino Sans GB}
+  {\setCJKsansfont{Hiragino Sans GB}[AutoFakeBold=2.2]}
+  {\IfFontExistsTF{Noto Sans CJK SC}
+    {\setCJKsansfont{Noto Sans CJK SC}[AutoFakeBold=2.2]}
+    {\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]}}
+
+\definecolor{navy}{HTML}{173B78}
+\definecolor{blue}{HTML}{3157C8}
+\definecolor{blueSoft}{HTML}{F0F4FF}
+\definecolor{green}{HTML}{177C68}
+\definecolor{greenSoft}{HTML}{EEF8F4}
+\definecolor{amber}{HTML}{C97820}
+\definecolor{amberSoft}{HTML}{FFF7ED}
+\definecolor{ink}{HTML}{171B22}
+\definecolor{muted}{HTML}{66717F}
+\definecolor{line}{HTML}{D7DEE8}
+\definecolor{paper}{HTML}{FBFAF7}
+
+\pagecolor{paper}
+\color{ink}
+\linespread{1.03}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\setlength{\abovedisplayshortskip}{3pt}
+\setlength{\belowdisplayshortskip}{3pt}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,
+  pdfauthor={MIStatlE},pdftitle={AI-era Theory Note: Gradient Descent Contraction}}
+
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[L]{\small\rmfamily\color{muted}TN--01 · 可复现的判断，才是积累}
+\fancyfoot[R]{\small\sffamily\color{blue}@MIStatlE · 1}
+\pagestyle{fancy}
+
+\tcbset{
+  principle/.style={enhanced,colback=blueSoft,colframe=blue!28,boxrule=0.5pt,
+    arc=1pt,left=9pt,right=9pt,top=5pt,bottom=5pt},
+  theorem/.style={enhanced,colback=white,colframe=navy!42,boxrule=0.65pt,
+    borderline west={3pt}{0pt}{navy},arc=1pt,
+    left=9pt,right=9pt,top=6pt,bottom=6pt},
+  audit/.style={enhanced,frame hidden,borderline west={3pt}{0pt}{#1},
+    colback=#1!6,arc=1pt,left=8pt,right=8pt,top=5pt,bottom=5pt},
+  ledger/.style={enhanced,colback=white,colframe=line,boxrule=0.55pt,
+    arc=1pt,left=8pt,right=8pt,top=5pt,bottom=5pt}
+}
+
+\newcommand{\Kicker}[2]{%
+  {\rmfamily\bfseries\scriptsize\color{#1}#2}\par\vspace{0.18em}}
+
+\newcommand{\Status}[2]{%
+  \tcbox[on line,boxsep=1pt,left=4pt,right=4pt,top=1pt,bottom=1pt,
+    colback=#1!10,colframe=#1!45,boxrule=0.45pt,arc=2pt,
+    fontupper=\sffamily\bfseries\scriptsize\color{#1},before upper=\strut]{#2}}
+
+\newcommand{\SectionRule}[2]{%
+  \vspace{0.28em}
+  \noindent{\rmfamily\bfseries\large\color{#1}#2}\hspace{0.7em}%
+  {\color{line}\leaders\hrule height 0.45pt\hfill\kern0pt}\par
+  \vspace{0.18em}}
+
+\newcommand{\good}{\textcolor{green}{\ensuremath{\checkmark}}}
+\newcommand{\pending}{\textcolor{amber}{\ensuremath{\circ}}}
+
+\begin{document}
+
+\begin{minipage}[t]{0.71\linewidth}
+  \Kicker{blue}{THEORY NOTE · JUDGMENT TRACE}
+  {\bfseries\fontsize{24pt}{27pt}\selectfont\color{navy}
+    梯度下降的收缩率\par}
+  \vspace{0.12em}
+  {\large\color{muted}不是保存答案，而是保存判断如何被证据改变}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.25\linewidth}
+  \raggedleft
+  {\sffamily\scriptsize\color{muted}NOTE 01}\par
+  \vspace{0.18em}{\color{line}\rule{0.78\linewidth}{0.5pt}}\par
+  \vspace{0.18em}{\sffamily\small\color{green}\textbf{JUDGMENT}\quad REVISED}\par
+  \vspace{0.15em}{\sffamily\small\color{muted}NEXT\quad REBUILD ALONE}
+\end{minipage}
+
+\vspace{0.28em}
+\begin{tcolorbox}[principle]
+  \Kicker{blue}{NOTE PRINCIPLE}
+  理论笔记不以结论为最小单位，而记录一次\textbf{可审计的判断变化}：
+  原判断 $\rightarrow$ 反证信号 $\rightarrow$ AI 压力测试 $\rightarrow$ 人的决定 $\rightarrow$ 独立重建。
+\end{tcolorbox}
+
+\vspace{0.08em}
+\begin{tcolorbox}[theorem]
+  \Kicker{navy}{目标命题 \,/\, TARGET}
+  设 $f:\mathbb R^d\to\mathbb R$ 为 $\mu$-强凸且 $L$-光滑，$x^\star$ 为极小点。取
+  $\eta=2/(L+\mu)$，目标是保留最优条件数依赖：
+  \[
+    \|x_{t+1}-x^\star\|
+    \le \frac{L-\mu}{L+\mu}\,\|x_t-x^\star\|.
+  \]
+\end{tcolorbox}
+
+\SectionRule{navy}{1\quad 起点：我原本相信什么}
+
+令 $d_t=x_t-x^\star$，$g_t=\nabla f(x_t)-\nabla f(x^\star)$。第一判断：分别调用强单调性与 Lipschitz 性应该足够。
+\[
+\|d_t-\eta g_t\|^2
+\le \bigl(1-2\eta\mu+\eta^2L^2\bigr)\|d_t\|^2.
+\]
+这条推导\textbf{正确，却不够好}：最优步长只有 $\eta=\mu/L^2$，把应有的 $\kappa=L/\mu$ 依赖损失成近似 $\kappa^2$。
+
+\vspace{0.22em}
+\noindent
+\begin{minipage}[t]{0.475\linewidth}
+  \begin{tcolorbox}[audit=amber]
+    \Kicker{amber}{反证信号 \,/\, EVIDENCE}
+    $\kappa^2$ 依赖直接否定了第一判断：分别正确的界，组合后未必保留问题的几何结构。
+  \end{tcolorbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.505\linewidth}
+  \begin{tcolorbox}[audit=blue]
+    \Kicker{blue}{AI 的位置 \,/\, PRESSURE TEST}
+    AI 不继续计算，只追问：
+    \begin{itemize}[leftmargin=1.25em,itemsep=0.12em,topsep=0.2em]
+      \item 两个不等式能否同时取紧？
+      \item 是否存在同时保留 $\langle g,d\rangle$ 与 $\|g\|^2$ 的混合量？
+    \end{itemize}
+  \end{tcolorbox}
+\end{minipage}
+
+\vspace{0.08em}
+\begin{tcolorbox}[audit=green]
+  \Kicker{green}{我的决定 \,/\, HUMAN JUDGMENT}
+  放弃“分别取界”的表示，改为保留耦合。采用光滑强凸函数的插值不等式
+  \[
+  \langle g,d\rangle\ge
+  \frac{\mu L}{\mu+L}\|d\|^2+
+  \frac{1}{\mu+L}\|g\|^2.
+  \]
+\end{tcolorbox}
+
+\SectionRule{green}{2\quad 重建：保留耦合的证明主线}
+
+\begin{enumerate}[leftmargin=1.7em,label=\textbf{\arabic*.},itemsep=0.25em,topsep=0pt]
+  \item 代入恒等式 $\|d_t-\eta g_t\|^2=\|d_t\|^2-2\eta\langle g_t,d_t\rangle+\eta^2\|g_t\|^2$。
+  \item 取 $\eta=2/(L+\mu)$，$\|g_t\|^2$ 的系数恰好抵消。
+  \item 剩余系数为
+  \[
+    1-\frac{4\mu L}{(L+\mu)^2}
+    =\left(\frac{L-\mu}{L+\mu}\right)^2,
+  \]
+  开方即得目标收缩率。
+\end{enumerate}
+
+\SectionRule{navy}{3\quad 能力增量：下次我会做出什么不同的第一步}
+
+\begin{tcolorbox}[ledger]
+  \small
+  \begin{minipage}[t]{0.30\linewidth}
+    \Kicker{green}{判断已改变}
+    以后遇到“局部正确、整体过松”的证明，先检查表示是否拆得太早。
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.28\linewidth}
+    \Kicker{navy}{证据已核验}
+    \good\ 代数消项与最终系数\par
+    \vspace{0.16em}\good\ 边界 $\mu=L$ 一致
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.36\linewidth}
+    \Kicker{amber}{仍欠自己的证明}
+    \pending\ 不看 AI 对话，从 $f-\frac\mu2\|\cdot\|^2$ 的凸光滑性重建插值引理。
+  \end{minipage}
+\end{tcolorbox}
+
+\end{document}

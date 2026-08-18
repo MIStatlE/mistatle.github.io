@@ -1,5 +1,16 @@
 [
   {
+    "id": "ai-theory-note",
+    "title": "AI-era Theory Note",
+    "desc": "记录判断如何被证据改变：原判断、反证信号、AI 压力测试、人的决定与能力增量。",
+    "icon": "notebook-tabs",
+    "tags": ["Theory Notes", "XeLaTeX", "AI Research"],
+    "filePath": "public/data/templates/ai_growth_note.md",
+    "previewImage": "assets/images/latex-template/ai-growth-note-preview.png",
+    "previewImages": ["assets/images/latex-template/ai-growth-note-preview.png"],
+    "link": null
+  },
+  {
     "id": "short-note",
     "title": "Short Note",
     "desc": "极简模板，融合了小红书卡片美学与 Notion 风格。",
