@@ -438,7 +438,7 @@
           };
         }
 
-        const VALID_TABS = ["home", "library", "papers", "lab", "posts", "tools", "about"];
+        const VALID_TABS = ["home", "library", "lab", "tools", "about"];
 
         function parseLocationRoute() {
           const raw = window.location.hash.replace(/^#\/?/, "");
@@ -483,14 +483,6 @@
             });
           });
 
-          Object.values(db?.papers?.lists || {}).flat().forEach((item) => {
-            if (hasReadableContent(item.filePath)) candidates.push({ tab: "papers", item });
-          });
-
-          (db?.posts || []).forEach((item) => {
-            if (hasReadableContent(item.filePath)) candidates.push({ tab: "posts", item });
-          });
-
           [...(db?.tools?.latex || []), ...(db?.tools?.general || [])].forEach((item) => {
             if (hasReadableContent(item.filePath)) candidates.push({ tab: "tools", item });
           });
@@ -528,23 +520,9 @@
                     "diff": [{ title: "Diffusion Models: Theory to Practice", chapters: [{ title: "Foundations", lessons: [{ id: "diff_01", title: "VAE & ELBO", type: "note", filePath: "public/data/posts/vae_elbo.md" }] }] }]
                 }
             },
-            papers: {
-                themes: [
-                    { id: "gen-ai", title: "Generative Models & World Models", count: 1, desc: "Mechanisms, objectives, and representation geometry." }
-                ],
-                lists: {
-                    "gen-ai": [
-                        { title: "LeWorldModel / SIGReg：为什么不会塌缩？", authors: "Maes et al., 2026", tags: ["World Model", "JEPA", "Note"], read: true, filePath: "public/data/papers/leworldmodel_sigreg.md" }
-                    ]
-                }
-            },
             lab: [
                 { id: "article-reader", language: "REACT", title: "MIStatlE Article Reader", desc: "支持 Markdown、KaTeX、代码高亮、文章目录与 PDF 附件的研究笔记阅读器。", link: "https://github.com/MIStatlE/mistatle.github.io", featured: true },
                 { id: "latex-template-system", language: "TEX", title: "LaTeX Template System", desc: "用于短笔记、课程讲义、长篇数学写作与公开内容卡片的排版源包。", link: "https://github.com/MIStatlE/mistatle.github.io/tree/main/public/data/templates", featured: true }
-            ],
-            posts: [
-                { id: "typical-set", date: "Jan 21, 2026", category: "INFORMATION THEORY", title: "Typical Set：高维空间中的概率集中", desc: "从 AEP、熵与高斯几何出发理解典型集。", filePath: "public/data/posts/typical_set.md" },
-                { id: "scaled-dot-product-attention", date: "Nov 23, 2025", category: "DEEP LEARNING", title: "缩放点积注意力：为什么除以 √dₖ？", desc: "从点积方差、Softmax 饱和与梯度稳定性推导缩放因子的来历。", filePath: "public/data/posts/vae_elbo.md" }
             ],
             tools: {
                 general: [],
@@ -829,9 +807,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
         const NAV_ITEMS = [
             { id: "library", label: "Library" },
-            { id: "papers", label: "Reading" },
             { id: "lab", label: "Lab" },
-            { id: "posts", label: "Journal" },
             { id: "tools", label: "Tools" }
         ];
 
@@ -1340,14 +1316,6 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             filePath: "public/data/library/rl/policy-gradient-optimization.md"
           },
           {
-            id: "featured-leworldmodel",
-            sourceTab: "papers",
-            eyebrow: "Paper Note",
-            title: "LeWorldModel / SIGReg",
-            desc: "讲清 latent prediction、表示塌缩与 SIGReg 之间的机制联系。",
-            filePath: "public/data/papers/leworldmodel_sigreg.md"
-          },
-          {
             id: "featured-short-note",
             sourceTab: "tools",
             eyebrow: "Reusable Template",
@@ -1376,7 +1344,6 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             <div className="flex flex-wrap gap-4 md:gap-6 mb-16">
               <button onClick={() => setActiveTab('library')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE LIBRARY <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
-              <button onClick={() => setActiveTab('posts')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">LATEST NOTES</button>
             </div>
 
             <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
@@ -1404,11 +1371,11 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               <SectionHeader
                 eyebrow="Start Here"
                 title="Selected Work"
-                description="Three finished pieces that best represent the archive: one theoretical note, one paper reading, and one reusable tool."
+                description="Two finished pieces that best represent the archive: one theoretical note and one reusable tool."
                 aside="curated, not exhaustive"
               />
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {FEATURED_ITEMS.map((item, index) => (
                   <SectionPanel
                     key={item.id}
@@ -1952,21 +1919,17 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             Promise.all([
                 safeFetch('public/data/library.json'),
-                safeFetch('public/data/papers.json'),
                 safeFetch('public/data/lab.json'),
-                safeFetch('public/data/post.json'),
                 safeFetch('public/data/tools.json'),
                 safeFetch('public/data/latex_templates.json')
-            ]).then(([library, papers, lab, posts, toolsData, latexData]) => {
-                const failedSources = [library, papers, lab, posts, toolsData, latexData]
+            ]).then(([library, lab, toolsData, latexData]) => {
+                const failedSources = [library, lab, toolsData, latexData]
                   .filter(result => !result.ok)
                   .map(result => result.url.replace('public/data/', '').replace('.json', ''));
 
                 setDb(prev => ({
                     library: library.ok ? library.data : prev.library,
-                    papers: papers.ok ? papers.data : prev.papers,
                     lab: lab.ok ? lab.data : prev.lab,
-                    posts: posts.ok ? posts.data : prev.posts,
                     tools: {
                         general: toolsData.ok ? toolsData.data : prev.tools.general,
                         latex: latexData.ok ? latexData.data : prev.tools.latex
@@ -2005,9 +1968,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             switch(activeTab) {
               case 'home': return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
               case 'library': return <Library data={db.library} onRead={openReadingItem} />;
-              case 'papers': return <Papers data={db.papers} onRead={openReadingItem} />;
               case 'lab': return <Lab data={db.lab} />;
-              case 'posts': return <Posts data={db.posts} onRead={openReadingItem} />;
               case 'tools': return <Tools data={db.tools} onRead={openReadingItem} />;
               case 'about': return <About />;
               default: return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
