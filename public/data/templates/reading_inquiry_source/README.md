@@ -1,6 +1,6 @@
 # Problem-Led Reading
 
-The source file paper-reading-brief.tex is a five-page XeLaTeX template for source-aware reading notes.
+The source file paper-reading-brief.tex is a four-page XeLaTeX template for source-aware reading notes: one reusable entry page and one three-page worked example.
 
 The workflow has three stages:
 
@@ -8,7 +8,7 @@ The workflow has three stages:
 2. use AI to expand, not settle, the hypothesis space;
 3. write back only source-checked revisions.
 
-The blank pages are reusable across papers, reports, book chapters, essays, and technical documentation. The worked example reads Rich Sutton's *The Bitter Lesson*.
+The entry page is reusable across papers, reports, book chapters, essays, and technical documentation. The worked example reads Rich Sutton's *The Bitter Lesson*.
 
 ## Compile
 

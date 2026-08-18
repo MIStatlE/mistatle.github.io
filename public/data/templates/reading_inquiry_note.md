@@ -2,7 +2,7 @@
 title: Problem-Led Reading
 date: 2026-08-18
 categories: LaTeX Template
-description: 一份来源可核验的五页阅读模板：先建立初步判断，再由 AI 扩展假设空间，最后只写回经核验的修订。
+description: 一份四页问题研读模板：初读形成判断，AI 展开候选，最后回到来源修订。
 tags: [LaTeX, Reading Notes, XeLaTeX, AI-Assisted]
 ---
 
@@ -13,12 +13,11 @@ tags: [LaTeX, Reading Notes, XeLaTeX, AI-Assisted]
   <img src="assets/images/latex-template/reading-inquiry-preview-2.png" alt="Problem-Led Reading page 2">
   <img src="assets/images/latex-template/reading-inquiry-preview-3.png" alt="Problem-Led Reading page 3">
   <img src="assets/images/latex-template/reading-inquiry-preview-4.png" alt="Problem-Led Reading page 4">
-  <img src="assets/images/latex-template/reading-inquiry-preview-5.png" alt="Problem-Led Reading page 5">
 </div>
 
 ### 问题研读
 
-这份模板用于论文、报告、书章、长文与项目文档。它不要求第一次阅读就形成完整总结，而是保留三个连续阶段：
+这份模板用于论文、报告、书章、长文与项目文档。第一页是可复用入口；后三页用一个例子贯穿三个阶段：
 
 1. 建立初步判断：区分原文主张、证据与个人解释。
 2. 展开候选解释：由 AI 提出概念区分、替代机制、反例与迁移。
@@ -45,7 +44,7 @@ AI 位于可选边栏。它用于扩展假设空间，而不直接修改主笔�
 
     xelatex paper-reading-brief.tex
 
-成品为五页 7.5 x 10 英寸 PDF，可直接渲染为 1500 x 2000 的移动端图片。
+成品为四页 7.5 x 10 英寸 PDF，可直接渲染为 1500 x 2000 的移动端图片。
 
 ### License
 

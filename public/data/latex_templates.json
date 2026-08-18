@@ -2,7 +2,7 @@
   {
     "id": "reading-inquiry",
     "title": "Problem-Led Reading",
-    "desc": "先建立初步判断，再由 AI 扩展假设空间，最后只写回经核验的修订。",
+    "desc": "初读形成判断，由 AI 扩展候选，最后回到来源修订。",
     "icon": "notebook-pen",
     "tags": ["Reading Notes", "XeLaTeX", "AI-Assisted"],
     "filePath": "public/data/templates/reading_inquiry_note.md",
@@ -11,8 +11,7 @@
       "assets/images/latex-template/reading-inquiry-preview-1.png",
       "assets/images/latex-template/reading-inquiry-preview-2.png",
       "assets/images/latex-template/reading-inquiry-preview-3.png",
-      "assets/images/latex-template/reading-inquiry-preview-4.png",
-      "assets/images/latex-template/reading-inquiry-preview-5.png"
+      "assets/images/latex-template/reading-inquiry-preview-4.png"
     ],
     "link": null
   },

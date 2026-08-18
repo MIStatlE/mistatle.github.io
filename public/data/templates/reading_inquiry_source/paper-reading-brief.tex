@@ -73,7 +73,7 @@
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \fancyfoot[L]{\footnotesize\sffamily\color{muted}PROBLEM-LED READING \enspace \SeriesNumber}
-\fancyfoot[R]{\footnotesize\sffamily\color{navy}@MIStatlE \enspace\textperiodcentered\enspace \thepage/5}
+\fancyfoot[R]{\footnotesize\sffamily\color{navy}@MIStatlE \enspace\textperiodcentered\enspace \thepage/4}
 \pagestyle{fancy}
 
 % -----------------------------------------------------------------
@@ -108,9 +108,6 @@
 
 \newcommand{\Tag}[1]{%
   {\sffamily\bfseries\scriptsize\color{navy}\MakeUppercase{#1}}}
-
-\newcommand{\Atom}[1]{%
-  {\sffamily\scriptsize\color{navy}#1}}
 
 \newcommand{\SourceNote}[3]{%
   \noindent
@@ -154,7 +151,7 @@
 
 \vspace{0.48em}
 {\small\color{muted}
-  适用于论文、报告、书章、长文与项目文档。以一个明确问题为起点，并保留来源与不确定性。}
+  先读原文，形成初步判断；再让 AI 展开候选，最后回到来源修订。}
 
 \RuleHead{START}{Reading question}
 
@@ -164,47 +161,38 @@
   {\color{rule}\hrule height 0.45pt}
 \end{tcolorbox}
 
-\RuleHead{COMPOSE}{Choose, repeat, omit}
-
-\centering
-\Atom{CLAIM}\quad\textperiodcentered\quad
-\Atom{EVIDENCE}\quad\textperiodcentered\quad
-\Atom{EQUATION}\quad\textperiodcentered\quad
-\Atom{MECHANISM}\par
-\vspace{0.20em}
-\Atom{QUESTION}\quad\textperiodcentered\quad
-\Atom{COUNTEREXAMPLE}\quad\textperiodcentered\quad
-\Atom{AI MARGIN}
-\par\raggedright
-
-\vspace{0.48em}
+\vspace{0.30em}
 \begin{minipage}[t]{0.69\linewidth}
   \vspace{0pt}
-  \RuleHead{TRACE}{Source / scratch}
-  \OpenLine{\textsf{p./sec./fig.}\quad 记录一条原文、数据或局部机制。}
-  \OpenLine{\textsf{p./sec./fig.}\quad 保留定位与原始措辞；暂不补写摘要。}
-  \OpenLine{\textsf{?}\quad 记录阻碍理解或可能改变判断的问题。}
+  \RuleHead{SOURCE}{First pass}
+  \OpenLine{\textsf{p./sec./fig.}\quad 一条可定位的主张、证据或机制。}
+  \OpenLine{\textsf{?}\quad 一个阻碍理解或可能改变判断的问题。}
+
+  \RuleHead{MY READ}{Current interpretation}
+  \begin{tcolorbox}[openbox,height=1.10in,valign=top]
+    {\small\color{muted}我目前如何理解它？哪一处仍不确定？}
+  \end{tcolorbox}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.26\linewidth}
   \vspace{0pt}
   \RuleHead{OPTIONAL}{AI margin}
   \begin{tcolorbox}[marginbox]
-    \MarginQuestion{clarify}{该判断依赖哪些前提？}
-    \vspace{0.55em}
-    \MarginQuestion{alternate}{是否存在替代解释？}
-    \vspace{0.55em}
-    \MarginQuestion{boundary}{反例或失效条件是什么？}
+    \MarginQuestion{clarify}{隐含前提是什么？}
+    \vspace{0.62em}
+    \MarginQuestion{alternate}{替代解释是什么？}
+    \vspace{0.62em}
+    \MarginQuestion{check}{如何回到来源核验？}
   \end{tcolorbox}
 \end{minipage}
 
-\RuleHead{WORK}{Free space}
+\RuleHead{WORK}{Think on paper}
 
-\begin{tcolorbox}[openbox,height=2.10in,valign=top]
+\begin{tcolorbox}[openbox,height=2.25in,valign=top]
   {\footnotesize\color{muted}
-    quote / evidence / diagram / derivation / mechanism / objection}
+    quote / diagram / derivation / mechanism / objection}
 \end{tcolorbox}
 
-\RuleHead{RETURN}{One place to revisit}
+\RuleHead{RETURN}{Next place to resume}
 \OpenLine{下次从以下位置继续：}
 
 \newpage
@@ -212,7 +200,7 @@
 % =================================================================
 % PAGE 2 -- a raw first read before AI
 % =================================================================
-\PageTitle{ESSAY EXAMPLE / FIRST READ}{建立初步判断}
+\PageTitle{ESSAY EXAMPLE / 01 FIRST PASS}{初读：形成判断}
 \vspace{0.08em}
 \SourceLine
 
@@ -274,7 +262,7 @@
 % =================================================================
 % PAGE 3 -- AI expands the search space without owning the note
 % =================================================================
-\PageTitle{ESSAY EXAMPLE / EXPAND}{展开候选解释}
+\PageTitle{ESSAY EXAMPLE / 02 EXPAND}{扩展：生成候选}
 \vspace{0.08em}
 \SourceLine
 
@@ -341,7 +329,7 @@
 % =================================================================
 % PAGE 4 -- write back only what survived checking
 % =================================================================
-\PageTitle{ESSAY EXAMPLE / WRITE BACK}{核验后的修订}
+\PageTitle{ESSAY EXAMPLE / 03 CHECK}{回源：修订判断}
 \vspace{0.30em}
 \SourceLine
 
@@ -351,95 +339,34 @@
   构造能够随计算扩展的搜索与学习方法。
 \end{tcolorbox}
 
-\RuleHead{REVISE}{My interpretation}
-\begin{tcolorbox}[openbox,fontupper=\small]
-  初读将其概括为“知识与计算的冲突”，区分过粗。
-  更准确的问题是：知识被固化为答案，还是用于设计可持续学习、搜索与吸收反馈的过程？
-\end{tcolorbox}
-
-\RuleHead{LEAVE OPEN}{A present-day transfer}
-\begin{tcolorbox}[openbox,fontupper=\small]
-  对于当代模型与 agent 工作流，哪些结构属于临时脚手架，
-  哪些属于长期接口、安全边界与反馈机制？这是原文未回答的延伸问题。
-\end{tcolorbox}
-
-\RuleHead{MODEL}{A relation worth redrawing}
-\begin{tcolorbox}[marginbox]
-  \centering
-  {\small\sffamily
-    domain knowledge
-    \quad$\longrightarrow$\quad
-    fixed answer \; / \; scalable interface
-    \quad$\longleftarrow$\quad
-    growing computation}
-\end{tcolorbox}
-
-\RuleHead{NEXT}{One question to carry}
-
-{\bfseries\large
-  在当前 AI 工作流中，哪些结构应保持稳定，哪些应随模型能力更新？\par}
-
-\vspace{0.62em}
-{\Tag{AI ROLE}\quad\small
-  AI 提供备选解释；笔记的可信度仍来自原文核验与个人判断修订。}
-
-\newpage
-
-% =================================================================
-% PAGE 5 -- blank continuation page
-% =================================================================
-\PageTitle{CONTINUE / OPEN PAGE}{问题的继续推演}
-
-\vspace{0.18em}
-{\small\color{muted}
-  当单页不足时，复制此页。无需完整总结；仅推进一个对象。}
-
-\RuleHead{CARRY}{Bring one thing forward}
-
-\begin{tcolorbox}[openbox]
-  {\small\color{muted}
-    来源 / 当前问题 / 一个关键对象（原文、数据、公式或机制）}\par
-  \vspace{0.52em}{\color{rule}\hrule height 0.45pt}\vspace{0.62em}
-  {\color{rule}\hrule height 0.45pt}
-\end{tcolorbox}
-
-\vspace{0.28em}
-\begin{minipage}[t]{0.69\linewidth}
-  \vspace{0pt}
-  \RuleHead{DEVELOP}{Think on paper}
-  \begin{tcolorbox}[openbox,height=4.22in,valign=top]
-    {\footnotesize\color{muted}
-      trace \quad / \quad connect \quad / \quad redraw \quad / \quad test}
+\RuleHead{REVISE}{Before / after}
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{0pt}\Tag{before}\par
+  \vspace{0.25em}
+  \begin{tcolorbox}[openbox,height=1.05in,valign=top,fontupper=\small]
+    领域知识改善初始性能，也可能成为可扩展性的约束。
   \end{tcolorbox}
 \end{minipage}\hfill
-\begin{minipage}[t]{0.26\linewidth}
-  \vspace{0pt}
-  \RuleHead{OPTIONAL}{AI branches}
-  \begin{tcolorbox}[marginbox,height=4.22in,valign=top]
-    \MarginQuestion{clarify}{哪一前提尚未显式化？}
-    \vspace{0.68em}
-    \MarginQuestion{oppose}{最强反例或替代解释是什么？}
-    \vspace{0.68em}
-    \MarginQuestion{transfer}{最近的可迁移情境是什么？}
-    \vspace{0.68em}
-    \MarginQuestion{check}{如何通过来源、推导或测试核验？}
-
-    \vfill
-    {\footnotesize\color{muted}
-      AI 生成候选；由读者决定是否写回。}
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{0pt}\Tag{after}\par
+  \vspace{0.25em}
+  \begin{tcolorbox}[openbox,height=1.05in,valign=top,fontupper=\small]
+    更关键的区分不是知识与计算，而是固定答案与可扩展的学习过程。
   \end{tcolorbox}
 \end{minipage}
 
-\RuleHead{WRITE BACK}{One deliberate update}
-
-\begin{tcolorbox}[openbox]
-  \Tag{keep}\quad
-  \Tag{revise}\quad
-  \Tag{leave open}\par
-  \vspace{0.50em}{\color{rule}\hrule height 0.45pt}
+\RuleHead{OPEN}{One question to carry}
+\begin{tcolorbox}[openbox,fontupper=\small]
+  在当前 AI 工作流中，哪些结构应保持稳定，哪些应随模型能力更新？
+  这是从原文延伸出的新问题，而非原文结论。
 \end{tcolorbox}
 
-\RuleHead{RETURN}{The next place to resume}
-\OpenLine{下次从以下位置继续：}
+\vfill
+\RuleHead{AI ROLE}{Expand, then step back}
+\begin{tcolorbox}[marginbox]
+  {\small
+    AI 提供候选解释；最终写回只依据原文核验与个人判断修订。}
+\end{tcolorbox}
+\vspace{0.24in}
 
 \end{document}
