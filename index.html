@@ -439,13 +439,15 @@
         }
 
         const VALID_TABS = ["home", "library", "lab", "tools", "about"];
+        const LEGACY_TAB_ALIASES = { lab: "library" };
 
         function parseLocationRoute() {
           const raw = window.location.hash.replace(/^#\/?/, "");
           if (!raw) return { tab: "home", filePath: "" };
 
           const [tabCandidate, action, encodedPath] = raw.split("/");
-          const tab = VALID_TABS.includes(tabCandidate) ? tabCandidate : "home";
+          const requestedTab = VALID_TABS.includes(tabCandidate) ? tabCandidate : "home";
+          const tab = LEGACY_TAB_ALIASES[requestedTab] || requestedTab;
           const filePath = action === "read" && encodedPath
             ? normalizeContentPath(decodeURIComponent(encodedPath))
             : "";
@@ -807,7 +809,6 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
         const NAV_ITEMS = [
             { id: "library", label: "Library" },
-            { id: "lab", label: "Lab" },
             { id: "tools", label: "Tools" }
         ];
 
@@ -1402,7 +1403,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         );
 
         // --- Library（✅ hover/touch 预取） ---
-        const Library = ({ onRead, data }) => {
+        const Library = ({ onRead, data, lab }) => {
           const [selectedDiscipline, setSelectedDiscipline] = useState(null);
 
           if (!data || !data.disciplines || data.disciplines.length === 0) {
@@ -1453,6 +1454,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                             </SectionPanel>
                         ))}
                     </div>
+                    <Lab data={lab} embedded />
                 </SectionShell>
             );
           }
@@ -1609,11 +1611,12 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         };
 
         // --- Lab ---
-        const Lab = ({ data }) => (
-            <SectionShell>
+        const Lab = ({ data, embedded = false }) => {
+          const content = (
+            <>
                 <SectionHeader
                   eyebrow="Experimental Projects"
-                  title="The Laboratory"
+                  title={embedded ? "Lab" : "The Laboratory"}
                   description="Small builds, visual experiments, and tools that sharpen the workflow."
                   aside={data && data.length > 0 ? `${data.length} active items` : "in progress"}
                 />
@@ -1653,8 +1656,15 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         </SectionPanel>
                     )) : <div className="text-stone-400">No lab projects loaded.</div>}
                 </div>
-            </SectionShell>
-        );
+            </>
+          );
+
+          if (embedded) {
+            return <section className="mt-20 border-t border-stone-200 pt-16">{content}</section>;
+          }
+
+          return <SectionShell>{content}</SectionShell>;
+        };
 
         // --- About ---
         const About = () => (
@@ -1967,8 +1977,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             switch(activeTab) {
               case 'home': return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
-              case 'library': return <Library data={db.library} onRead={openReadingItem} />;
-              case 'lab': return <Lab data={db.lab} />;
+              case 'library': return <Library data={db.library} lab={db.lab} onRead={openReadingItem} />;
               case 'tools': return <Tools data={db.tools} onRead={openReadingItem} />;
               case 'about': return <About />;
               default: return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
