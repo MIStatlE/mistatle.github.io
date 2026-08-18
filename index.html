@@ -438,16 +438,14 @@
           };
         }
 
-        const VALID_TABS = ["home", "library", "lab", "tools", "about"];
-        const LEGACY_TAB_ALIASES = { lab: "library" };
+        const VALID_TABS = ["home", "library", "tools", "about"];
 
         function parseLocationRoute() {
           const raw = window.location.hash.replace(/^#\/?/, "");
           if (!raw) return { tab: "home", filePath: "" };
 
           const [tabCandidate, action, encodedPath] = raw.split("/");
-          const requestedTab = VALID_TABS.includes(tabCandidate) ? tabCandidate : "home";
-          const tab = LEGACY_TAB_ALIASES[requestedTab] || requestedTab;
+          const tab = VALID_TABS.includes(tabCandidate) ? tabCandidate : "home";
           const filePath = action === "read" && encodedPath
             ? normalizeContentPath(decodeURIComponent(encodedPath))
             : "";
@@ -522,10 +520,6 @@
                     "diff": [{ title: "Diffusion Models: Theory to Practice", chapters: [{ title: "Foundations", lessons: [{ id: "diff_01", title: "VAE & ELBO", type: "note", filePath: "public/data/posts/vae_elbo.md" }] }] }]
                 }
             },
-            lab: [
-                { id: "article-reader", language: "REACT", title: "MIStatlE Article Reader", desc: "为长篇技术笔记设计的轻量阅读器：让公式、代码、目录与 PDF 在同一条阅读路径中保持清晰。", link: "https://github.com/MIStatlE/mistatle.github.io", featured: true },
-                { id: "latex-template-system", language: "TEX", title: "LaTeX Template System", desc: "一组服务于不同写作尺度的 LaTeX 模板：从短篇推导到课程讲义与长篇数学写作。", link: "https://github.com/MIStatlE/mistatle.github.io/tree/main/public/data/templates", featured: true }
-            ],
             tools: {
                 general: [],
                 latex: [
@@ -1341,10 +1335,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               Theory, Algorithms<br/>& <span className="italic text-blue-900">Learning Systems</span>.
             </h1>
             <p className="mb-7 max-w-3xl font-serif text-lg leading-relaxed text-stone-600 md:text-xl">
-              从假设出发，理解一个结论为何成立；从机制出发，看见它如何工作；也诚实保留尚未解决的部分。
+              围绕数学、学习理论、强化学习与算法，整理推导、解释和可复用的技术笔记。
             </p>
             <div className="mb-14 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">
-              <span>Structure</span><span className="text-stone-200">/</span><span>Mechanism</span><span className="text-stone-200">/</span><span>Boundary</span>
+              <span>Notes</span><span className="text-stone-200">/</span><span>Derivations</span><span className="text-stone-200">/</span><span>Resources</span>
             </div>
 
             <div className="flex flex-wrap gap-4 md:gap-6 mb-16">
@@ -1407,7 +1401,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         );
 
         // --- Library（✅ hover/touch 预取） ---
-        const Library = ({ onRead, data, lab }) => {
+        const Library = ({ onRead, data }) => {
           const [selectedDiscipline, setSelectedDiscipline] = useState(null);
 
           if (!data || !data.disciplines || data.disciplines.length === 0) {
@@ -1458,7 +1452,6 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                             </SectionPanel>
                         ))}
                     </div>
-                    <Lab data={lab} embedded />
                 </SectionShell>
             );
           }
@@ -1614,111 +1607,48 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             );
         };
 
-        // --- Lab ---
-        const Lab = ({ data, embedded = false }) => {
-          const content = (
-            <>
-                <SectionHeader
-                  eyebrow="Experimental Projects"
-                  title={embedded ? "Lab" : "The Laboratory"}
-                  description="当文字不足以回答问题，就用实验、可视化或小工具继续追问。这里保留能够检验直觉、暴露机制的实现。"
-                  aside={data && data.length > 0 ? `${data.length} active items` : "in progress"}
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {data && data.length > 0 ? data.map((item, idx) => (
-                        <SectionPanel key={item.id} className="flex flex-col group relative overflow-hidden transition-colors duration-300 hover:border-blue-900/25">
-                            <div className="flex items-center justify-between px-6 py-3 border-b border-stone-100 bg-stone-50/80">
-                                <div className="font-mono text-[10px] text-stone-400 uppercase tracking-widest">
-                                    EXP_NO.{String(idx + 1).padStart(2, '0')}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className={`w-2 h-2 rounded-full ${item.featured ? 'bg-blue-600 animate-pulse' : 'bg-stone-300'}`}></div>
-                                    <span className="font-mono text-[10px] font-bold text-stone-600 uppercase">{item.language}</span>
-                                </div>
-                            </div>
-
-                            <div className="p-8 flex-grow flex flex-col">
-                                <h3 className="text-2xl font-serif font-bold text-stone-900 mb-3 group-hover:text-blue-900 transition-colors">
-                                    {item.title}
-                                </h3>
-                                <div className="flex gap-2 mb-6">
-                                    {item.stack && item.stack.map(tech => (
-                                        <span key={tech} className="px-2 py-0.5 bg-stone-100 text-stone-500 text-[10px] font-mono border border-stone-200">{tech}</span>
-                                    ))}
-                                </div>
-                                <p className="text-stone-600 text-sm leading-relaxed mb-8 font-light border-l-2 border-stone-200 pl-4">
-                                    {item.desc}
-                                </p>
-
-                                <div className="mt-auto">
-                                     <ActionButton text="View Project" href={item.link} />
-                                </div>
-                            </div>
-
-                            <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-stone-200 group-hover:border-r-blue-900 transition-colors"></div>
-                        </SectionPanel>
-                    )) : <div className="text-stone-400">No lab projects loaded.</div>}
-                </div>
-            </>
-          );
-
-          if (embedded) {
-            return <section className="mt-20 border-t border-stone-200 pt-16">{content}</section>;
-          }
-
-          return <SectionShell>{content}</SectionShell>;
-        };
-
         // --- About ---
         const About = () => (
-            <SectionShell maxWidth="max-w-4xl" className="flex flex-col justify-center">
+            <SectionShell maxWidth="max-w-5xl" className="flex flex-col justify-center">
                 <SectionHeader
                   eyebrow="About"
-                  title="How I Work"
-                  description="A personal technical site and a record of understanding in progress."
-                  centered={true}
+                  title="MIStatlE"
+                  description="A personal site about mathematics, learning theory, reinforcement learning, and algorithms."
+                  aside="Shanghai"
                 />
 
-                <SectionPanel className="p-10 md:p-14 text-center">
-                    <div className="relative mb-10 inline-flex items-center justify-center">
-                        <div className="absolute inset-0 rounded-full bg-blue-50 blur-2xl opacity-80"></div>
-                        <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-stone-200 bg-stone-50 text-4xl text-stone-800">∞</div>
-                    </div>
-
-                    <div className="max-w-2xl mx-auto">
-                        <p className="text-lg md:text-xl font-serif text-stone-600 leading-relaxed font-light">
-                            我希望这里既严谨，也不假装完整。面对一个问题，我会先追问结论依赖什么结构，再理解证明或算法如何运作，最后说明它在什么条件下成立。已经想清楚的部分尽量写准确；仍然不确定的部分，也保留不确定。
-                        </p>
-
-                        <div className="mt-10 grid gap-4 text-left md:grid-cols-3">
-                            {[
-                              ["Structure", "找到真正承载结论的定义、假设与不变量。"],
-                              ["Mechanism", "不仅说明结果是什么，也解释证明或算法如何到达那里。"],
-                              ["Boundary", "区分已知、推测与未解，并记录结论的适用范围。"]
-                            ].map(([title, copy]) => (
-                              <div key={title} className="rounded-2xl border border-stone-100 bg-stone-50/70 p-5">
-                                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-blue-900">{title}</div>
-                                <p className="text-sm leading-relaxed text-stone-500">{copy}</p>
-                              </div>
-                            ))}
+                <SectionPanel className="overflow-hidden">
+                    <div className="grid md:grid-cols-[1.45fr_0.85fr]">
+                        <div className="p-8 md:p-12">
+                            <p className="text-xl md:text-2xl font-serif text-stone-800 leading-relaxed">
+                                你好，我是 MIStatlE。这里整理我在学习、研究与技术写作中真正读过、推过或做过的内容。
+                            </p>
+                            <div className="mt-8 space-y-5 text-base leading-8 text-stone-600">
+                                <p>
+                                    主题从数学与学习理论出发，也延伸到强化学习、算法与实现。我不会把它写成知识大全；一篇内容通常只回答一个具体问题，并尽量交代必要背景、关键推导和结论边界。
+                                </p>
+                                <p>
+                                    内容会随着理解继续修改。如果某篇笔记对你有帮助，或你发现了错误，欢迎告诉我。
+                                </p>
+                            </div>
                         </div>
 
-                        <p className="mt-10 text-base font-serif text-stone-500">
-                            如果这些内容能帮助你少绕一点路，或更认真地提出一个问题，它就已经有意义。
-                        </p>
-                    </div>
+                        <aside className="border-t border-stone-100 bg-stone-50/70 p-8 md:border-l md:border-t-0 md:p-10">
+                            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-900">Current interests</div>
+                            <ul className="mt-6 space-y-3 font-serif text-base text-stone-700">
+                                <li>Mathematical foundations</li>
+                                <li>Learning theory</li>
+                                <li>Reinforcement learning</li>
+                                <li>Algorithms</li>
+                            </ul>
 
-                    <div className="mt-12 pt-10 border-t border-stone-100">
-                        <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-stone-400 mb-4">Email</div>
-                        <a href="mailto:mistatle@163.com" className="text-2xl md:text-3xl font-serif font-bold text-stone-900 hover:text-blue-900 transition-colors">
-                            mistatle@163.com
-                        </a>
-                    </div>
-
-                    <div className="mt-10 flex justify-center gap-6 text-[10px] font-mono text-stone-300 uppercase tracking-widest">
-                        <span>Shanghai</span>
-                        <span>Est. 2025</span>
+                            <div className="mt-10 border-t border-stone-200 pt-8">
+                                <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-stone-400">Email</div>
+                                <a href="mailto:mistatle@163.com" className="mt-3 inline-block font-serif text-lg font-bold text-stone-900 transition-colors hover:text-blue-900">
+                                    mistatle@163.com
+                                </a>
+                            </div>
+                        </aside>
                     </div>
                 </SectionPanel>
             </SectionShell>
@@ -1933,17 +1863,15 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             Promise.all([
                 safeFetch('public/data/library.json'),
-                safeFetch('public/data/lab.json'),
                 safeFetch('public/data/tools.json'),
                 safeFetch('public/data/latex_templates.json')
-            ]).then(([library, lab, toolsData, latexData]) => {
-                const failedSources = [library, lab, toolsData, latexData]
+            ]).then(([library, toolsData, latexData]) => {
+                const failedSources = [library, toolsData, latexData]
                   .filter(result => !result.ok)
                   .map(result => result.url.replace('public/data/', '').replace('.json', ''));
 
                 setDb(prev => ({
                     library: library.ok ? library.data : prev.library,
-                    lab: lab.ok ? lab.data : prev.lab,
                     tools: {
                         general: toolsData.ok ? toolsData.data : prev.tools.general,
                         latex: latexData.ok ? latexData.data : prev.tools.latex
@@ -1981,7 +1909,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             switch(activeTab) {
               case 'home': return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
-              case 'library': return <Library data={db.library} lab={db.lab} onRead={openReadingItem} />;
+              case 'library': return <Library data={db.library} onRead={openReadingItem} />;
               case 'tools': return <Tools data={db.tools} onRead={openReadingItem} />;
               case 'about': return <About />;
               default: return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
@@ -1994,7 +1922,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               <main id="main-content" className="flex-grow">{renderContent()}</main>
               <footer className="bg-stone-50/90 border-t border-stone-200 py-12 mt-0 text-stone-400 text-xs font-mono">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div>© {new Date().getFullYear()} MIStatlE. Written carefully; revised when understanding changes.</div>
+                    <div>© {new Date().getFullYear()} MIStatlE. Mathematics · Algorithms · Learning.</div>
                     <div className="flex items-center gap-2 uppercase tracking-[0.18em]">
                         <span className={`inline-block h-1.5 w-1.5 rounded-full ${loading ? "bg-blue-600 animate-pulse" : fallbackSources.length > 0 ? "bg-amber-500" : "bg-stone-300"}`}></span>
                         {loading ? (
@@ -2007,7 +1935,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                 Local Fallback · {fallbackSources.length}
                             </span>
                         ) : (
-                            <span>Structure · Mechanism · Boundary</span>
+                            <span>Notes · Derivations · Resources</span>
                         )}
                     </div>
                 </div>
