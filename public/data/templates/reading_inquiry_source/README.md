@@ -1,4 +1,4 @@
-# Reading and Inquiry
+# Problem-Led Reading
 
 The source file paper-reading-brief.tex is a five-page XeLaTeX template for source-aware reading notes.
 
@@ -15,4 +15,3 @@ The blank pages are reusable across papers, reports, book chapters, essays, and 
     xelatex paper-reading-brief.tex
 
 The document uses a 7.5 x 10 inch page and includes Chinese font fallbacks.
-

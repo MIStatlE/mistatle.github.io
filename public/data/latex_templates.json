@@ -1,7 +1,7 @@
 [
   {
     "id": "reading-inquiry",
-    "title": "Reading & Inquiry",
+    "title": "Problem-Led Reading",
     "desc": "先建立初步判断，再由 AI 扩展假设空间，最后只写回经核验的修订。",
     "icon": "notebook-pen",
     "tags": ["Reading Notes", "XeLaTeX", "AI-Assisted"],
@@ -17,17 +17,6 @@
     "link": null
   },
   {
-    "id": "ai-theory-note",
-    "title": "AI-era Theory Note",
-    "desc": "记录判断如何被证据改变：原判断、反证信号、AI 压力测试、人的决定与能力增量。",
-    "icon": "notebook-tabs",
-    "tags": ["Theory Notes", "XeLaTeX", "AI Research"],
-    "filePath": "public/data/templates/ai_growth_note.md",
-    "previewImage": "assets/images/latex-template/ai-growth-note-preview.png",
-    "previewImages": ["assets/images/latex-template/ai-growth-note-preview.png"],
-    "link": null
-  },
-  {
     "id": "short-note",
     "title": "Short Note",
     "desc": "极简模板，融合了小红书卡片美学与 Notion 风格。",
@@ -40,17 +29,6 @@
       "assets/images/latex-template/short-note-preview-2.png",
       "assets/images/latex-template/short-note-preview-3.png"
     ],
-    "link": null
-  },
-  {
-    "id": "xhs-cover-note",
-    "title": "XHS Cover Note",
-    "desc": "面向公开学术笔记和小红书卡片导出的 LaTeX 封面与笔记样式源包。",
-    "icon": "panel-top",
-    "tags": ["LaTeX", "XeLaTeX", "XHS"],
-    "filePath": "public/data/templates/xhs_cover_note.md",
-    "previewImage": null,
-    "previewImages": [],
     "link": null
   },
   {
