@@ -696,15 +696,6 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         );
 
         const PlatformIcon = ({ platform }) => {
-            if (platform === 'bilibili') {
-                return (
-                    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="4" y="6.5" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/>
-                        <path d="M9 4.2 7.4 6M15 4.2 16.6 6M9.2 10.5v3M14.8 10.5v3M9 15.7c1 .65 2 .95 3 .95s2-.3 3-.95" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                );
-            }
-
             if (platform === 'xiaohongshu') {
                 return (
                     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
@@ -1348,7 +1339,6 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
                 <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">ELSEWHERE:</span>
                 <div className="flex gap-4">
-                    <SocialLink platform="bilibili" label="Bilibili" href="https://space.bilibili.com/496530225?spm_id_from=333.1007.0.0" colorClass="group-hover:text-[#00AEEC] group-hover:border-[#00AEEC]" />
                     <SocialLink platform="github" label="GitHub" href="https://github.com/mistatle" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
                     <SocialLink platform="xiaohongshu" label="小红书" href="https://www.xiaohongshu.com/user/profile/64d362e1000000000b0087a6" colorClass="group-hover:text-[#FF2442] group-hover:border-[#FF2442]" />
                     <SocialLink platform="zhihu" label="知乎" href="https://www.zhihu.com/people/kkk-36-70-64" colorClass="group-hover:text-[#0084FF] group-hover:border-[#0084FF]" />
