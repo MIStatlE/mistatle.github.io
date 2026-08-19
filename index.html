@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIStatlE | Theory, Algorithms & Learning Systems</title>
-    <meta name="description" content="A personal technical site for thinking carefully about mathematical structure, algorithmic mechanisms, and learning systems.">
+    <title>MIStatlE | Mathematics, Algorithms & AI</title>
+    <meta name="description" content="MIStatlE is a personal website for mathematics, algorithms, and AI: structure, mechanism, and boundary.">
     <meta name="theme-color" content="#fafaf9">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="https://mistatle.github.io/">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MIStatlE">
-    <meta property="og:title" content="MIStatlE | Theory, Algorithms & Learning Systems">
-    <meta property="og:description" content="Careful notes on mathematical structure, algorithmic mechanisms, and the boundaries of learning systems.">
+    <meta property="og:title" content="MIStatlE | Mathematics, Algorithms & AI">
+    <meta property="og:description" content="A personal website about structure, mechanism, and the boundaries of intelligent systems.">
     <meta property="og:url" content="https://mistatle.github.io/">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="MIStatlE | Theory, Algorithms & Learning Systems">
-    <meta name="twitter:description" content="Careful notes on mathematical structure, algorithmic mechanisms, and the boundaries of learning systems.">
+    <meta property="og:image" content="https://mistatle.github.io/assets/images/og-editorial-v1.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MIStatlE | Mathematics, Algorithms & AI">
+    <meta name="twitter:description" content="A personal website about structure, mechanism, and the boundaries of intelligent systems.">
+    <meta name="twitter:image" content="https://mistatle.github.io/assets/images/og-editorial-v1.png">
     <link rel="icon" type="image/svg+xml" href="assets/icons/mistatle-mark.svg">
 
     <script type="application/ld+json">
@@ -25,7 +27,8 @@
         "@type": "WebSite",
         "name": "MIStatlE",
         "url": "https://mistatle.github.io/",
-        "description": "A personal technical site for thinking carefully about mathematical structure, algorithmic mechanisms, and learning systems.",
+        "description": "A personal website about mathematics, algorithms, and AI.",
+        "image": "https://mistatle.github.io/assets/images/og-editorial-v1.png",
         "inLanguage": ["zh-CN", "en"]
       }
     </script>
@@ -135,6 +138,7 @@
                 transition-duration: 0.01ms !important;
             }
         }
+
     </style>
 </head>
 <body>
@@ -438,14 +442,56 @@
           };
         }
 
-        const VALID_TABS = ["home", "library", "tools", "about"];
+        function getEntryArticlePath(entry) {
+          return normalizeContentPath(entry?.formats?.article?.path || entry?.filePath);
+        }
+
+        function buildCollectionReadingItem(entry, editorial) {
+          if (!entry) return null;
+          const tracks = editorial?.tracks || [];
+          const collections = editorial?.collections || [];
+          const entries = editorial?.entries || [];
+          const track = tracks.find((item) => item.id === entry.trackId);
+          const collection = collections.find((item) => item.id === entry.collectionId);
+          const collectionEntries = entries
+            .filter((item) => item.collectionId === entry.collectionId && hasReadableContent(getEntryArticlePath(item)))
+            .map((item) => ({
+              ...item,
+              readable: true,
+              filePath: getEntryArticlePath(item),
+              chapterTitle: item.kind || "Entry",
+              sourceTab: "writing",
+              trackTitle: track?.titleZh || track?.title || "",
+              trackCode: track?.code || "",
+              collectionTitle: collection?.title || ""
+            }));
+
+          return {
+            ...entry,
+            filePath: getEntryArticlePath(entry),
+            sourceTab: "writing",
+            trackTitle: track?.titleZh || track?.title || "",
+            trackCode: track?.code || "",
+            collectionTitle: collection?.title || "",
+            readingContext: {
+              type: "editorial-collection",
+              disciplineTitle: track?.titleZh || track?.title || "",
+              courseTitle: collection?.title || "",
+              lessons: collectionEntries
+            }
+          };
+        }
+
+        const VALID_TABS = ["home", "writing", "collections", "resources", "about"];
+        const LEGACY_TAB_ALIASES = { collections: "writing" };
 
         function parseLocationRoute() {
           const raw = window.location.hash.replace(/^#\/?/, "");
           if (!raw) return { tab: "home", filePath: "" };
 
           const [tabCandidate, action, encodedPath] = raw.split("/");
-          const tab = VALID_TABS.includes(tabCandidate) ? tabCandidate : "home";
+          const requestedTab = VALID_TABS.includes(tabCandidate) ? tabCandidate : "home";
+          const tab = LEGACY_TAB_ALIASES[requestedTab] || requestedTab;
           const filePath = action === "read" && encodedPath
             ? normalizeContentPath(decodeURIComponent(encodedPath))
             : "";
@@ -465,26 +511,16 @@
           if (!targetPath) return null;
 
           const candidates = [];
-          const disciplines = db?.library?.disciplines || [];
-          const coursesByDiscipline = db?.library?.courses || {};
-
-          disciplines.forEach((discipline) => {
-            (coursesByDiscipline[discipline.id] || []).forEach((course) => {
-              (course.chapters || []).forEach((chapter) => {
-                (chapter.lessons || []).forEach((lesson) => {
-                  if (hasReadableContent(lesson.filePath)) {
-                    candidates.push({
-                      tab: "library",
-                      item: buildLibraryReadingItem(lesson, discipline, course)
-                    });
-                  }
-                });
+          (db?.editorial?.entries || []).forEach((entry) => {
+            if (hasReadableContent(getEntryArticlePath(entry))) {
+              candidates.push({
+                tab: "writing",
+                item: buildCollectionReadingItem(entry, db.editorial)
               });
-            });
+            }
           });
-
           [...(db?.tools?.latex || []), ...(db?.tools?.general || [])].forEach((item) => {
-            if (hasReadableContent(item.filePath)) candidates.push({ tab: "tools", item });
+            if (hasReadableContent(item.filePath)) candidates.push({ tab: "resources", item });
           });
 
           const preferred = candidates.find(({ tab, item }) =>
@@ -500,6 +536,17 @@
 
         // --- 默认回退数据 (Backup Data) ---
         const DEFAULT_DB = {
+            editorial: {
+                positioning: {
+                    eyebrow: "PERSONAL WEBSITE",
+                    title: "Mathematics, Algorithms & AI",
+                    statement: "这里记录数学、算法与 AI 中值得反复理解的问题：结论依赖怎样的结构，方法为何有效，又在什么条件下失效。",
+                    principles: []
+                },
+                tracks: [],
+                collections: [],
+                entries: []
+            },
             library: {
                 disciplines: [
                     { id: "opt", title: "Optimization", icon: "layers", desc: "从凸性与最优性条件出发，理解一阶方法为什么有效。", count: "0 Courses" },
@@ -674,13 +721,13 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         const Logo = () => (
           <div className="flex items-center gap-3 select-none group cursor-pointer">
             <div className="relative w-11 h-11 flex items-center justify-center bg-white border border-stone-200 shadow-sm rounded-xl group-hover:shadow-md transition-all duration-300 overflow-hidden">
-                <svg width="44" height="44" viewBox="0 0 44 44" className="opacity-95">
-                    <rect x="5.5" y="5.5" width="33" height="33" rx="10" fill="#FCFCFB" stroke="#D6D3D1" />
-                    <path d="M22 11.2V33.2" stroke="#D6D3D1" strokeWidth="1.2" strokeLinecap="round" />
-                    <path d="M12.2 30.8C15 29.8 17.4 27.9 19.2 25.25C21 22.6 22.35 20.45 24.1 18.75C25.85 17.05 28.05 15.4 32.4 12.55" stroke="#1E3A8A" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-blue-700 transition-colors duration-500" />
-                    <circle cx="12.25" cy="30.85" r="3" fill="#1C1917" className="group-hover:fill-stone-900 transition-colors duration-500" />
-                    <circle cx="32.45" cy="12.7" r="3" fill="#FCFCFB" stroke="#B67A2D" strokeWidth="1.8" className="group-hover:stroke-amber-600 transition-colors duration-500" />
-                    <circle cx="21.8" cy="21.8" r="1.25" fill="#2F5E58" className="group-hover:fill-teal-700 transition-colors duration-500" />
+                <svg width="44" height="44" viewBox="0 0 64 64" className="opacity-95" aria-hidden="true">
+                    <rect x="6.5" y="6.5" width="51" height="51" rx="16" fill="#FCFCFB" stroke="#D6D3D1" />
+                    <path d="M16 32H48" stroke="#A8A29E" strokeWidth="1.6" strokeLinecap="round" />
+                    <path d="M44.5 14.5C37 13.3 33.2 16.4 32.4 22.2L29.7 41.8C28.9 47.6 25.2 50.7 17.5 49.5" stroke="#1E3A8A" strokeWidth="3.6" fill="none" strokeLinecap="round" className="group-hover:stroke-blue-700 transition-colors duration-500" />
+                    <circle cx="16" cy="32" r="3.8" fill="#1C1917" />
+                    <circle cx="48" cy="32" r="3.8" fill="#FCFCFB" stroke="#1E3A8A" strokeWidth="2.2" className="group-hover:stroke-blue-700 transition-colors duration-500" />
+                    <rect x="28.8" y="29.3" width="5.4" height="5.4" rx="1.1" transform="rotate(45 28.8 29.3)" fill="#FCFCFB" stroke="#1C1917" strokeWidth="1.6" />
                 </svg>
             </div>
             <div className="flex flex-col justify-center">
@@ -719,6 +766,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         <path d="m10.2 14.95 4.65-2.95-4.65-2.95v5.9Z" fill="currentColor"/>
                     </svg>
                 );
+            }
+
+            if (platform === 'douyin') {
+                return <Icon name="music-2" size={20} strokeWidth={1.8} />;
             }
 
             if (platform === 'github') {
@@ -793,8 +844,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         };
 
         const NAV_ITEMS = [
-            { id: "library", label: "Library" },
-            { id: "tools", label: "Tools" }
+            { id: "writing", label: "Writing" },
+            { id: "resources", label: "Resources" }
         ];
 
         // --- 导航栏 (Navbar) ---
@@ -1082,7 +1133,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               return () => { cancelled = true; };
             }, [state.content, state.loading, state.error, state.needsCode, state.needsMath]);
 
-            const courseIndex = item?.readingContext?.type === "library-course" ? item.readingContext : null;
+            const courseIndex = ["library-course", "editorial-collection"].includes(item?.readingContext?.type) ? item.readingContext : null;
+            const isEditorialCollection = item?.readingContext?.type === "editorial-collection";
+            const contextLabel = isEditorialCollection ? "Collection" : "Course Index";
             const currentPath = normalizeContentPath(item?.filePath);
             const currentLessonIndex = courseIndex
               ? courseIndex.lessons.findIndex((lesson) => lesson.filePath === currentPath || lesson.id === item?.id)
@@ -1139,6 +1192,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                             <span className="text-blue-900 font-bold">{Array.isArray(state.frontmatter.categories) ? state.frontmatter.categories[0] : state.frontmatter.categories}</span>
                                         )}
                                         {state.frontmatter?.date && <span>• {state.frontmatter.date}</span>}
+                                        {item?.trackTitle && <span>• {item.trackTitle}</span>}
                                         {courseIndex?.courseTitle && <span>• {courseIndex.courseTitle}</span>}
                                     </div>
 
@@ -1158,6 +1212,23 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                                 <span key={i} className="px-2 py-1 bg-stone-100 text-stone-500 text-[10px] font-mono uppercase rounded border border-stone-200">
                                                     #{tag}
                                                 </span>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {item?.formats && Object.entries(item.formats).some(([key, format]) => key !== "article" && (format?.path || format?.url)) && (
+                                        <div className="mt-7 flex flex-wrap items-center gap-2 border-t border-stone-100 pt-5">
+                                            <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">Also available</span>
+                                            {Object.entries(item.formats).filter(([key, format]) => key !== "article" && (format?.path || format?.url)).map(([key, format]) => (
+                                                <a
+                                                  key={key}
+                                                  href={format.path || format.url}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-600 transition-colors hover:border-blue-900 hover:text-blue-900"
+                                                >
+                                                    {format.label || key} <Icon name="external-link" size={12} />
+                                                </a>
                                             ))}
                                         </div>
                                     )}
@@ -1185,7 +1256,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                                         {courseIndex && (
                                             <div className={`${indexCardClass} p-4`}>
-                                                <p className={`${indexLabelClass} mb-2`}>Course Index</p>
+                                                <p className={`${indexLabelClass} mb-2`}>{contextLabel}</p>
                                                 <h3 className="font-serif text-lg text-stone-900 mb-3">{courseIndex.courseTitle}</h3>
                                                 <div className="space-y-2.5">
                                                     {courseIndex.lessons.map((lesson) => {
@@ -1223,7 +1294,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                           disabled={!previousLesson?.readable}
                                           className={`rounded-xl border p-4 text-left transition-colors ${previousLesson?.readable ? "border-stone-200 hover:border-stone-400 hover:bg-stone-50" : "border-stone-100 text-stone-300 cursor-not-allowed"}`}
                                         >
-                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">Previous Note</div>
+                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">{isEditorialCollection ? "Previous Entry" : "Previous Note"}</div>
                                             <div className="font-serif text-lg text-stone-900">{previousLesson?.title || "None"}</div>
                                         </button>
                                         <button
@@ -1232,7 +1303,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                           disabled={!nextLesson?.readable}
                                           className={`rounded-xl border p-4 text-left transition-colors ${nextLesson?.readable ? "border-stone-200 hover:border-stone-400 hover:bg-stone-50" : "border-stone-100 text-stone-300 cursor-not-allowed"}`}
                                         >
-                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">Next Note</div>
+                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">{isEditorialCollection ? "Next Entry" : "Next Note"}</div>
                                             <div className="font-serif text-lg text-stone-900">{nextLesson?.title || "None"}</div>
                                         </button>
                                     </div>
@@ -1262,7 +1333,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                                         {courseIndex && (
                                             <div className={`${indexCardClass} p-4`}>
-                                                <p className={`${indexLabelClass} mb-2`}>Course Index</p>
+                                                <p className={`${indexLabelClass} mb-2`}>{contextLabel}</p>
                                                 <h3 className="font-serif text-lg text-stone-900 mb-3">{courseIndex.courseTitle}</h3>
                                                 <div className="space-y-2.5">
                                                     {courseIndex.lessons.map((lesson) => {
@@ -1292,53 +1363,40 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             );
         };
 
-        const FEATURED_ITEMS = [
-          {
-            id: "featured-policy-gradient",
-            sourceTab: "library",
-            eyebrow: "Theory Note",
-            title: "Policy Gradient 的优化视角",
-            desc: "从性能目标、策略梯度定理到随机优化中的方差与步长，建立一条连续、可核验的推导主线。",
-            filePath: "public/data/library/rl/policy-gradient-optimization.md"
-          },
-          {
-            id: "featured-short-note",
-            sourceTab: "tools",
-            eyebrow: "Writing Template",
-            title: "Short Note",
-            desc: "一个克制的 LaTeX 模板，让结构、公式与留白共同服务于阅读。",
-            filePath: "public/data/templates/short_note.md"
-          }
-        ];
+        const FEATURED_ENTRY_IDS = ["typical-set", "policy-gradient-optimization", "leworldmodel-sigreg"];
 
         // --- Hero ---
-        const Hero = ({ setActiveTab }) => (
+        const Hero = ({ setActiveTab, positioning }) => (
           <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[78vh] relative">
-            <div className="absolute right-0 top-20 opacity-[0.035] pointer-events-none select-none font-serif text-9xl text-blue-900 hidden md:block">∫</div>
-            <div className="absolute left-10 bottom-20 opacity-[0.035] pointer-events-none select-none font-serif text-9xl text-stone-900 hidden md:block">∑</div>
+            <div className="absolute right-4 top-16 opacity-[0.045] pointer-events-none select-none font-serif text-[11rem] text-blue-900 hidden md:block">∂</div>
+            <div className="absolute left-10 bottom-24 opacity-[0.045] pointer-events-none select-none font-serif text-[10rem] text-stone-900 hidden md:block">λ</div>
 
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 text-stone-500 text-xs font-mono mb-9 w-fit self-start">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-900"></span>
-              <span className="tracking-[0.16em]">PERSONAL TECHNICAL SITE</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 shadow-sm text-stone-500 text-xs font-mono mb-8 w-fit self-start">
+              <span className="w-2 h-2 rounded-full bg-blue-900"></span>
+              <span className="tracking-[0.18em]">{positioning?.eyebrow || "PERSONAL WEBSITE"}</span>
             </div>
 
-            <h1 className="max-w-5xl text-5xl md:text-8xl font-bold text-stone-900 leading-[1.05] mb-9 font-serif tracking-tight">
-              Theory, Algorithms<br/>& <span className="italic text-blue-900">Learning Systems</span>.
+            <h1 className="max-w-5xl text-5xl md:text-8xl font-bold text-stone-900 leading-[1.05] mb-8 font-serif tracking-tight">
+              Mathematics,<br/>
+              <span className="text-stone-300">Algorithms</span> & <span className="italic text-blue-900">AI</span>.
             </h1>
-            <p className="mb-7 max-w-3xl font-serif text-lg leading-relaxed text-stone-600 md:text-xl">
-              围绕数学、学习理论、强化学习与算法，整理推导、解释和可复用的技术笔记。
+            <p className="max-w-3xl text-lg md:text-2xl text-stone-600 leading-relaxed mb-6">
+              {positioning?.statement || "这里记录数学、算法与 AI 中值得反复理解的问题：结论依赖怎样的结构，方法为何有效，又在什么条件下失效。"}
             </p>
             <div className="mb-14 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">
-              <span>Notes</span><span className="text-stone-200">/</span><span>Derivations</span><span className="text-stone-200">/</span><span>Resources</span>
+              <span>Structure</span><span className="text-stone-200">/</span><span>Mechanism</span><span className="text-stone-200">/</span><span>Boundary</span>
             </div>
 
             <div className="flex flex-wrap gap-4 md:gap-6 mb-16">
-              <button onClick={() => setActiveTab('library')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE LIBRARY <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
+              <button onClick={() => setActiveTab('writing')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE WRITING <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
+              <button onClick={() => setActiveTab('resources')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">RESOURCES</button>
             </div>
 
             <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
                 <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">ELSEWHERE:</span>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
+                    <SocialLink platform="youtube" label="YouTube" href="https://www.youtube.com/@ZICHENGLYU-h8y" colorClass="group-hover:text-[#FF0033] group-hover:border-[#FF0033]" />
+                    <SocialLink platform="douyin" label="抖音" colorClass="group-hover:text-stone-900 group-hover:border-stone-900" />
                     <SocialLink platform="github" label="GitHub" href="https://github.com/mistatle" colorClass="group-hover:text-[#333] group-hover:border-[#333]" />
                     <SocialLink platform="xiaohongshu" label="小红书" href="https://www.xiaohongshu.com/user/profile/64d362e1000000000b0087a6" colorClass="group-hover:text-[#FF2442] group-hover:border-[#FF2442]" />
                     <SocialLink platform="zhihu" label="知乎" href="https://www.zhihu.com/people/kkk-36-70-64" colorClass="group-hover:text-[#0084FF] group-hover:border-[#0084FF]" />
@@ -1353,42 +1411,426 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           </div>
         );
 
-        const Home = ({ setActiveTab, onRead }) => (
-          <>
-            <Hero setActiveTab={setActiveTab} />
-            <SectionShell className="min-h-0 pt-10 md:pt-14">
+        const Home = ({ setActiveTab, onRead, editorial }) => {
+          const positioning = editorial?.positioning || {};
+          const tracks = editorial?.tracks || [];
+          const featured = FEATURED_ENTRY_IDS
+            .map((id) => (editorial?.issues || []).find((issue) => issue.id === id))
+            .filter(Boolean)
+            .map((issue) => buildEditorialReadingItem(issue, editorial));
+
+          return (
+            <>
+              <Hero setActiveTab={setActiveTab} positioning={positioning} />
+
+              <section className="bg-stone-900 text-white">
+                <div className="max-w-6xl mx-auto px-6 py-14 md:py-18 grid gap-8 md:grid-cols-3">
+                  {(positioning.principles || []).map((principle, index) => (
+                    <div key={principle.label} className={`md:px-8 ${index > 0 ? "md:border-l md:border-white/10" : ""}`}>
+                      <div className="mb-4 font-mono text-[10px] uppercase tracking-[0.26em] text-blue-300">{principle.label}</div>
+                      <h2 className="mb-3 text-2xl font-serif font-bold">{principle.title}</h2>
+                      <p className="text-sm leading-relaxed text-stone-400">{principle.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <SectionShell className="min-h-0">
+                <SectionHeader
+                  eyebrow="Editorial Tracks"
+                  title="Three enduring questions"
+                  description="不按零散学科堆放内容，而是沿着数学结构、算法过程与学习系统三条主线持续推进。"
+                  aside="one primary track per issue"
+                />
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  {tracks.map((track, index) => (
+                    <SectionPanel key={track.id} className="group flex min-h-[22rem] flex-col p-8 transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25">
+                      <div className="mb-10 flex items-center justify-between">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-200 bg-stone-50 text-blue-900">
+                          <Icon name={track.icon || "circle"} size={20} />
+                        </div>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-stone-300">0{index + 1} / {track.code}</span>
+                      </div>
+                      <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-blue-900">{track.title}</div>
+                      <h2 className="mb-5 text-3xl font-serif font-bold text-stone-900">{track.titleZh}</h2>
+                      <p className="mb-5 font-serif text-lg italic leading-relaxed text-stone-600">{track.question}</p>
+                      <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{track.desc}</p>
+                      <button type="button" onClick={() => setActiveTab("issues")} className="border-t border-stone-100 pt-4 text-left font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors group-hover:text-blue-900">
+                        Explore track <span className="ml-2">→</span>
+                      </button>
+                    </SectionPanel>
+                  ))}
+                </div>
+              </SectionShell>
+
+              {featured.length > 0 && (
+                <SectionShell className="min-h-0 pt-6 md:pt-10">
+                  <SectionHeader
+                    eyebrow="Start Here"
+                    title="Selected Writing"
+                    description="三个入口分别展示数学结构、算法机制与学习系统的写作方式。"
+                    aside="curated, not exhaustive"
+                  />
+
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    {featured.map((item) => (
+                      <SectionPanel
+                        key={item.id}
+                        onClick={() => onRead(item)}
+                        onKeyDown={(event) => handleKeyboardActivation(event, () => onRead(item))}
+                        role="button"
+                        tabIndex={0}
+                        className="group flex min-h-[19rem] cursor-pointer flex-col p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+                      >
+                        <div className="mb-9 flex items-center justify-between">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-900">{item.number} · {item.kind}</span>
+                          <span className="font-serif text-sm italic text-stone-300">{item.trackCode}</span>
+                        </div>
+                        <h2 className="mb-4 text-2xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{item.title}</h2>
+                        <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{item.desc}</p>
+                        <div className="border-t border-stone-100 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors group-hover:text-blue-900">
+                          Read <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </div>
+                      </SectionPanel>
+                    ))}
+                  </div>
+                </SectionShell>
+              )}
+            </>
+          );
+        };
+
+        const Issues = ({ editorial, onRead }) => {
+          const tracks = editorial?.tracks || [];
+          const issues = editorial?.issues || [];
+          const series = editorial?.series || [];
+          const [activeTrack, setActiveTrack] = useState("all");
+          const visibleIssues = activeTrack === "all" ? issues : issues.filter((issue) => issue.trackId === activeTrack);
+
+          return (
+            <SectionShell maxWidth="max-w-6xl">
               <SectionHeader
-                eyebrow="Start Here"
-                title="Selected Work"
-                description="少量经过完整推导或反复使用的内容。它们仍可被检查、修订，并在新的问题中复用。"
-                aside="a small, considered selection"
+                eyebrow="Canonical Writing"
+                title="Issues"
+                description="每一期只解决一个明确问题，并标明它所属的主线、系列与后续方向。"
+                aside={`${issues.length} published issues`}
               />
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {FEATURED_ITEMS.map((item, index) => (
-                  <SectionPanel
-                    key={item.id}
-                    onClick={() => onRead(item)}
-                    onKeyDown={(event) => handleKeyboardActivation(event, () => onRead(item))}
-                    role="button"
-                    tabIndex={0}
-                    className="group flex min-h-[19rem] cursor-pointer flex-col p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+              <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label="Filter issues by editorial track">
+                {[{ id: "all", titleZh: "全部", code: "ALL" }, ...tracks].map((track) => (
+                  <button
+                    key={track.id}
+                    type="button"
+                    onClick={() => setActiveTrack(track.id)}
+                    aria-pressed={activeTrack === track.id}
+                    className={`rounded-full border px-4 py-2 text-[11px] font-mono uppercase tracking-[0.16em] transition-colors ${activeTrack === track.id ? "border-stone-900 bg-stone-900 text-white" : "border-stone-200 bg-white text-stone-500 hover:border-stone-400 hover:text-stone-900"}`}
                   >
-                    <div className="mb-10 flex items-center justify-between">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-900">{item.eyebrow}</span>
-                      <span className="font-serif text-sm italic text-stone-300">0{index + 1}</span>
-                    </div>
-                    <h2 className="mb-4 text-2xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{item.title}</h2>
-                    <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{item.desc}</p>
-                    <div className="border-t border-stone-100 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors group-hover:text-blue-900">
-                      Open <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
-                    </div>
-                  </SectionPanel>
+                    {track.code} · {track.titleZh}
+                  </button>
                 ))}
               </div>
+
+              <SectionPanel className="overflow-hidden">
+                {visibleIssues.map((issue, index) => {
+                  const track = tracks.find((entry) => entry.id === issue.trackId);
+                  const issueSeries = series.find((entry) => entry.id === issue.seriesId);
+                  const readingItem = buildEditorialReadingItem(issue, editorial);
+                  return (
+                    <article
+                      key={issue.id}
+                      onMouseEnter={() => prefetchArticle(issue.filePath)}
+                      onTouchStart={() => prefetchArticle(issue.filePath)}
+                      onClick={() => onRead(readingItem)}
+                      onKeyDown={(event) => handleKeyboardActivation(event, () => onRead(readingItem))}
+                      role="button"
+                      tabIndex={0}
+                      className={`group grid cursor-pointer gap-6 px-7 py-8 transition-colors hover:bg-stone-50/80 md:grid-cols-[8rem_minmax(0,1fr)_12rem] md:items-start md:px-10 ${index > 0 ? "border-t border-stone-100" : ""}`}
+                    >
+                      <div>
+                        <div className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-blue-900">{issue.number}</div>
+                        <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-400">{issue.kind}</div>
+                      </div>
+                      <div>
+                        <h2 className="mb-3 text-2xl md:text-3xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{issue.title}</h2>
+                        <p className="max-w-2xl text-sm md:text-base leading-relaxed text-stone-500">{issue.desc}</p>
+                      </div>
+                      <div className="md:text-right">
+                        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-stone-400">{track?.titleZh}</div>
+                        <div className="mt-2 text-sm font-serif text-stone-600">{issueSeries?.title}</div>
+                        <div className="mt-5 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-300 transition-colors group-hover:text-blue-900">Read issue →</div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </SectionPanel>
             </SectionShell>
-          </>
-        );
+          );
+        };
+
+        const Maps = ({ editorial, onRead }) => {
+          const tracks = editorial?.tracks || [];
+          const issues = editorial?.issues || [];
+          const seriesList = editorial?.series || [];
+
+          return (
+            <SectionShell maxWidth="max-w-6xl">
+              <SectionHeader
+                eyebrow="Connected Reading"
+                title="Maps"
+                description="Series 不是文件夹，而是一组持续推进的问题。已发布内容与下一步被放在同一张地图里。"
+                aside={`${seriesList.length} active series`}
+              />
+
+              <div className="space-y-7">
+                {seriesList.map((series, mapIndex) => {
+                  const track = tracks.find((entry) => entry.id === series.trackId);
+                  const published = (series.issueIds || [])
+                    .map((id) => issues.find((issue) => issue.id === id))
+                    .filter(Boolean);
+                  return (
+                    <SectionPanel key={series.id} className="overflow-hidden">
+                      <div className="grid gap-8 border-b border-stone-100 bg-stone-50/65 p-7 md:grid-cols-[9rem_minmax(0,1fr)] md:p-10">
+                        <div>
+                          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-blue-900">MAP {String(mapIndex + 1).padStart(2, "0")}</div>
+                          <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-400">{track?.code} · {track?.titleZh}</div>
+                        </div>
+                        <div>
+                          <h2 className="text-3xl font-serif font-bold text-stone-900">{series.title}</h2>
+                          <p className="mt-3 font-serif text-lg italic text-stone-600">{series.question}</p>
+                          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-stone-500">{series.desc}</p>
+                        </div>
+                      </div>
+
+                      <div className="p-7 md:p-10">
+                        <div className="relative space-y-3 before:absolute before:bottom-4 before:left-[0.8rem] before:top-4 before:w-px before:bg-stone-200">
+                          {published.map((issue) => {
+                            const readingItem = buildEditorialReadingItem(issue, editorial);
+                            return (
+                              <button
+                                key={issue.id}
+                                type="button"
+                                onClick={() => onRead(readingItem)}
+                                onMouseEnter={() => prefetchArticle(issue.filePath)}
+                                className="group relative grid w-full gap-3 rounded-xl border border-stone-100 bg-white p-4 pl-11 text-left transition-colors hover:border-blue-900/25 hover:bg-blue-50/30 md:grid-cols-[7rem_minmax(0,1fr)_auto] md:items-center"
+                              >
+                                <span className="absolute left-[0.46rem] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-white bg-blue-900 shadow-sm"></span>
+                                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-blue-900">{issue.number}</span>
+                                <span className="font-serif text-lg font-bold text-stone-800 group-hover:text-blue-900">{issue.title}</span>
+                                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-300 group-hover:text-blue-900">Published →</span>
+                              </button>
+                            );
+                          })}
+                          {(series.planned || []).map((title, index) => (
+                            <div key={title} className="relative grid gap-3 rounded-xl border border-dashed border-stone-200 bg-stone-50/60 p-4 pl-11 md:grid-cols-[7rem_minmax(0,1fr)_auto] md:items-center">
+                              <span className="absolute left-[0.55rem] top-1/2 h-2.5 w-2.5 -translate-y-1/2 rounded-full border border-stone-300 bg-stone-50"></span>
+                              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-stone-300">NEXT {String(index + 1).padStart(2, "0")}</span>
+                              <span className="font-serif text-base text-stone-500">{title}</span>
+                              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-300">Planned</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </SectionPanel>
+                  );
+                })}
+              </div>
+            </SectionShell>
+          );
+        };
+
+        const Collections = ({ editorial, onRead, embedded = false }) => {
+          const tracks = editorial?.tracks || [];
+          const collections = editorial?.collections || [];
+          const entries = editorial?.entries || [];
+          const [selectedCollectionId, setSelectedCollectionId] = useState(null);
+
+          const renderFormatAction = (entry, formatKey, format) => {
+            if (!format) return null;
+            const label = format.label || formatKey;
+            if (formatKey === "article" && format.path) {
+              const readingItem = buildCollectionReadingItem(entry, editorial);
+              return (
+                <button
+                  key={formatKey}
+                  type="button"
+                  onClick={() => onRead(readingItem)}
+                  onMouseEnter={() => prefetchArticle(format.path)}
+                  onTouchStart={() => prefetchArticle(format.path)}
+                  className="inline-flex items-center gap-2 rounded-full bg-stone-900 px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-blue-900"
+                >
+                  <Icon name="book-open" size={13} /> {label}
+                </button>
+              );
+            }
+
+            const href = format.path || format.url;
+            if (!href) return null;
+            return (
+              <a
+                key={formatKey}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-600 transition-colors hover:border-blue-900 hover:text-blue-900"
+              >
+                <Icon name={formatKey === "video" ? "play" : "file-text"} size={13} /> {label}
+              </a>
+            );
+          };
+
+          const getPublishedEntries = (collection) => (collection?.entryIds || [])
+            .map((id) => entries.find((entry) => entry.id === id))
+            .filter(Boolean);
+          const trackIcons = { foundations: "sigma", algorithms: "workflow", systems: "network" };
+          const selectedCollection = collections.find((collection) => collection.id === selectedCollectionId);
+
+          if (!selectedCollection) {
+            return (
+              <SectionShell maxWidth="max-w-6xl" className={embedded ? "min-h-0" : ""}>
+                <SectionHeader
+                  eyebrow="Topics"
+                  title="专题"
+                  description="围绕概率与信息、策略优化、生成模型与世界模型展开的系列内容。"
+                  aside={`${collections.length} topics · ${entries.length} notes`}
+                />
+
+                <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
+                  {collections.map((collection) => {
+                    const track = tracks.find((item) => item.id === collection.trackId);
+                    const published = getPublishedEntries(collection);
+                    const formatTypes = [...new Set(published.flatMap((entry) => Object.keys(entry.formats || {})))];
+                    return (
+                      <SectionPanel
+                        key={collection.id}
+                        onClick={() => setSelectedCollectionId(collection.id)}
+                        onKeyDown={(event) => handleKeyboardActivation(event, () => setSelectedCollectionId(collection.id))}
+                        role="button"
+                        tabIndex={0}
+                        className="group relative flex min-h-[23rem] cursor-pointer flex-col overflow-hidden p-8 text-left transition-all hover:-translate-y-1 hover:border-blue-900/30 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+                      >
+                        <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-stone-50 transition-transform duration-700 group-hover:scale-[1.55] group-hover:bg-blue-50/80"></div>
+                        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-blue-200 via-stone-200 to-transparent"></div>
+                        <div className="relative z-10 flex h-full flex-col">
+                          <div className="mb-8 flex items-center justify-between">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-stone-100 text-stone-600 transition-all duration-500 group-hover:scale-105 group-hover:bg-blue-900 group-hover:text-white">
+                              <Icon name={trackIcons[collection.trackId] || "layers"} size={23} />
+                            </div>
+                            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-stone-400">{track?.code} · {track?.titleZh}</span>
+                          </div>
+                          <h2 className="mb-4 text-3xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{collection.title}</h2>
+                          <p className="mb-4 font-serif text-lg italic leading-relaxed text-stone-600">{collection.question}</p>
+                          <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{collection.desc}</p>
+                          <div className="flex items-center border-t border-stone-100 pt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-400">
+                            <Icon name="book-open" size={13} className="mr-2" />
+                            <span>{published.length} {published.length === 1 ? "entry" : "entries"}</span>
+                            {formatTypes.length > 0 && <span className="ml-3 text-stone-300">{formatTypes.join(" · ")}</span>}
+                            <span className="ml-auto text-blue-900/70 transition-transform group-hover:translate-x-1">→</span>
+                          </div>
+                        </div>
+                      </SectionPanel>
+                    );
+                  })}
+                </div>
+              </SectionShell>
+            );
+          }
+
+          const selectedTrack = tracks.find((item) => item.id === selectedCollection.trackId);
+          const published = getPublishedEntries(selectedCollection);
+          return (
+            <SectionShell maxWidth="max-w-6xl" className={embedded ? "min-h-0" : ""}>
+              <SectionBackButton label="Back to Writing" onClick={() => setSelectedCollectionId(null)} />
+              <SectionHeader
+                eyebrow={`${selectedTrack?.code || ""} · ${selectedTrack?.titleZh || "Collection"}`}
+                title={selectedCollection.title}
+                description={selectedCollection.question}
+                aside={`${published.length} ${published.length === 1 ? "entry" : "entries"}`}
+                className="mt-8"
+              />
+
+              <SectionPanel className="overflow-hidden">
+                <div className="border-b border-stone-100 bg-stone-50/65 px-7 py-6 md:px-10">
+                  <p className="max-w-3xl text-sm leading-relaxed text-stone-500">{selectedCollection.desc}</p>
+                </div>
+                <div className="divide-y divide-stone-100">
+                  {published.map((entry) => (
+                    <article key={entry.id} className="grid gap-5 px-7 py-7 md:grid-cols-[8rem_minmax(0,1fr)_auto] md:items-center md:px-10">
+                      <div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-blue-900">{entry.kind}</div>
+                        <div className="mt-2 font-serif text-sm italic text-stone-400">{entry.date}</div>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-serif font-bold leading-snug text-stone-900 md:text-2xl">{entry.title}</h3>
+                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-stone-500">{entry.desc}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2 md:max-w-[13rem] md:justify-end">
+                        {Object.entries(entry.formats || {}).map(([formatKey, format]) => renderFormatAction(entry, formatKey, format))}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </SectionPanel>
+
+            </SectionShell>
+          );
+        };
+
+        const HomeV2 = ({ setActiveTab, onRead, editorial }) => {
+          const positioning = editorial?.positioning || {};
+          const featured = FEATURED_ENTRY_IDS
+            .map((id) => (editorial?.entries || []).find((entry) => entry.id === id))
+            .filter(Boolean)
+            .map((entry) => buildCollectionReadingItem(entry, editorial));
+          return (
+            <>
+              <Hero setActiveTab={setActiveTab} positioning={positioning} />
+              {featured.length > 0 && (
+                <SectionShell className="min-h-0 pb-10 pt-14 md:pb-16 md:pt-20">
+                  <SectionHeader
+                    eyebrow="Writing"
+                    title="近期写作"
+                    description="关于高维概率、策略优化与表示学习。"
+                  />
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    {featured.map((item) => (
+                      <SectionPanel
+                        key={item.id}
+                        onClick={() => onRead(item)}
+                        onKeyDown={(event) => handleKeyboardActivation(event, () => onRead(item))}
+                        role="button"
+                        tabIndex={0}
+                        className="group flex min-h-[19rem] cursor-pointer flex-col p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-900/25 hover:shadow-[0_26px_60px_rgba(30,58,138,0.09)]"
+                      >
+                        <div className="mb-9 flex items-center justify-between">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-900">{item.kind}</span>
+                          <span className="font-serif text-sm italic text-stone-300">{item.trackCode}</span>
+                        </div>
+                        <h2 className="mb-4 text-2xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{item.title}</h2>
+                        <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{item.desc}</p>
+                        <div className="border-t border-stone-100 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors group-hover:text-blue-900">
+                          Read <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </div>
+                      </SectionPanel>
+                    ))}
+                  </div>
+                </SectionShell>
+              )}
+              <section className="bg-stone-900 text-white">
+                <div className="max-w-6xl mx-auto px-6 py-14 md:py-18 grid gap-8 md:grid-cols-3">
+                  {(positioning.principles || []).map((principle, index) => (
+                    <div key={principle.label} className={`md:px-8 ${index > 0 ? "md:border-l md:border-white/10" : ""}`}>
+                      <div className="mb-4 font-mono text-[10px] uppercase tracking-[0.26em] text-blue-300">{principle.label}</div>
+                      <h2 className="mb-3 text-2xl font-serif font-bold">{principle.title}</h2>
+                      <p className="text-sm leading-relaxed text-stone-400">{principle.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+              <Collections editorial={editorial} onRead={onRead} embedded />
+            </>
+          );
+        };
 
         // --- Library（✅ hover/touch 预取） ---
         const Library = ({ onRead, data }) => {
@@ -1692,7 +2134,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
         // --- Tools（✅ hover/touch 预取） ---
         const Tools = ({ data, onRead }) => {
-            const generalTools = data.general || data || [];
+            const generalTools = [
+              ...(data.general || []),
+              ...(data.lab || []).map((item) => ({ ...item, tags: item.tags || (item.language ? [item.language] : []) }))
+            ];
             const latexTemplates = data.latex || [];
 
             const ToolCard = ({ item }) => {
@@ -1770,10 +2215,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return (
                 <SectionShell>
                     <SectionHeader
-                      eyebrow="Tools & Templates"
-                      title="Resources"
-                      description="把反复使用的写作方法整理成模板。它们不替代思考，只减少表达与排版的摩擦。"
-                      aside={`${latexTemplates.length} templates`}
+                      eyebrow="Resources"
+                      title="模板、代码与工具"
+                      description="可以直接阅读、下载或复用的 LaTeX 模板、代码、PDF 与小型工具。"
+                      aside={`${latexTemplates.length + generalTools.length} resources`}
                     />
 
                     <div className="mb-20">
@@ -1784,13 +2229,13 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {latexTemplates.length > 0 ? latexTemplates.map(t => (
                                 <ToolCard key={t.id} item={t} />
-                            )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">No templates loaded. Check latex_templates.json</div>}
+                            )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">资源正在整理中。</div>}
                         </div>
                     </div>
 
                     {generalTools.length > 0 && <div>
                         <div className="flex items-center gap-3 mb-8">
-                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">Reference Utilities</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">Code & Utilities</span>
                             <div className="h-px flex-1 bg-stone-200"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1808,8 +2253,6 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           const [activeTab, setActiveTab] = useState(() => parseLocationRoute().tab);
           const [readingItem, setReadingItem] = useState(null);
           const [db, setDb] = useState(DEFAULT_DB);
-          const [loading, setLoading] = useState(true);
-          const [fallbackSources, setFallbackSources] = useState([]);
 
           useEffect(() => {
             const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
@@ -1822,7 +2265,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               return;
             }
             const tabLabel = activeTab === "home"
-              ? "Theory, Algorithms & Learning Systems"
+              ? "Mathematics, Algorithms & AI"
               : ([...NAV_ITEMS, { id: "about", label: "About" }].find((item) => item.id === activeTab)?.label || "Archive");
             document.title = `MIStatlE | ${tabLabel}`;
           }, [activeTab, readingItem]);
@@ -1852,23 +2295,17 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             };
 
             Promise.all([
-                safeFetch('public/data/library.json'),
+                safeFetch('public/data/editorial.json'),
                 safeFetch('public/data/tools.json'),
                 safeFetch('public/data/latex_templates.json')
-            ]).then(([library, toolsData, latexData]) => {
-                const failedSources = [library, toolsData, latexData]
-                  .filter(result => !result.ok)
-                  .map(result => result.url.replace('public/data/', '').replace('.json', ''));
-
+            ]).then(([editorial, toolsData, latexData]) => {
                 setDb(prev => ({
-                    library: library.ok ? library.data : prev.library,
+                    editorial: editorial.ok ? editorial.data : prev.editorial,
                     tools: {
                         general: toolsData.ok ? toolsData.data : prev.tools.general,
                         latex: latexData.ok ? latexData.data : prev.tools.latex
                     }
                 }));
-                setFallbackSources(failedSources);
-                setLoading(false);
             });
           }, []);
 
@@ -1883,7 +2320,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           };
 
           const openReadingItem = (item) => {
-            const sourceTab = item?.sourceTab || activeTab || "library";
+            const sourceTab = item?.sourceTab || activeTab || "writing";
             const normalizedItem = { ...item, filePath: normalizeContentPath(item?.filePath), sourceTab };
             const nextHash = routeHashFor(sourceTab, normalizedItem);
             if (window.location.hash === nextHash) {
@@ -1898,11 +2335,11 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             if (readingItem) return <ArticleReader item={readingItem} onBack={() => navigateToTab(activeTab)} onSelectItem={openReadingItem} />;
 
             switch(activeTab) {
-              case 'home': return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
-              case 'library': return <Library data={db.library} onRead={openReadingItem} />;
-              case 'tools': return <Tools data={db.tools} onRead={openReadingItem} />;
+              case 'home': return <HomeV2 setActiveTab={navigateToTab} onRead={openReadingItem} editorial={db.editorial} />;
+              case 'writing': return <Collections editorial={db.editorial} onRead={openReadingItem} />;
+              case 'resources': return <Tools data={db.tools} onRead={openReadingItem} />;
               case 'about': return <About />;
-              default: return <Home setActiveTab={navigateToTab} onRead={openReadingItem} />;
+              default: return <HomeV2 setActiveTab={navigateToTab} onRead={openReadingItem} editorial={db.editorial} />;
             }
           };
 
@@ -1912,22 +2349,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               <main id="main-content" className="flex-grow">{renderContent()}</main>
               <footer className="bg-stone-50/90 border-t border-stone-200 py-12 mt-0 text-stone-400 text-xs font-mono">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div>© {new Date().getFullYear()} MIStatlE. Mathematics · Algorithms · Learning.</div>
-                    <div className="flex items-center gap-2 uppercase tracking-[0.18em]">
-                        <span className={`inline-block h-1.5 w-1.5 rounded-full ${loading ? "bg-blue-600 animate-pulse" : fallbackSources.length > 0 ? "bg-amber-500" : "bg-stone-300"}`}></span>
-                        {loading ? (
-                            <span>Syncing…</span>
-                        ) : fallbackSources.length > 0 ? (
-                            <span
-                              className="rounded-full border border-stone-200 bg-white px-3 py-1 text-[10px] text-stone-500"
-                              title={`Fallback sources: ${fallbackSources.join(', ')}`}
-                            >
-                                Local Fallback · {fallbackSources.length}
-                            </span>
-                        ) : (
-                            <span>Notes · Derivations · Resources</span>
-                        )}
-                    </div>
+                    <div>© {new Date().getFullYear()} MIStatlE</div>
+                    <div className="uppercase tracking-[0.18em]">Structure · Mechanism · Boundary</div>
                 </div>
               </footer>
             </div>

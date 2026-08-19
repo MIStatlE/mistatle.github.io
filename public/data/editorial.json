@@ -1,0 +1,140 @@
+{
+  "positioning": {
+    "eyebrow": "PERSONAL WEBSITE",
+    "title": "Mathematics, Algorithms & AI",
+    "statement": "这里记录数学、算法与 AI 中值得反复理解的问题：结论依赖怎样的结构，方法为何有效，又在什么条件下失效。",
+    "principles": [
+      {
+        "label": "STRUCTURE",
+        "title": "数学澄清结构",
+        "desc": "从定义、假设与推导中找出真正决定结论的部分。"
+      },
+      {
+        "label": "MECHANISM",
+        "title": "算法解释过程",
+        "desc": "关注不变量、信息流与计算步骤，而不只给出结果。"
+      },
+      {
+        "label": "BOUNDARY",
+        "title": "核验标出边界",
+        "desc": "用反例、实验与来源说明结论何时成立、何时失效。"
+      }
+    ]
+  },
+  "tracks": [
+    {
+      "id": "foundations",
+      "code": "FND",
+      "title": "Mathematical Foundations",
+      "titleZh": "数学基础"
+    },
+    {
+      "id": "algorithms",
+      "code": "ALG",
+      "title": "Algorithms & Optimization",
+      "titleZh": "算法与优化"
+    },
+    {
+      "id": "systems",
+      "code": "SYS",
+      "title": "Learning Systems",
+      "titleZh": "学习与智能系统"
+    }
+  ],
+  "collections": [
+    {
+      "id": "probability-concentration",
+      "trackId": "foundations",
+      "title": "概率、信息与集中",
+      "question": "概率质量如何在高维空间中组织起来？",
+      "desc": "从典型集出发，连接集中现象、信息量与高维几何。",
+      "entryIds": ["typical-set"]
+    },
+    {
+      "id": "policy-optimization",
+      "trackId": "algorithms",
+      "title": "策略优化",
+      "question": "策略梯度究竟在优化什么，又受什么分布约束？",
+      "desc": "从目标、梯度估计和覆盖分布理解强化学习中的优化结构。",
+      "entryIds": ["policy-gradient-optimization"]
+    },
+    {
+      "id": "generative-world-models",
+      "trackId": "systems",
+      "title": "生成模型与世界模型",
+      "question": "学习系统如何形成可预测、可用而不塌缩的表示？",
+      "desc": "从潜变量建模到 latent prediction，比较目标函数与表示几何。",
+      "entryIds": ["vae-elbo", "leworldmodel-sigreg"]
+    }
+  ],
+  "entries": [
+    {
+      "id": "typical-set",
+      "trackId": "foundations",
+      "collectionId": "probability-concentration",
+      "kind": "Derivation",
+      "title": "Typical Set：高维空间中的概率集中",
+      "desc": "概率质量为什么不在密度最高的点，而会落在高维空间中的薄壳上？",
+      "date": "2026-01-21",
+      "formats": {
+        "article": {
+          "path": "public/data/posts/typical_set.md",
+          "label": "Article"
+        }
+      }
+    },
+    {
+      "id": "policy-gradient-optimization",
+      "trackId": "algorithms",
+      "collectionId": "policy-optimization",
+      "kind": "Mechanism",
+      "title": "Policy Gradient 的优化视角",
+      "desc": "从目标函数、梯度估计、方差与步长选择建立一条连续的优化主线。",
+      "date": "2026-05-06",
+      "formats": {
+        "article": {
+          "path": "public/data/library/rl/policy-gradient-optimization.md",
+          "label": "Article"
+        },
+        "pdf": {
+          "path": "public/data/library/rl/source/policy-gradient-note.pdf",
+          "label": "PDF"
+        }
+      }
+    },
+    {
+      "id": "vae-elbo",
+      "trackId": "systems",
+      "collectionId": "generative-world-models",
+      "kind": "Foundation",
+      "title": "VAE 与 ELBO",
+      "desc": "从潜变量模型与变分下界理解生成模型的基本优化对象。",
+      "date": "2025-11-23",
+      "formats": {
+        "article": {
+          "path": "public/data/posts/vae_elbo.md",
+          "label": "Article"
+        }
+      }
+    },
+    {
+      "id": "leworldmodel-sigreg",
+      "trackId": "systems",
+      "collectionId": "generative-world-models",
+      "kind": "Paper Reading",
+      "title": "LeWorldModel / SIGReg：为什么不会塌缩？",
+      "desc": "连接 latent prediction、表示塌缩与 SIGReg，辨认机制真正依赖的条件。",
+      "date": "2026-03-25",
+      "formats": {
+        "article": {
+          "path": "public/data/papers/leworldmodel_sigreg.md",
+          "label": "Article"
+        },
+        "pdf": {
+          "path": "public/data/papers/source/leworldmodel_sigreg.pdf",
+          "label": "PDF"
+        }
+      }
+    }
+  ]
+}
