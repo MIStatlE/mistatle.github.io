@@ -59,6 +59,14 @@
       "entryIds": ["policy-gradient-optimization"]
     },
     {
+      "id": "sequential-exploration",
+      "trackId": "systems",
+      "title": "序列决策与探索",
+      "question": "单步随机性为何不足以保证真正的信息被观察？",
+      "desc": "从状态访问、到达事件与轨迹分布理解强化学习中的深度探索。",
+      "entryIds": ["deep-exploration"]
+    },
+    {
       "id": "generative-world-models",
       "trackId": "systems",
       "title": "生成模型与世界模型",
@@ -98,6 +106,25 @@
         },
         "pdf": {
           "path": "public/data/library/rl/source/policy-gradient-note.pdf",
+          "label": "PDF"
+        }
+      }
+    },
+    {
+      "id": "deep-exploration",
+      "trackId": "systems",
+      "collectionId": "sequential-exploration",
+      "kind": "Theorem Note",
+      "title": "从 Bandit 到 RL：Deep Exploration 为何必要",
+      "desc": "固定单步动作边缘分布后，路径事件概率为何仍能从 p^N 变为 p？",
+      "date": "2026-08-21",
+      "formats": {
+        "article": {
+          "path": "public/data/library/rl/deep-exploration.md",
+          "label": "Article"
+        },
+        "pdf": {
+          "path": "public/data/library/rl/source/deep-exploration-note.pdf",
           "label": "PDF"
         }
       }
