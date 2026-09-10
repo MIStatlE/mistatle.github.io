@@ -4,7 +4,11 @@
     "title": "Problem-Led Reading",
     "desc": "先形成自己的问题与判断，再请 AI 扩展可能性，最后回到原文核验和修订。",
     "icon": "notebook-pen",
-    "tags": ["Reading Notes", "XeLaTeX", "AI-Assisted"],
+    "tags": [
+      "Reading Notes",
+      "XeLaTeX",
+      "AI-Assisted"
+    ],
     "filePath": "public/data/templates/reading_inquiry_note.md",
     "previewImage": "assets/images/latex-template/reading-inquiry-preview-1.png",
     "previewImages": [
@@ -13,14 +17,23 @@
       "assets/images/latex-template/reading-inquiry-preview-3.png",
       "assets/images/latex-template/reading-inquiry-preview-4.png"
     ],
-    "link": null
+    "link": null,
+    "i18n": {
+      "en": {
+        "title": "Problem-Led Reading",
+        "desc": "Form your own questions and judgments, ask AI to explore further possibilities, then return to the source to check and revise."
+      }
+    }
   },
   {
     "id": "short-note",
     "title": "Short Note",
     "desc": "为短篇推导与公开笔记准备的极简模板，强调结构、公式与留白。",
-    "icon": "file-text", 
-    "tags": ["Cheatsheet", "TColorBox"],
+    "icon": "file-text",
+    "tags": [
+      "Cheatsheet",
+      "TColorBox"
+    ],
     "filePath": "public/data/templates/short_note.md",
     "previewImage": "assets/images/latex-template/short-note-preview-1.png",
     "previewImages": [
@@ -28,14 +41,24 @@
       "assets/images/latex-template/short-note-preview-2.png",
       "assets/images/latex-template/short-note-preview-3.png"
     ],
-    "link": null
+    "link": null,
+    "i18n": {
+      "en": {
+        "title": "Short Note",
+        "desc": "A minimal template for short derivations and public notes, with an emphasis on structure, equations, and white space."
+      }
+    }
   },
   {
     "id": "cn-lecture-note",
     "title": "CN Lecture Note",
     "desc": "面向中文课程讲义与系列笔记，统一正文层级、定理环境与长篇阅读节奏。",
     "icon": "notebook-pen",
-    "tags": ["Lecture Note", "CTeX", "XeLaTeX"],
+    "tags": [
+      "Lecture Note",
+      "CTeX",
+      "XeLaTeX"
+    ],
     "filePath": "public/data/templates/cn_lecture_note.md",
     "previewImage": "assets/images/latex-template/cn-lecture-preview-1.png",
     "previewImages": [
@@ -43,14 +66,24 @@
       "assets/images/latex-template/cn-lecture-preview-2.png",
       "assets/images/latex-template/cn-lecture-preview-3.png"
     ],
-    "link": null
+    "link": null,
+    "i18n": {
+      "en": {
+        "title": "CN Lecture Note",
+        "desc": "For Chinese lecture notes and note series, with consistent section hierarchy, theorem environments, and pacing for longer texts."
+      }
+    }
   },
   {
     "id": "en-article-note",
     "title": "EN Article Note",
     "desc": "面向英文技术说明与 expository writing，保持论证结构、公式和引用的清晰。",
     "icon": "scroll-text",
-    "tags": ["Article", "Expository", "XeLaTeX"],
+    "tags": [
+      "Article",
+      "Expository",
+      "XeLaTeX"
+    ],
     "filePath": "public/data/templates/en_article_note.md",
     "previewImage": "assets/images/latex-template/en-article-preview-1.png",
     "previewImages": [
@@ -58,14 +91,24 @@
       "assets/images/latex-template/en-article-preview-2.png",
       "assets/images/latex-template/en-article-preview-3.png"
     ],
-    "link": null
+    "link": null,
+    "i18n": {
+      "en": {
+        "title": "EN Article Note",
+        "desc": "For English technical explanations and expository writing, keeping arguments, equations, and citations clear."
+      }
+    }
   },
   {
     "id": "mi-book-style",
     "title": "MI Book / Lecture Note",
     "desc": "面向中文数学书与长篇讲义，在页眉、章节、定理与封面之间建立一致的阅读系统。",
     "icon": "book-open",
-    "tags": ["Book", "XeLaTeX", "CTeX"],
+    "tags": [
+      "Book",
+      "XeLaTeX",
+      "CTeX"
+    ],
     "filePath": "public/data/templates/mi_book_style.md",
     "previewImage": "assets/images/latex-template/mi-book-preview-1.png",
     "previewImages": [
@@ -74,6 +117,12 @@
       "assets/images/latex-template/mi-book-preview-3.png",
       "assets/images/latex-template/mi-book-preview-4.png"
     ],
-    "link": null
+    "link": null,
+    "i18n": {
+      "en": {
+        "title": "MI Book / Lecture Note",
+        "desc": "For Chinese mathematics books and extended lecture notes, with consistent design across headers, chapters, theorems, and covers."
+      }
+    }
   }
 ]

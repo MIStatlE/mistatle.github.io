@@ -7,19 +7,47 @@
       {
         "label": "STRUCTURE",
         "title": "数学澄清结构",
-        "desc": "从定义、假设与推导中找出真正决定结论的部分。"
+        "desc": "从定义、假设与推导中找出真正决定结论的部分。",
+        "i18n": {
+          "en": {
+            "label": "STRUCTURE",
+            "title": "Mathematics clarifies structure",
+            "desc": "Use definitions, assumptions, and derivations to identify what determines a result."
+          }
+        }
       },
       {
         "label": "MECHANISM",
         "title": "算法解释过程",
-        "desc": "关注不变量、信息流与计算步骤，而不只给出结果。"
+        "desc": "关注不变量、信息流与计算步骤，而不只给出结果。",
+        "i18n": {
+          "en": {
+            "label": "MECHANISM",
+            "title": "Algorithms explain the process",
+            "desc": "Follow invariants, information flow, and computational steps, beyond the final result."
+          }
+        }
       },
       {
         "label": "BOUNDARY",
         "title": "核验标出边界",
-        "desc": "用反例、实验与来源说明结论何时成立、何时失效。"
+        "desc": "用反例、实验与来源说明结论何时成立、何时失效。",
+        "i18n": {
+          "en": {
+            "label": "BOUNDARY",
+            "title": "Verification marks the limits",
+            "desc": "Use counterexamples, experiments, and sources to show when a result holds and when it fails."
+          }
+        }
       }
-    ]
+    ],
+    "i18n": {
+      "en": {
+        "eyebrow": "PERSONAL WEBSITE",
+        "title": "Mathematics, Algorithms & AI",
+        "statement": "Questions in mathematics, algorithms, and AI worth revisiting: which structures support a result, why a method works, and when it fails."
+      }
+    }
   },
   "tracks": [
     {
@@ -48,7 +76,16 @@
       "title": "概率、信息与集中",
       "question": "概率质量如何在高维空间中组织起来？",
       "desc": "从典型集出发，连接集中现象、信息量与高维几何。",
-      "entryIds": ["typical-set"]
+      "entryIds": [
+        "typical-set"
+      ],
+      "i18n": {
+        "en": {
+          "title": "Probability, information, and concentration",
+          "question": "How is probability mass organized in high-dimensional spaces?",
+          "desc": "Start with typical sets to connect concentration, information, and high-dimensional geometry."
+        }
+      }
     },
     {
       "id": "policy-optimization",
@@ -56,7 +93,16 @@
       "title": "策略优化",
       "question": "策略梯度究竟在优化什么，又受什么分布约束？",
       "desc": "从目标、梯度估计和覆盖分布理解强化学习中的优化结构。",
-      "entryIds": ["policy-gradient-optimization"]
+      "entryIds": [
+        "policy-gradient-optimization"
+      ],
+      "i18n": {
+        "en": {
+          "title": "Policy optimization",
+          "question": "What does policy gradient actually optimize, and which distributions constrain it?",
+          "desc": "Understand the optimization structure of reinforcement learning through objectives, gradient estimation, and distributional coverage."
+        }
+      }
     },
     {
       "id": "sequential-exploration",
@@ -64,7 +110,16 @@
       "title": "序列决策与探索",
       "question": "单步随机性为何不足以保证真正的信息被观察？",
       "desc": "从状态访问、到达事件与轨迹分布理解强化学习中的深度探索。",
-      "entryIds": ["deep-exploration"]
+      "entryIds": [
+        "deep-exploration"
+      ],
+      "i18n": {
+        "en": {
+          "title": "Sequential decision-making and exploration",
+          "question": "Why is randomness at each step insufficient to guarantee informative observations?",
+          "desc": "Understand deep exploration in reinforcement learning through state visitation, hitting events, and trajectory distributions."
+        }
+      }
     },
     {
       "id": "generative-world-models",
@@ -72,7 +127,17 @@
       "title": "生成模型与世界模型",
       "question": "学习系统如何形成可预测、可用而不塌缩的表示？",
       "desc": "从潜变量建模到 latent prediction，比较目标函数与表示几何。",
-      "entryIds": ["vae-elbo", "leworldmodel-sigreg"]
+      "entryIds": [
+        "vae-elbo",
+        "leworldmodel-sigreg"
+      ],
+      "i18n": {
+        "en": {
+          "title": "Generative models and world models",
+          "question": "How can learning systems form predictable, useful representations that do not collapse?",
+          "desc": "From latent-variable modeling to latent prediction, compare objectives and representation geometry."
+        }
+      }
     }
   ],
   "entries": [
@@ -88,6 +153,12 @@
         "article": {
           "path": "public/data/posts/typical_set.md",
           "label": "Article"
+        }
+      },
+      "i18n": {
+        "en": {
+          "title": "Typical sets: probability concentration in high dimensions",
+          "desc": "Why does probability mass concentrate on a thin shell in high dimensions, away from the point of highest density?"
         }
       }
     },
@@ -108,6 +179,12 @@
           "path": "public/data/library/rl/source/policy-gradient-note.pdf",
           "label": "PDF"
         }
+      },
+      "i18n": {
+        "en": {
+          "title": "Policy gradient through the lens of optimization",
+          "desc": "Trace a connected optimization argument through objectives, gradient estimation, variance, and step-size selection."
+        }
       }
     },
     {
@@ -127,6 +204,24 @@
           "path": "public/data/library/rl/source/deep-exploration-note.pdf",
           "label": "PDF"
         }
+      },
+      "i18n": {
+        "en": {
+          "title": "Why random actions are not enough",
+          "desc": "With each step's marginal action distribution fixed, why can a path event's probability still change from p^N to p?"
+        }
+      },
+      "editions": {
+        "en": {
+          "article": {
+            "path": "public/data/library/rl/deep-exploration.en.md",
+            "label": "Article"
+          },
+          "pdf": {
+            "path": "public/data/library/rl/source/deep-exploration-note-en.pdf",
+            "label": "PDF"
+          }
+        }
       }
     },
     {
@@ -141,6 +236,12 @@
         "article": {
           "path": "public/data/posts/vae_elbo.md",
           "label": "Article"
+        }
+      },
+      "i18n": {
+        "en": {
+          "title": "VAE and ELBO",
+          "desc": "Use latent-variable models and variational lower bounds to understand the basic optimization objective of generative models."
         }
       }
     },
@@ -160,6 +261,12 @@
         "pdf": {
           "path": "public/data/papers/source/leworldmodel_sigreg.pdf",
           "label": "PDF"
+        }
+      },
+      "i18n": {
+        "en": {
+          "title": "LeWorldModel / SIGReg: why doesn't it collapse?",
+          "desc": "Connect latent prediction, representation collapse, and SIGReg to identify the conditions the mechanism actually needs."
         }
       }
     }

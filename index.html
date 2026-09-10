@@ -144,8 +144,28 @@
 <body>
     <div id="root"></div>
 
+    <script src="public/site-language.js"></script>
     <script type="text/babel">
         const { useState, useEffect, useRef, memo } = React;
+        const LanguageContext = React.createContext({lang: 'zh', changeLanguage: () => {}});
+        const useLanguage = () => {
+          const context = React.useContext(LanguageContext);
+          return {...context, t: (name) => SiteLanguage.t(context.lang, name)};
+        };
+        const LanguageSwitch = () => {
+          const {lang, changeLanguage, t} = useLanguage();
+          return <div role="group" aria-label={t('language')} className="inline-flex items-center gap-1 rounded-full border border-stone-200 bg-white/70 p-1 shrink-0">
+            {['zh','en'].map(code => <button key={code} type="button" lang={code === 'zh' ? 'zh-CN' : 'en'}
+              aria-pressed={lang === code} onClick={() => changeLanguage(code)}
+              className={`px-3 py-1.5 rounded-full text-sm transition-colors ${lang === code ? 'bg-stone-900 text-white' : 'text-stone-500 hover:text-blue-900'}`}>
+              {code === 'zh' ? '中文' : 'English'}
+            </button>)}
+          </div>;
+        };
+        const EditionBadge = ({item}) => {
+          const {t} = useLanguage();
+          return item?.translationMissing ? <span className="inline-block mt-2 text-xs text-stone-500" lang="en">{t(item.contentLanguage === 'zh' ? 'chineseOnly' : 'englishOnly')}</span> : null;
+        };
 
         // ============================
         // ✅ Perf: 动态资源加载器 + 缓存
@@ -730,7 +750,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     <rect x="28.8" y="29.3" width="5.4" height="5.4" rx="1.1" transform="rotate(45 28.8 29.3)" fill="#FCFCFB" stroke="#1C1917" strokeWidth="1.6" />
                 </svg>
             </div>
-            <div className="flex flex-col justify-center">
+            <div className="hidden sm:flex flex-col justify-center">
                 <div className="font-serif text-lg font-bold tracking-tight leading-none" style={{
                     background: 'linear-gradient(to right, #1e3a8a, #2563eb)',
                     WebkitBackgroundClip: 'text',
@@ -850,6 +870,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
         // --- 导航栏 (Navbar) ---
         const Navbar = ({ activeTab, setActiveTab }) => {
+            const {t} = useLanguage();
             const [isMenuOpen, setIsMenuOpen] = useState(false);
 
             const handleTabClick = (tab) => {
@@ -859,8 +880,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
             return (
                 <nav className="sticky top-0 z-50 glass-nav transition-all duration-300">
-                    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                        <button type="button" onClick={() => handleTabClick('home')} aria-label="Go to home" className="rounded-xl">
+                    <div className="max-w-7xl mx-auto px-3 sm:px-6 h-20 flex items-center justify-between gap-2">
+                        <button type="button" onClick={() => handleTabClick('home')} aria-label={t('home')} className="rounded-xl">
                             <Logo />
                         </button>
                         
@@ -872,27 +893,30 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                   aria-current={activeTab === item.id ? "page" : undefined}
                                   className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === item.id ? 'bg-stone-900 text-white shadow-md' : 'text-stone-500 hover:text-stone-900 hover:bg-stone-200/50'}`}
                                 >
-                                    {item.label}
+                                    {t(item.id)}
                                 </button>
                             ))}
                         </div>
                         
                         <div className="hidden lg:flex items-center gap-4">
                              <button onClick={() => setActiveTab('about')} className="font-serif text-sm font-bold text-stone-900 hover:text-blue-900 transition-colors">
-                                 ABOUT
+                                 {t('about')}
                              </button>
                         </div>
 
+                        <div className="flex items-center gap-2">
+                        <LanguageSwitch />
                         <button
                           type="button"
                           className="lg:hidden p-2 rounded-md hover:bg-stone-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-900/30"
                           onClick={() => setIsMenuOpen(!isMenuOpen)}
-                          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                          aria-label={isMenuOpen ? t('closeMenu') : t('openMenu')}
                           aria-expanded={isMenuOpen}
                           aria-controls="mobile-menu"
                         >
                           <Icon name={isMenuOpen ? "x" : "menu"} className="text-stone-800" />
                         </button>
+                        </div>
                     </div>
 
                     {isMenuOpen && (
@@ -904,7 +928,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                   aria-current={activeTab === item.id ? "page" : undefined}
                                   className={`px-4 py-3 text-left rounded-lg text-sm font-medium transition-colors ${activeTab === item.id ? 'bg-stone-200 text-stone-900' : 'text-stone-500 hover:bg-stone-100'}`}
                                 >
-                                    {item.label.toUpperCase()}
+                                    {t(item.id)}
                                 </button>
                             ))}
                         </div>
@@ -915,6 +939,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
         // --- ArticleReader（✅ 重库按需加载 + 缓存 + 空闲时高亮/公式） ---
         const ArticleReader = ({ item, onBack, onSelectItem }) => {
+            const {lang, t} = useLanguage();
             const [state, setState] = useState({ 
                 content: '', 
                 frontmatter: null, 
@@ -1133,9 +1158,11 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               return () => { cancelled = true; };
             }, [state.content, state.loading, state.error, state.needsCode, state.needsMath]);
 
+            const declaredLanguage = state.frontmatter?.lang?.split('-')[0];
+            const contentLanguage = ['zh','en'].includes(declaredLanguage) ? declaredLanguage : (item?.contentLanguage || 'zh');
             const courseIndex = ["library-course", "editorial-collection"].includes(item?.readingContext?.type) ? item.readingContext : null;
             const isEditorialCollection = item?.readingContext?.type === "editorial-collection";
-            const contextLabel = isEditorialCollection ? "Collection" : "Course Index";
+            const contextLabel = isEditorialCollection ? t('collection') : t('courseIndex');
             const currentPath = normalizeContentPath(item?.filePath);
             const currentLessonIndex = courseIndex
               ? courseIndex.lessons.findIndex((lesson) => lesson.filePath === currentPath || lesson.id === item?.id)
@@ -1166,19 +1193,19 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return (
                 <div className={`${hasSidebar ? "max-w-[88rem]" : "max-w-[70rem]"} mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 min-h-screen`}>
                     <button onClick={onBack} className="group flex items-center text-sm text-stone-400 hover:text-blue-900 mb-10 font-mono uppercase tracking-wider transition-colors">
-                        <span className="mr-2 inline-block transition-transform group-hover:-translate-x-1">←</span> Back to List
+                        <span className="mr-2 inline-block transition-transform group-hover:-translate-x-1">←</span> {t('backList')}
                     </button>
 
                     {state.loading && (
                         <div className="flex flex-col items-center py-20 space-y-4">
                             <div className="w-8 h-8 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
-                            <p className="text-stone-400 font-mono text-xs animate-pulse">Loading...</p>
+                            <p className="text-stone-400 font-mono text-xs animate-pulse">{t('loading')}</p>
                         </div>
                     )}
 
                     {state.error && (
                         <div className="p-6 border border-red-200 bg-red-50 rounded-lg text-red-800">
-                            <h3 className="font-bold mb-2">Error</h3>
+                            <h3 className="font-bold mb-2">{t('error')}</h3>
                             <p className="font-mono text-sm">{state.error}</p>
                         </div>
                     )}
@@ -1186,6 +1213,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     {!state.loading && !state.error && (
                         <div className={`fade-in ${hasSidebar ? "lg:grid lg:grid-cols-[minmax(0,1fr)_13.5rem] xl:grid-cols-[minmax(0,1fr)_14.5rem] lg:gap-8 xl:gap-10 items-start" : ""}`}>
                             <article className="min-w-0">
+                                {contentLanguage !== lang && <p role="status" className="mb-6 border-l-2 border-blue-900 bg-blue-50/60 px-4 py-3 text-sm text-stone-600">{t(contentLanguage === 'zh' ? 'missingEnglish' : 'missingChinese')}</p>}
                                 <header className="mb-12 pb-8 border-b border-stone-200">
                                     <div className="flex flex-wrap gap-3 mb-4 text-xs font-mono uppercase tracking-widest text-stone-500">
                                         {state.frontmatter?.categories && (
@@ -1218,7 +1246,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                                     {item?.formats && Object.entries(item.formats).some(([key, format]) => key !== "article" && (format?.path || format?.url)) && (
                                         <div className="mt-7 flex flex-wrap items-center gap-2 border-t border-stone-100 pt-5">
-                                            <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">Also available</span>
+                                            <span className="mr-2 font-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">{t('also')}</span>
                                             {Object.entries(item.formats).filter(([key, format]) => key !== "article" && (format?.path || format?.url)).map(([key, format]) => (
                                                 <a
                                                   key={key}
@@ -1238,7 +1266,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                     <div className="lg:hidden space-y-6 mb-10">
                                         {state.headings.length > 0 && (
                                             <div className={`${indexCardClass} p-4`}>
-                                                <p className={`${indexLabelClass} mb-3`}>Article Index</p>
+                                                <p className={`${indexLabelClass} mb-3`}>{t('articleIndex')}</p>
                                                 <div className="space-y-2">
                                                     {state.headings.map((heading) => (
                                                         <button
@@ -1282,6 +1310,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
                                 <div
                                     ref={contentRef}
+                                    lang={contentLanguage === 'en' ? 'en' : 'zh-CN'}
                                     className="prose prose-stone prose-lg xl:prose-xl prose-headings:font-serif max-w-none prose-img:rounded-lg prose-a:text-blue-900"
                                     dangerouslySetInnerHTML={{ __html: state.content }}
                                 ></div>
@@ -1294,7 +1323,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                           disabled={!previousLesson?.readable}
                                           className={`rounded-xl border p-4 text-left transition-colors ${previousLesson?.readable ? "border-stone-200 hover:border-stone-400 hover:bg-stone-50" : "border-stone-100 text-stone-300 cursor-not-allowed"}`}
                                         >
-                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">{isEditorialCollection ? "Previous Entry" : "Previous Note"}</div>
+                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">{t('previous')}</div>
                                             <div className="font-serif text-lg text-stone-900">{previousLesson?.title || "None"}</div>
                                         </button>
                                         <button
@@ -1303,7 +1332,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                           disabled={!nextLesson?.readable}
                                           className={`rounded-xl border p-4 text-left transition-colors ${nextLesson?.readable ? "border-stone-200 hover:border-stone-400 hover:bg-stone-50" : "border-stone-100 text-stone-300 cursor-not-allowed"}`}
                                         >
-                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">{isEditorialCollection ? "Next Entry" : "Next Note"}</div>
+                                            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-400 mb-2">{t('next')}</div>
                                             <div className="font-serif text-lg text-stone-900">{nextLesson?.title || "None"}</div>
                                         </button>
                                     </div>
@@ -1315,7 +1344,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                     <div className="sticky top-24 space-y-5">
                                         {state.headings.length > 0 && (
                                             <div className={`${indexCardClass} p-4`}>
-                                                <p className={`${indexLabelClass} mb-3`}>Article Index</p>
+                                                <p className={`${indexLabelClass} mb-3`}>{t('articleIndex')}</p>
                                                 <div className="space-y-2">
                                                     {state.headings.map((heading) => (
                                                         <button
@@ -1366,7 +1395,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         const FEATURED_ENTRY_IDS = ["typical-set", "policy-gradient-optimization", "leworldmodel-sigreg"];
 
         // --- Hero ---
-        const Hero = ({ setActiveTab, positioning }) => (
+        const Hero = ({ setActiveTab, positioning }) => {
+          const {t} = useLanguage();
+          return (
           <div className="max-w-6xl mx-auto px-6 py-24 md:py-32 fade-in flex flex-col justify-center min-h-[78vh] relative">
             <div className="absolute right-4 top-16 opacity-[0.045] pointer-events-none select-none font-serif text-[11rem] text-blue-900 hidden md:block">∂</div>
             <div className="absolute left-10 bottom-24 opacity-[0.045] pointer-events-none select-none font-serif text-[10rem] text-stone-900 hidden md:block">λ</div>
@@ -1388,12 +1419,12 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             </div>
 
             <div className="flex flex-wrap gap-4 md:gap-6 mb-16">
-              <button onClick={() => setActiveTab('writing')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">EXPLORE WRITING <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
-              <button onClick={() => setActiveTab('resources')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">RESOURCES</button>
+              <button onClick={() => setActiveTab('writing')} className="group px-8 py-4 bg-stone-900 text-white text-sm font-bold tracking-widest hover:bg-blue-900 transition-all flex items-center gap-3 rounded-sm">{t('explore')} <span className="group-hover:translate-x-1 transition-transform inline-block">→</span></button>
+              <button onClick={() => setActiveTab('resources')} className="px-8 py-4 border border-stone-300 text-stone-600 text-sm font-bold tracking-widest hover:border-stone-900 hover:text-stone-900 transition-all bg-white/50 backdrop-blur-sm rounded-sm">{t('resources')}</button>
             </div>
 
             <div className="flex items-center gap-4 border-t border-stone-200 pt-8">
-                <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">ELSEWHERE:</span>
+                <span className="text-xs font-mono text-stone-400 mr-4 hidden md:block">{t('elsewhere')}:</span>
                 <div className="flex flex-wrap gap-4">
                     <SocialLink platform="youtube" label="YouTube" href="https://www.youtube.com/@ZICHENGLYU-h8y" colorClass="group-hover:text-[#FF0033] group-hover:border-[#FF0033]" />
                     <SocialLink platform="douyin" label="抖音" colorClass="group-hover:text-stone-900 group-hover:border-stone-900" />
@@ -1406,10 +1437,11 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             <div className="mt-8 flex flex-wrap justify-between gap-x-8 gap-y-2 text-xs font-mono text-stone-400 uppercase tracking-widest">
                 <span>Est. 2025</span>
                 <span>Mathematics · Algorithms · AI</span>
-                <span>Shanghai</span>
+                <span>{t('shanghai')}</span>
             </div>
           </div>
-        );
+          );
+        };
 
         const Home = ({ setActiveTab, onRead, editorial }) => {
           const positioning = editorial?.positioning || {};
@@ -1640,6 +1672,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         };
 
         const Collections = ({ editorial, onRead, embedded = false }) => {
+          const {t} = useLanguage();
           const tracks = editorial?.tracks || [];
           const collections = editorial?.collections || [];
           const entries = editorial?.entries || [];
@@ -1689,10 +1722,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return (
               <SectionShell maxWidth="max-w-6xl" className={embedded ? "min-h-0" : ""}>
                 <SectionHeader
-                  eyebrow="Topics"
-                  title="专题"
-                  description="围绕概率与信息、策略优化、生成模型与世界模型展开的系列内容。"
-                  aside={`${collections.length} topics · ${entries.length} notes`}
+                  eyebrow={t('topics')}
+                  title={t('topics')}
+                  description={t('topicsDesc')}
+                  aside={`${collections.length} ${t('topicCount')} · ${entries.length} ${t('noteCount')}`}
                 />
 
                 <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
@@ -1723,7 +1756,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                           <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{collection.desc}</p>
                           <div className="flex items-center border-t border-stone-100 pt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-400">
                             <Icon name="book-open" size={13} className="mr-2" />
-                            <span>{published.length} {published.length === 1 ? "entry" : "entries"}</span>
+                            <span>{published.length} {t('entryCount')}</span>
                             {formatTypes.length > 0 && <span className="ml-3 text-stone-300">{formatTypes.join(" · ")}</span>}
                             <span className="ml-auto text-blue-900/70 transition-transform group-hover:translate-x-1">→</span>
                           </div>
@@ -1740,12 +1773,12 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
           const published = getPublishedEntries(selectedCollection);
           return (
             <SectionShell maxWidth="max-w-6xl" className={embedded ? "min-h-0" : ""}>
-              <SectionBackButton label="Back to Writing" onClick={() => setSelectedCollectionId(null)} />
+              <SectionBackButton label={t('backWriting')} onClick={() => setSelectedCollectionId(null)} />
               <SectionHeader
                 eyebrow={`${selectedTrack?.code || ""} · ${selectedTrack?.titleZh || "Collection"}`}
                 title={selectedCollection.title}
                 description={selectedCollection.question}
-                aside={`${published.length} ${published.length === 1 ? "entry" : "entries"}`}
+                aside={`${published.length} ${t('entryCount')}`}
                 className="mt-8"
               />
 
@@ -1763,6 +1796,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                       <div>
                         <h3 className="text-xl font-serif font-bold leading-snug text-stone-900 md:text-2xl">{entry.title}</h3>
                         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-stone-500">{entry.desc}</p>
+                        <EditionBadge item={entry} />
                       </div>
                       <div className="flex flex-wrap gap-2 md:max-w-[13rem] md:justify-end">
                         {Object.entries(entry.formats || {}).map(([formatKey, format]) => renderFormatAction(entry, formatKey, format))}
@@ -1777,6 +1811,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         };
 
         const HomeV2 = ({ setActiveTab, onRead, editorial }) => {
+          const {t} = useLanguage();
           const positioning = editorial?.positioning || {};
           const featured = FEATURED_ENTRY_IDS
             .map((id) => (editorial?.entries || []).find((entry) => entry.id === id))
@@ -1788,9 +1823,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
               {featured.length > 0 && (
                 <SectionShell className="min-h-0 pb-10 pt-14 md:pb-16 md:pt-20">
                   <SectionHeader
-                    eyebrow="Writing"
-                    title="近期写作"
-                    description="关于高维概率、策略优化与表示学习。"
+                    eyebrow={t('writing')}
+                    title={t('recent')}
+                    description={t('recentDesc')}
                   />
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     {featured.map((item) => (
@@ -1808,8 +1843,9 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                         </div>
                         <h2 className="mb-4 text-2xl font-serif font-bold leading-tight text-stone-900 transition-colors group-hover:text-blue-900">{item.title}</h2>
                         <p className="mb-8 flex-grow text-sm leading-relaxed text-stone-500">{item.desc}</p>
+                        <EditionBadge item={item} />
                         <div className="border-t border-stone-100 pt-4 font-mono text-[11px] uppercase tracking-[0.18em] text-stone-500 transition-colors group-hover:text-blue-900">
-                          Read <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
+                          {t('read')} <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
                         </div>
                       </SectionPanel>
                     ))}
@@ -2040,42 +2076,44 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
         };
 
         // --- About ---
-        const About = () => (
+        const About = () => {
+          const {t} = useLanguage();
+          return (
             <SectionShell maxWidth="max-w-5xl" className="flex flex-col justify-center">
                 <SectionHeader
-                  eyebrow="About"
+                  eyebrow={t('about')}
                   title="MIStatlE"
-                  description="A personal site about mathematics, learning theory, reinforcement learning, and algorithms."
-                  aside="Shanghai"
+                  description={t('aboutDesc')}
+                  aside={t('shanghai')}
                 />
 
                 <SectionPanel className="overflow-hidden">
                     <div className="grid md:grid-cols-[1.45fr_0.85fr]">
                         <div className="p-8 md:p-12">
                             <p className="text-xl md:text-2xl font-serif text-stone-800 leading-relaxed">
-                                你好，我是 MIStatlE。这里整理我在学习、研究与技术写作中真正读过、推过或做过的内容。
+                                {t('aboutIntro')}
                             </p>
                             <div className="mt-8 space-y-5 text-base leading-8 text-stone-600">
                                 <p>
-                                    主题从数学与学习理论出发，也延伸到强化学习、算法与实现。我不会把它写成知识大全；一篇内容通常只回答一个具体问题，并尽量交代必要背景、关键推导和结论边界。
+                                    {t('aboutBody')}
                                 </p>
                                 <p>
-                                    内容会随着理解继续修改。如果某篇笔记对你有帮助，或你发现了错误，欢迎告诉我。
+                                    {t('aboutEnd')}
                                 </p>
                             </div>
                         </div>
 
                         <aside className="border-t border-stone-100 bg-stone-50/70 p-8 md:border-l md:border-t-0 md:p-10">
-                            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-900">Current interests</div>
+                            <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-900">{t('interests')}</div>
                             <ul className="mt-6 space-y-3 font-serif text-base text-stone-700">
-                                <li>Mathematical foundations</li>
-                                <li>Learning theory</li>
-                                <li>Reinforcement learning</li>
-                                <li>Algorithms</li>
+                                <li>{t('foundations')}</li>
+                                <li>{t('learning')}</li>
+                                <li>{t('rl')}</li>
+                                <li>{t('algorithms')}</li>
                             </ul>
 
                             <div className="mt-10 border-t border-stone-200 pt-8">
-                                <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-stone-400">Email</div>
+                                <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-stone-400">{t('email')}</div>
                                 <a href="mailto:mistatle@163.com" className="mt-3 inline-block font-serif text-lg font-bold text-stone-900 transition-colors hover:text-blue-900">
                                     mistatle@163.com
                                 </a>
@@ -2084,7 +2122,8 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     </div>
                 </SectionPanel>
             </SectionShell>
-        );
+          );
+        };
 
         // --- Posts（✅ hover/touch 预取） ---
         const Posts = ({ data, onRead }) => (
@@ -2134,6 +2173,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
         // --- Tools（✅ hover/touch 预取） ---
         const Tools = ({ data, onRead }) => {
+            const {t} = useLanguage();
             const generalTools = [
               ...(data.general || []),
               ...(data.lab || []).map((item) => ({ ...item, tags: item.tags || (item.language ? [item.language] : []) }))
@@ -2190,7 +2230,7 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                                 ))}
                                 {item.previewImages && item.previewImages.length > 1 && (
                                     <span className="text-[10px] font-mono text-blue-900 border border-blue-100 bg-blue-50 px-1.5 py-0.5 rounded uppercase">
-                                        {item.previewImages.length} Previews
+                                        {item.previewImages.length} {t('previews')}
                                     </span>
                                 )}
                             </div>
@@ -2203,9 +2243,10 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
                     <p className="text-sm text-stone-500 mb-8 flex-grow leading-relaxed font-light">
                         {item.desc}
                     </p>
+                    <EditionBadge item={item} />
 
                     <div className="mt-auto pt-4 border-t border-stone-100 flex items-center text-xs font-mono text-stone-500 uppercase tracking-wider group-hover:text-blue-900 transition-colors">
-                        <span className="font-semibold">{item.filePath ? "Open Resource" : "Open Tool"}</span>
+                        <span className="font-semibold">{item.filePath ? t('openResource') : t('openTool')}</span>
                         <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                     </div>
                 </SectionPanel>
@@ -2215,27 +2256,27 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             return (
                 <SectionShell>
                     <SectionHeader
-                      eyebrow="Resources"
-                      title="模板、代码与工具"
-                      description="可以直接阅读、下载或复用的 LaTeX 模板、代码、PDF 与小型工具。"
-                      aside={`${latexTemplates.length + generalTools.length} resources`}
+                      eyebrow={t('resources')}
+                      title={t('resourcesTitle')}
+                      description={t('resourcesDesc')}
+                      aside={`${latexTemplates.length + generalTools.length} ${t('resourceCount')}`}
                     />
 
                     <div className="mb-20">
                         <div className="flex items-center gap-3 mb-8">
-                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-blue-900">LaTeX Templates</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-blue-900">{t('latex')}</span>
                             <div className="h-px flex-1 bg-stone-200"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {latexTemplates.length > 0 ? latexTemplates.map(t => (
                                 <ToolCard key={t.id} item={t} />
-                            )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">资源正在整理中。</div>}
+                            )) : <div className="text-stone-400 italic p-4 border border-dashed border-stone-200 w-full">{t('preparing')}</div>}
                         </div>
                     </div>
 
                     {generalTools.length > 0 && <div>
                         <div className="flex items-center gap-3 mb-8">
-                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">Code & Utilities</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-stone-400">{t('utilities')}</span>
                             <div className="h-px flex-1 bg-stone-200"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2250,9 +2291,25 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
 
         // --- App（✅ 不再用全屏 loading 阻塞首屏；用 DEFAULT_DB 立即可渲染） ---
         const App = () => {
+          const [lang, setLang] = useState(() => SiteLanguage.detect(window.location, SiteLanguage.storage()));
+          const t = name => SiteLanguage.t(lang, name);
           const [activeTab, setActiveTab] = useState(() => parseLocationRoute().tab);
           const [readingItem, setReadingItem] = useState(null);
           const [db, setDb] = useState(DEFAULT_DB);
+          const localizedDb = React.useMemo(() => SiteLanguage.localizeDB(db, lang), [db, lang]);
+
+          const changeLanguage = (next) => {
+            if (!SiteLanguage.valid(next) || next === lang) return;
+            const nextURL = SiteLanguage.url(window.location.href, next);
+            window.history.pushState(null, '', nextURL);
+            SiteLanguage.remember(next, SiteLanguage.storage());
+            setLang(next);
+          };
+
+          useEffect(() => {
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+            SiteLanguage.remember(lang, SiteLanguage.storage());
+          }, [lang]);
 
           useEffect(() => {
             const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
@@ -2266,21 +2323,33 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             }
             const tabLabel = activeTab === "home"
               ? "Mathematics, Algorithms & AI"
-              : ([...NAV_ITEMS, { id: "about", label: "About" }].find((item) => item.id === activeTab)?.label || "Archive");
+              : t(activeTab);
             document.title = `MIStatlE | ${tabLabel}`;
-          }, [activeTab, readingItem]);
+          }, [activeTab, readingItem, lang]);
 
           useEffect(() => {
             const syncRoute = () => {
+              const nextLang = SiteLanguage.detect(window.location, SiteLanguage.storage());
+              if (nextLang !== lang) { setLang(nextLang); return; }
               const route = parseLocationRoute();
+              const target = SiteLanguage.pathFor(db.editorial?.entries, route.filePath, lang);
+              const nextHash = routeHashFor(route.tab, target ? {filePath: target} : null);
+              const nextURL = SiteLanguage.url(window.location.pathname + window.location.search + nextHash, lang);
+              if (window.location.pathname + window.location.search + window.location.hash !== nextURL) {
+                window.history.replaceState(null, '', nextURL);
+              }
               setActiveTab(route.tab);
-              setReadingItem(route.filePath ? findReadingItemByPath(db, route.filePath, route.tab) : null);
+              setReadingItem(target ? findReadingItemByPath(localizedDb, target, route.tab) : null);
             };
 
             window.addEventListener("hashchange", syncRoute);
+            window.addEventListener("popstate", syncRoute);
             syncRoute();
-            return () => window.removeEventListener("hashchange", syncRoute);
-          }, [db]);
+            return () => {
+              window.removeEventListener("hashchange", syncRoute);
+              window.removeEventListener("popstate", syncRoute);
+            };
+          }, [db, localizedDb, lang]);
 
           useEffect(() => {
             const safeFetch = async (url) => {
@@ -2335,25 +2404,27 @@ const Icon = memo(({ name, size = 20, strokeWidth = 2, className, ...props }) =>
             if (readingItem) return <ArticleReader item={readingItem} onBack={() => navigateToTab(activeTab)} onSelectItem={openReadingItem} />;
 
             switch(activeTab) {
-              case 'home': return <HomeV2 setActiveTab={navigateToTab} onRead={openReadingItem} editorial={db.editorial} />;
-              case 'writing': return <Collections editorial={db.editorial} onRead={openReadingItem} />;
-              case 'resources': return <Tools data={db.tools} onRead={openReadingItem} />;
+              case 'home': return <HomeV2 setActiveTab={navigateToTab} onRead={openReadingItem} editorial={localizedDb.editorial} />;
+              case 'writing': return <Collections editorial={localizedDb.editorial} onRead={openReadingItem} />;
+              case 'resources': return <Tools data={localizedDb.tools} onRead={openReadingItem} />;
               case 'about': return <About />;
-              default: return <HomeV2 setActiveTab={navigateToTab} onRead={openReadingItem} editorial={db.editorial} />;
+              default: return <HomeV2 setActiveTab={navigateToTab} onRead={openReadingItem} editorial={localizedDb.editorial} />;
             }
           };
 
           return (
+            <LanguageContext.Provider value={{lang, changeLanguage}}>
             <div className="min-h-screen flex flex-col selection:bg-blue-900 selection:text-white">
               <Navbar activeTab={activeTab} setActiveTab={navigateToTab} />
               <main id="main-content" className="flex-grow">{renderContent()}</main>
               <footer className="bg-stone-50/90 border-t border-stone-200 py-12 mt-0 text-stone-400 text-xs font-mono">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>© {new Date().getFullYear()} MIStatlE</div>
-                    <div className="uppercase tracking-[0.18em]">Structure · Mechanism · Boundary</div>
+                    <div className="uppercase tracking-[0.18em]">{t('principles')}</div>
                 </div>
               </footer>
             </div>
+            </LanguageContext.Provider>
           );
         };
 
