@@ -2,9 +2,8 @@
 title: "LeWorldModel / SIGReg：为什么不会塌缩？"
 description: "连接 latent prediction、表示塌缩与 SIGReg，辨认机制真正依赖的条件。"
 date: "2026-03-25"
-area: "representation"
+area: "deep-learning"
 kind: "paper"
-level: "deep"
 track: "systems"
 collection: "generative-world-models"
 tags: ["World Model", "JEPA", "SIGReg", "Latent Planning"]

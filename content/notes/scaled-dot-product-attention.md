@@ -2,9 +2,8 @@
 title: "缩放点积注意力：为什么除以 √dₖ？"
 description: "从点积方差、Softmax 饱和与梯度稳定性出发，推导 Transformer 中缩放因子的来历，并给出 PyTorch 实现。"
 date: "2025-11-23"
-area: "architectures"
+area: "deep-learning"
 kind: "foundation"
-level: "intro"
 track: "systems"
 tags: ["Transformer", "Attention", "PyTorch"]
 legacy: "public/data/posts/vae_elbo.md"

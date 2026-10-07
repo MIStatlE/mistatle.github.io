@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
@@ -84,9 +85,8 @@ function build() {
     const where = `notes/${n.slug}`;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(n.date || '')) throw new Error(`${where}: "date" must look like 2026-01-31`);
     if (!has(site.tracks, n.track)) throw new Error(`${where}: unknown track "${n.track}"`);
-    if (n.area && !has(site.areas, n.area)) throw new Error(`${where}: unknown area "${n.area}" (see content/site.json)`);
+    if (n.area && !has(site.areas, n.area)) throw new Error(`${where}: unknown subject "${n.area}" (see "areas" in content/site.json)`);
     if (n.kind && !has(site.kinds, n.kind)) throw new Error(`${where}: unknown kind "${n.kind}"`);
-    if (n.level && !has(site.levels, n.level)) throw new Error(`${where}: unknown level "${n.level}"`);
     if (n.collection && !has(site.collections, n.collection)) throw new Error(`${where}: unknown collection "${n.collection}"`);
   }
 
@@ -113,6 +113,7 @@ function build() {
 
   const assets = { css: hashed('site.css', fontCss + read('src/site.css')), js: hashed('site.js', read('src/site.js')), katex: hashed('katex.css', katexCss) };
   const urls = [];
+  const lastmod = Object.fromEntries(notes.zh.map((n) => [`/notes/${n.slug}/`, n.updated || n.date]));
 
   for (const lang of LANGS) {
     const base = BASE[lang];
@@ -123,6 +124,7 @@ function build() {
       lang, base, href, site, assets, papers,
       t: UI[lang], L: (v) => pick(v, lang), date: (iso) => formatDate(iso, lang), htmlLang: HTML_LANG[lang],
       notes: list, resources: res, resourceLinks,
+      updated: list.map((n) => n.updated || n.date).sort().at(-1),
       map: prepareMap(rawMap, site, list),
     };
     const pages = [
@@ -141,6 +143,7 @@ function build() {
     const moved = { '/topics/': '/notes/', '/map/': '/notes/#map', '/papers/': '/notes/#papers', '/templates/': '/resources/' };
     for (const r of res) moved[`/templates/${r.slug}/`] = `/resources/${r.slug}/`;
     for (const [from, to] of Object.entries(moved)) write(`${base}${from}index.html`.replace(/^\//, ''), layout.redirectPage(ctx, href(to)));
+    write(`${base}/search.json`.replace(/^\//, ''), JSON.stringify(layout.searchIndex(ctx)));
     write(`${base}/rss.xml`.replace(/^\//, ''), `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
@@ -165,7 +168,7 @@ ${list.map((n) => `<item>
   const unique = [...new Set(urls)];
   write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${unique.flatMap((p) => LANGS.map((lang) => `  <url><loc>${site.url}${BASE[lang]}${p}</loc>${LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${HTML_LANG[l]}" href="${site.url}${BASE[l]}${p}"/>`).join('')}</url>`)).join('\n')}
+${unique.flatMap((p) => LANGS.map((lang) => `  <url><loc>${site.url}${BASE[lang]}${p}</loc>${lastmod[p] ? `<lastmod>${lastmod[p]}</lastmod>` : ''}${LANGS.map((l) => `<xhtml:link rel="alternate" hreflang="${HTML_LANG[l]}" href="${site.url}${BASE[l]}${p}"/>`).join('')}</url>`)).join('\n')}
 </urlset>
 `);
   write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap.xml\n`);
@@ -192,14 +195,20 @@ function serve(port = 4321) {
     .listen(port, () => console.log(`serving http://localhost:${port}`));
 }
 
-build();
 if (process.argv.includes('--serve')) {
+  // Each rebuild runs in a fresh process, so edits to src/*.mjs take effect as well as content and styles.
+  const rebuild = () => {
+    try { execFileSync(process.execPath, [fileURLToPath(import.meta.url)], { stdio: 'inherit' }); } catch { /* the child already printed the error */ }
+  };
+  rebuild();
   serve();
   let timer;
   for (const dir of ['content', 'src', 'static']) {
     fs.watch(path.join(ROOT, dir), { recursive: true }, () => {
       clearTimeout(timer);
-      timer = setTimeout(() => { try { build(); } catch (err) { console.error(err.message); } }, 150);
+      timer = setTimeout(rebuild, 150);
     });
   }
+} else {
+  build();
 }

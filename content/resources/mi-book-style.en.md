@@ -1,39 +1,36 @@
 ---
-type: "template"
 title: "MI Book / Lecture Note"
-description: "面向中文数学书与长篇讲义，在页眉、章节、定理与封面之间建立一致的阅读系统。"
+description: "For Chinese mathematics books and long lecture notes, with one reading system across headers, chapters, theorems and cover."
 tags: ["Book", "XeLaTeX", "CTeX"]
-order: 5
-previews: ["/images/templates/mi-book-style-1.webp", "/images/templates/mi-book-style-2.webp", "/images/templates/mi-book-style-3.webp", "/images/templates/mi-book-style-4.webp"]
 ---
 
-## 设计思路
+## Design
 
-这套模板面向 **书、讲义和专著** 这类较长的材料。目标是结构稳定、视觉统一：
+This template is for longer material in Chinese: **books, lecture notes and monographs**. The aim is a stable structure and one consistent look:
 
-* **保留书籍层级**：使用 `book` 类的 `part / chapter / section`，适合讲义、系列笔记和预印本。
-* **统一的视觉系统**：封面、彩带、页眉页脚、定理环境和提示盒子共用一套配色。
-* **稳定的依赖**：优先使用系统字体，找不到时回退到 TeX Gyre / Fandol，换一台机器也能编译。
-* **可读的定理环境**：`definition / theorem / lemma / corollary / remark` 统一套上边栏盒子。
-* **可覆写的页脚**：书名和页脚文字由 `\BookShortTitle` 和 `\BookFooterLabel` 两个宏控制。
+* **Book hierarchy kept**: it uses the `book` class with `part / chapter / section`, which suits lecture notes, note series and preprints.
+* **One visual system**: cover, ribbons, headers and footers, theorem environments and callout boxes share one palette.
+* **Stable dependencies**: system fonts first, falling back to TeX Gyre / Fandol, so it compiles on another machine.
+* **Readable theorems**: `definition / theorem / lemma / corollary / remark` are all set in sidebar boxes.
+* **Overridable footer**: the short title and footer label are controlled by `\BookShortTitle` and `\BookFooterLabel`.
 
-## 环境要求
+## Requirements
 
-* **编译器**：`XeLaTeX` 或 `LuaLaTeX`
-* **宏包**：`ctex`, `fontspec`, `tcolorbox`, `titlesec`, `fancyhdr`, `tikz`, `mathtools`, `amsthm`
-* **推荐字体**：
-  * 英文衬线：`Times New Roman`，回退到 `TeX Gyre Termes`
-  * 中文衬线：`Noto Serif CJK SC`，回退到 `Fandol`
-  * 等宽：`JetBrains Mono`，回退到 `Menlo / Courier New`
+* **Compiler**: `XeLaTeX` or `LuaLaTeX`
+* **Packages**: `ctex`, `fontspec`, `tcolorbox`, `titlesec`, `fancyhdr`, `tikz`, `mathtools`, `amsthm`
+* **Recommended fonts**:
+  * English serif: `Times New Roman`, falling back to `TeX Gyre Termes`
+  * Chinese serif: `Noto Serif CJK SC`, falling back to `Fandol`
+  * Monospace: `JetBrains Mono`, falling back to `Menlo / Courier New`
 
-## 源文件
+## Source files
 
 * [main.tex](/downloads/templates/mi-book-style/main.tex)
 * [miextras.sty](/downloads/templates/mi-book-style/miextras.sty)
 
-## 第一步：样式文件（`miextras.sty`）
+## Step 1: the style file (`miextras.sty`)
 
-样式文件负责字体、页眉页脚、配色和所有盒子环境。`KeyBox / SideBar / Example / Takeaway` 以及定理环境都由 `tcolorbox` 统一处理。
+The style file handles fonts, headers and footers, colors and every box environment. `KeyBox / SideBar / Example / Takeaway` and the theorem environments are all built on `tcolorbox`.
 
 ```latex
 \NeedsTeXFormat{LaTeX2e}
@@ -163,9 +160,9 @@ previews: ["/images/templates/mi-book-style-1.webp", "/images/templates/mi-book-
 \tcolorboxenvironment{remark}{mi-notion=accentD}
 ```
 
-## 第二步：主文件（`main.tex`）
+## Step 2: the main file (`main.tex`)
 
-`main.tex` 只负责组织一本书的结构。样式都留在 `.sty` 里，正文专注于 part / chapter / theorem / example / references。
+`main.tex` only organizes the structure of the book. Styling stays in the `.sty`; the body focuses on parts, chapters, theorems, examples and references. The sample content is in Chinese.
 
 ```latex
 \documentclass[10pt,openany]{book}
@@ -231,25 +228,25 @@ previews: ["/images/templates/mi-book-style-1.webp", "/images/templates/mi-book-
 \end{document}
 ```
 
-## 适用场景
+## When to use it
 
-适合：
+A good fit for:
 
-* 一本中文数学讲义
-* 系列 lecture notes 或专著
-* 长于 10 页、需要目录和章节层级的预印本
-* 之后可能扩写成课程讲义的长文底稿
+* a set of mathematics lecture notes in Chinese
+* a lecture note series or a monograph
+* a preprint longer than 10 pages that needs a table of contents and chapters
+* a long draft that may later grow into course notes
 
-不太适合：
+Less suitable for:
 
-* 单页卡片
-* 几屏就读完的短知识点
-* 需要强烈视觉风格的海报式排版
+* one-page cards
+* short items read in a few screens
+* poster-like layouts with a strong visual style
 
-## 扩展建议
+## Extending it
 
-要继续扩展这套模板，优先改下面三处，而不是添加新环境，这样整体风格不会散：
+To extend the template, change these three things first instead of adding new environments, so that the overall style stays coherent:
 
-1. `\BookShortTitle` 和 `\BookFooterLabel`
-2. 颜色系统 `brand / brandD / secblue / accentD`
-3. `mi-elegant` 和 `mi-notion` 两个盒子基类
+1. `\BookShortTitle` and `\BookFooterLabel`
+2. the color system `brand / brandD / secblue / accentD`
+3. the two box base styles `mi-elegant` and `mi-notion`

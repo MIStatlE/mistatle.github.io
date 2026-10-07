@@ -8,6 +8,7 @@
 npm install        # 只需一次
 npm run dev        # 本地预览 http://localhost:4321 ，改动后自动重建
 npm run build      # 生成 dist/
+npm run check      # 检查 dist/ 里的内部链接，有断链时报错（部署前会自动运行）
 ```
 
 推送到 `main` 后由 GitHub Actions 自动构建并发布（仓库 Settings → Pages → Source 需设为 **GitHub Actions**）。
@@ -22,11 +23,10 @@ title: "标题"
 description: "一句话摘要，显示在列表和分享卡片里。"
 date: "2026-10-07"
 updated: "2026-11-01"   # 可省略
-track: "foundations"    # 主线：foundations / algorithms / systems
-area: "information"     # 领域，见 content/site.json 的 areas
-kind: "derivation"      # 类型：derivation / mechanism / foundation / paper
-level: "core"           # 难度：intro / core / deep
-collection: "probability-concentration"   # 所属专题，可省略
+area: "information"     # 学科：probability / statistics / information / optimization / rl / theory / deep-learning / generative
+track: "foundations"    # 地图上的层：foundations / algorithms / systems
+kind: "derivation"      # 类型，只作标签显示：derivation / mechanism / foundation / paper
+collection: "probability-concentration"   # 所属专题，可省略；显示在文章底部
 tags: ["信息论"]
 pdf: "/downloads/xxx.pdf"                 # 可省略；文件放 static/downloads/
 draft: true                               # 可省略；为 true 时不发布
@@ -37,7 +37,7 @@ draft: true                               # 可省略；为 true 时不发布
 脚注写作 [^1]，并在文末另起一行写 `[^1]: 说明文字`。单独成段的图片可以点击放大。
 ```
 
-主线、领域、类型、难度都定义在 `content/site.json` 里，可以增删；写了不存在的值，构建会直接报错并指出是哪个文件。
+分类只有一层：学科。学科列表在 `content/site.json` 的 `areas` 里，可以增删；写了不存在的值，构建会直接报错并指出是哪个文件。
 
 ## 中英双语
 
@@ -50,9 +50,10 @@ draft: true                               # 可省略；为 true 时不发布
 
 地图由 `content/map.json` 自动排版，不需要手动摆位置：
 
-- `nodes`：`id`、`label`、`track`、`area`、`type`（concept / theorem / method / model / paper）和一句 `summary`。写完对应笔记后加上 `"note": "笔记文件名"`，节点就会点亮。
+- `nodes`：`id`、`label`、`area`（学科，和笔记用的是同一份列表）、`type`（concept / theorem / method / model / paper）和一句 `summary`。写完对应笔记后加上 `"note": "笔记文件名"`，节点就会点亮。
 - `edges`：`from`、`to`、`type` 和一句 `why`。`type` 是关系类型：`requires` 前置、`derives` 推出、`applies` 应用、`extends` 延伸、`contrasts` 对比。
-- 节点在哪一列，由指向它的关系链有多长决定；三条主线各占一层。
+- 地图按学科分区：每个学科是一块区域，区域上方的学科名可以点击，效果等同于列表上方的学科按钮。学科属于哪一层由 `content/site.json` 里它的 `track` 决定。
+- 区域内节点在哪一列，由指向它的关系链有多长决定；连线会自动绕开挡在路上的节点。
 
 文章底部的"前置与来源 / 后续与相关"也来自这份文件。
 
@@ -71,6 +72,10 @@ draft: true                               # 可省略；为 true 时不发布
 - **访问统计**：在 `content/site.json` 的 `analytics` 里填 GoatCounter 的站点代码，或 Umami 的脚本地址与网站 ID。留空时不加载任何统计脚本。
 - **论文清单**：编辑 `content/papers.json`，它显示在笔记页的"论文"视图里，和笔记共用同一套筛选。`status` 可取 `noted`（已写笔记，配合 `note` 字段）、`reading`、`read`、`queued`。
 
+## 全站搜索
+
+页眉的搜索按钮（或 ⌘K / Ctrl+K）可以搜索笔记、地图上的概念、论文和资源。索引在构建时自动生成为 `search.json`，不需要维护。
+
 ## 目录
 
 | 路径 | 内容 |
@@ -88,3 +93,4 @@ draft: true                               # 可省略；为 true 时不发布
 | `src/map.mjs` | 知识地图的排版与绘制 |
 | `src/i18n.mjs` | 两种语言的界面文字 |
 | `src/logo.mjs` | Logo（同时生成 favicon） |
+| `check.mjs` | 构建后的链接检查 |

@@ -1,5 +1,6 @@
 // Knowledge map: content/map.json → a layered, 2.5D inline SVG.
-// Each track is a tilted plane; a node's column is its longest chain of incoming relations.
+// Each track is a tilted plane, divided into one zone per subject; inside a zone, a node's column
+// follows its longest chain of incoming relations.
 // Positions are computed here, so the JSON only lists nodes and typed relations.
 import { esc } from './markdown.mjs';
 import { pick } from './i18n.mjs';
@@ -8,6 +9,7 @@ const NODE_W = 144, NODE_H = 46, COL = 204, ROW = 96;                 // plane u
 const PAD_U = 30, PAD_TOP = 48, PAD_BOTTOM = 16;                      // plane padding
 const SHEAR = 0.36, SQUASH = 0.66;                                    // projection
 const GAP = 64, SLAB = 7, LIFT = 15, MARGIN = 14;
+const EMPTY_ZONE = 0.5;                                              // width of a subject with nothing on the map yet
 
 export function prepareMap(raw, site, notes) {
   const noteBySlug = new Map(notes.map((n) => [n.slug, n]));
@@ -15,10 +17,11 @@ export function prepareMap(raw, site, notes) {
   const byId = new Map();
   for (const n of raw.nodes) {
     if (byId.has(n.id)) throw new Error(`map.json: duplicate node "${n.id}"`);
-    if (!site.tracks.some((t) => t.id === n.track)) throw new Error(`map.json: node "${n.id}" has unknown track "${n.track}"`);
-    if (n.area && !site.areas.some((a) => a.id === n.area)) throw new Error(`map.json: node "${n.id}" has unknown area "${n.area}"`);
+    const area = site.areas.find((a) => a.id === n.area);
+    if (!area) throw new Error(`map.json: node "${n.id}" needs a subject from "areas" in content/site.json (got "${n.area}")`);
     if (n.note && !noteBySlug.has(n.note)) throw new Error(`map.json: node "${n.id}" points at missing note "${n.note}"`);
-    byId.set(n.id, { type: 'concept', ...n, url: n.note ? noteBySlug.get(n.note).url : null, before: [], after: [], links: [] });
+    // The plane a node sits on is decided by its subject.
+    byId.set(n.id, { type: 'concept', ...n, track: area.track, url: n.note ? noteBySlug.get(n.note).url : null, before: [], after: [], links: [] });
   }
   const edges = raw.edges.map((e) => {
     const a = byId.get(e.from), b = byId.get(e.to), rel = relById.get(e.type);
@@ -87,21 +90,28 @@ function typeGlyph(type, x, y) {
 }
 
 export function renderMap(ctx, { panel = true } = {}) {
-  const { site, map, t, L } = ctx;
+  const { site, map, t, L, href } = ctx;
 
-  // 1. Planes, stacked top to bottom. Every plane has the same size; a track spreads its own
-  //    columns evenly across it, so short tracks do not leave half a plane empty.
+  // 1. Planes, stacked top to bottom, all the same size. A plane is split into one zone per subject;
+  //    a zone is as wide as the number of columns it needs (an empty one keeps a narrow strip).
   const lanes = site.tracks
     .map((track) => {
-      const mine = map.nodes.filter((n) => n.track === track.id);
-      if (!mine.length) return null;
-      const layers = [...new Set(mine.map((n) => n.layer))].sort((a, b) => a - b);
-      const cols = layers.map((layer) => mine.filter((n) => n.layer === layer));
-      return { track, cols, rows: Math.max(...cols.map((c) => c.length)) };
+      const zones = site.areas
+        .filter((a) => a.track === track.id)
+        .map((area) => {
+          const mine = map.nodes.filter((n) => n.area === area.id);
+          const layers = [...new Set(mine.map((n) => n.layer))].sort((a, b) => a - b);
+          const cols = layers.map((layer) => mine.filter((n) => n.layer === layer));
+          const labelRoom = (textWidth(L(area.title), 14) + 64) / COL;   // the subject name has to fit above its zone
+          return { area, cols, total: mine.length, done: mine.filter((n) => n.url).length, units: Math.max(cols.length, EMPTY_ZONE, labelRoom) };
+        });
+      if (!zones.some((z) => z.total)) return null;
+      return { track, zones, units: zones.reduce((sum, z) => sum + z.units, 0), rows: Math.max(1, ...zones.flatMap((z) => z.cols.map((c) => c.length))) };
     })
     .filter(Boolean);
-  const maxCols = Math.max(...lanes.map((l) => l.cols.length));
-  const planeW = PAD_U * 2 + maxCols * COL;
+  const planeW = PAD_U * 2 + Math.max(...lanes.map((l) => l.units)) * COL;
+  const rows = Math.max(...lanes.map((l) => l.rows));
+  for (const lane of lanes) lane.rows = rows;   // equal planes line up; shorter columns are centred
   let y = MARGIN + 34, maxH = 0;
   for (const lane of lanes) {
     lane.h = PAD_TOP + lane.rows * ROW + PAD_BOTTOM;
@@ -115,39 +125,51 @@ export function renderMap(ctx, { panel = true } = {}) {
   const project = (lane, u, v) => [ox + u + (lane.h - v) * SHEAR, lane.oy + v * SQUASH];
 
   for (const lane of lanes) {
-    const usable = planeW - PAD_U * 2;
-    lane.cols.forEach((col, ci) => {
-      col.forEach((n, i) => {
-        const u = PAD_U + ((ci + 0.5) * usable) / lane.cols.length;
-        const v = PAD_TOP + ((lane.rows - col.length) / 2 + i + 0.5) * ROW;
-        [n.px, n.py] = project(lane, u, v);       // footprint on the plane
-        n.cx = n.px; n.cy = n.py - LIFT - NODE_H / 2; // centre of the card floating above it
+    const unit = (planeW - PAD_U * 2) / lane.units;
+    let u0 = PAD_U;
+    for (const zone of lane.zones) {
+      zone.u0 = u0;
+      zone.u1 = u0 + zone.units * unit;
+      zone.cols.forEach((col, ci) => {
+        col.forEach((n, i) => {
+          const u = zone.u0 + ((ci + 0.5) * (zone.u1 - zone.u0)) / zone.cols.length;
+          const v = PAD_TOP + ((lane.rows - col.length) / 2 + i + 0.5) * ROW;
+          [n.px, n.py] = project(lane, u, v);       // footprint on the plane
+          n.cx = n.px; n.cy = n.py - LIFT - NODE_H / 2; // centre of the card floating above it
+        });
       });
-    });
+      u0 = zone.u1;
+    }
   }
 
   const laneSvg = lanes
     .map((lane) => {
       const { track, h } = lane;
       const c = [project(lane, 0, 0), project(lane, planeW, 0), project(lane, planeW, h), project(lane, 0, h)];
-      const dots = [];
-      for (let v = 20; v < h - 6; v += 30) for (let u = 22; u < planeW - 6; u += 30) {
-        const [dx, dy] = project(lane, u, v);
-        dots.push(`<circle cx="${r1(dx)}" cy="${r1(dy)}" r=".9"/>`);
-      }
-      const [lx, ly] = c[0];
+      const ly = c[0][1];
       const id = `plane-${track.id}`;
+      const zones = lane.zones
+        .map((zone, zi) => {
+          const [tx] = project(lane, zone.u0, 0);
+          const name = L(zone.area.title);
+          const divider = zi ? `<path class="zone-line" d="M${pts([project(lane, zone.u0, 0)])}L${pts([project(lane, zone.u0, h)])}"/>` : '';
+          return `${divider}<a class="zone-label${zone.total ? '' : ' is-empty'}" href="${href('/notes/')}#s-${zone.area.id}" data-area="${zone.area.id}">
+    <path class="zone-tick" d="M${r1(tx)} ${r1(ly)}v-9"/>
+    <text x="${r1(tx + 8)}" y="${r1(ly - 12)}"><tspan class="zone-name">${esc(name)}</tspan><tspan class="zone-count" dx="7">${zone.done}/${zone.total}</tspan></text>
+  </a>`;
+        })
+        .join('\n  ');
       return `<g class="map-lane t-${track.id}">
   <linearGradient id="${id}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" class="g0"/><stop offset="1" class="g1"/></linearGradient>
+  <pattern id="${id}-dots" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="matrix(1 0 ${-SHEAR} ${SQUASH} ${r1(ox + h * SHEAR)} ${r1(lane.oy)})"><circle class="dot" cx="15" cy="15" r="1.1"/></pattern>
   <polygon class="ground" points="${pts(c.map(([px, py]) => [px - 6, py + 26]))}" filter="url(#kmap-blur)"/>
   <polygon class="slab" points="${pts([c[3], c[2], [c[2][0], c[2][1] + SLAB], [c[3][0], c[3][1] + SLAB]])}"/>
   <polygon class="slab side" points="${pts([c[1], c[2], [c[2][0], c[2][1] + SLAB], [c[1][0], c[1][1] + SLAB]])}"/>
   <polygon class="plane" points="${pts(c)}" fill="url(#${id})"/>
-  <g class="dots">${dots.join('')}</g>
+  <polygon points="${pts(c)}" fill="url(#${id}-dots)"/>
   <path class="rim" d="M${pts([c[3]])}L${pts([c[0]])}L${pts([c[1]])}"/>
-  <text class="lane-glyph" x="${r1(lx + 6)}" y="${r1(ly - 13)}">${esc(track.glyph)}</text>
-  <text class="lane-title" x="${r1(lx + 24)}" y="${r1(ly - 14)}">${esc(L(track.title))}</text>
-  <text class="lane-sub" x="${r1(c[1][0])}" y="${r1(ly - 14)}" text-anchor="end">${esc(track.code)} · ${esc(pick(track.title, 'en').toUpperCase())}</text>
+  ${zones}
+  <text class="lane-sub" x="${r1(c[1][0])}" y="${r1(ly - 12)}" text-anchor="end">${esc(track.glyph)} ${esc(L(track.title).toUpperCase())}</text>
 </g>`;
     })
     .join('\n');
@@ -164,7 +186,18 @@ export function renderMap(ctx, { panel = true } = {}) {
         const s = Math.sign(dx);
         p0 = [a.cx + (s * NODE_W) / 2, a.cy]; p3 = [b.cx - s * (NODE_W / 2 + end), b.cy];
         const k = Math.max(26, Math.abs(p3[0] - p0[0]) * 0.45);
-        p1 = [p0[0] + s * k, p0[1]]; p2 = [p3[0] - s * k, p3[1]];
+        // If another card sits on the straight path, bow the link around it.
+        const blocker = map.nodes.find((n) => {
+          if (n === a || n === b || n.track !== a.track || (n.cx - p0[0]) * (n.cx - p3[0]) >= 0) return false;
+          const lineY = p0[1] + ((n.cx - p0[0]) / (p3[0] - p0[0])) * (p3[1] - p0[1]);
+          return Math.abs(lineY - n.cy) < NODE_H * 0.8;
+        });
+        let bend = 0;
+        if (blocker) {
+          const lineY = p0[1] + ((blocker.cx - p0[0]) / (p3[0] - p0[0])) * (p3[1] - p0[1]);
+          bend = (lineY >= blocker.cy ? 1 : -1) * (NODE_H + 16);
+        }
+        p1 = [p0[0] + s * k, p0[1] + bend]; p2 = [p3[0] - s * k, p3[1] + bend];
       } else {
         const s = Math.sign(dy) || 1;
         p0 = [a.cx, a.cy + (s * NODE_H) / 2]; p3 = [b.cx, b.cy - s * (NODE_H / 2 + end)];
@@ -184,11 +217,13 @@ export function renderMap(ctx, { panel = true } = {}) {
       const head = rel.symmetric
         ? `<circle class="head" cx="${r1(p0[0])}" cy="${r1(p0[1])}" r="2.4"/><circle class="head" cx="${r1(tip[0])}" cy="${r1(tip[1])}" r="2.4"/>`
         : `<polygon class="head" points="${pts([tip, wing(1), wing(-1)])}"/>`;
-      return `<g class="map-edge r-${rel.id}${a.track === b.track ? '' : ' is-cross'}" data-from="${a.id}" data-to="${b.id}" data-rel="${rel.id}">
-  <path d="M${pts([p0])}C${pts([p1])} ${pts([p2])} ${pts([rel.symmetric ? tip : p3])}"/>
+      const d = `M${pts([p0])}C${pts([p1])} ${pts([p2])} ${pts([rel.symmetric ? tip : p3])}`;
+      const sentence = `${L(a.label)} ${rel.symmetric ? '↔' : '→'} ${L(b.label)}`;
+      return `<g class="map-edge r-${rel.id}${a.track === b.track ? '' : ' is-cross'}" data-from="${a.id}" data-to="${b.id}" data-rel="${rel.id}" data-head="${esc(sentence)}" data-tag="${esc(label)}" data-why="${esc(L(e.why) || '')}" aria-label="${esc(`${sentence}: ${label}`)}">
+  <path class="hit" d="${d}"/>
+  <path class="line" d="${d}"/>
   ${head}
   <g class="edge-label"><rect x="${r1(mx - lw / 2)}" y="${r1(my - 8.5)}" width="${r1(lw)}" height="17" rx="8.5"/><text x="${r1(mx)}" y="${r1(my + 3.3)}" text-anchor="middle">${esc(label)}</text></g>
-  <title>${esc(L(a.label))} ${rel.symmetric ? '↔' : '→'} ${esc(L(b.label))}：${esc(L(e.why) || '')}</title>
 </g>`;
     })
     .join('\n');
@@ -225,6 +260,13 @@ export function renderMap(ctx, { panel = true } = {}) {
       },
     ]),
   );
+  // On small screens the drawing is replaced by this outline: the same nodes, grouped by subject.
+  const outline = lanes
+    .flatMap((lane) => lane.zones.filter((z) => z.total).map((zone) => `<section class="t-${lane.track.id}">
+      <h3><i></i>${esc(L(zone.area.title))}<small>${zone.done}/${zone.total}</small></h3>
+      <p>${zone.cols.flat().map((n) => `<button type="button" class="ochip ${n.url ? 'is-written' : 'is-planned'}" data-id="${n.id}">${esc(L(n.label))}</button>`).join('')}</p>
+    </section>`))
+    .join('\n    ');
   const written = map.nodes.filter((n) => n.url).length;
   const usedTypes = map.types.filter((ty) => map.nodes.some((n) => n.type === ty.id));
   const usedRels = map.relations.filter((r) => map.edges.some((e) => e.rel === r));
@@ -243,6 +285,10 @@ ${nodeSvg}
   <div class="kmap-legend">
     <div class="legend-row"><span class="legend-name">${esc(t.relLegend)}</span>${usedRels.map((r) => `<button type="button" class="rel-toggle r-${r.id}" data-rel="${r.id}" aria-pressed="true"><i></i>${esc(L(r.title))}</button>`).join('')}</div>
     <div class="legend-row"><span class="legend-name">${esc(t.typeLegend)}</span>${usedTypes.map((ty) => `<span class="type-key"><svg viewBox="-8 -8 16 16" width="14" height="14" aria-hidden="true">${typeGlyph(ty.id, 0, 0)}</svg>${esc(L(ty.title))}</span>`).join('')}<span class="type-key"><i class="k-written"></i>${esc(t.written)}</span><span class="type-key"><i class="k-planned"></i>${esc(t.planned)}</span><span class="swipe">${esc(t.mapScroll)}</span><span class="count">${esc(t.lit(written, map.nodes.length))}</span></div>
+  </div>
+  <div class="kmap-outline">
+    <p class="outline-hint">${esc(t.outlineHint)}<span>${esc(t.lit(written, map.nodes.length))}</span></p>
+    ${outline}
   </div>
   ${panel ? `<div class="kmap-panel" aria-live="polite"><p class="hint">${esc(t.mapHint)}</p></div>` : ''}
   <script type="application/json" class="kmap-data">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>

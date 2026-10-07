@@ -1,30 +1,27 @@
 ---
-type: "template"
 title: "Short Note"
-description: "为短篇推导与公开笔记准备的极简模板，强调结构、公式与留白。"
+description: "A minimal template for short derivations and public notes, built around structure, formulas and white space."
 tags: ["Cheatsheet", "TColorBox"]
-order: 2
-previews: ["/images/templates/short-note-1.webp", "/images/templates/short-note-2.webp", "/images/templates/short-note-3.webp"]
 ---
 
-## 设计思路
+## Design
 
-这套模板为 **短篇推导和知识卡片** 设计。标准的 LaTeX `article` 边距很大，不适合在手机或平板上阅读短内容，这里做了三点调整：
+This template is for **short derivations and knowledge cards**. The standard LaTeX `article` has wide margins that do not suit short content read on a phone or tablet, so three things were changed:
 
-* **紧凑版面**：7.5 × 10 英寸页面，窄边距，单页信息密度高。
-* **两种盒子**：
-    * **Elegant Card**：用于 `Key Idea` 和 `Theorem`，带柔和阴影的卡片。
-    * **Notion Style**：用于 `Definition` 和 `Takeaway`，只有左侧色条。
-* **样式与内容分离**：样式放在单独的 `.tex` 文件里，正文文件只写内容。
+* **Compact page**: a 7.5 × 10 inch page with narrow margins, for a high density of information per page.
+* **Two kinds of boxes**:
+    * **Elegant Card**: for `Key Idea` and `Theorem`, a card with a soft shadow.
+    * **Notion Style**: for `Definition` and `Takeaway`, with only a colored bar on the left.
+* **Style and content kept apart**: the style lives in its own `.tex` file, and the main file holds only content.
 
-## 环境要求
+## Requirements
 
-* **编译器**：`XeLaTeX`（必需，用于 `ctex` 中文和 `fontspec` 字体）
-* **宏包**：`tcolorbox`（4.50 以上）、`tikz`、`geometry`
+* **Compiler**: `XeLaTeX` (required, for Chinese via `ctex` and fonts via `fontspec`)
+* **Packages**: `tcolorbox` (4.50 or later), `tikz`, `geometry`
 
-## 第一步：创建样式文件
+## Step 1: create the style file
 
-在项目根目录新建 `short-template.tex`。这是样式表，使用时不需要改动。
+Create `short-template.tex` in the project root. This is the style sheet and does not need editing.
 
 ```latex
 % ===========================================
@@ -131,9 +128,9 @@ previews: ["/images/templates/short-note-1.webp", "/images/templates/short-note-
 \fancyhf{} \renewcommand{\headrulewidth}{0pt} \fancyfoot[C]{\footnotesize\color{brand!50} · \thepage \ ·} \pagestyle{fancy}
 ```
 
-## 第二步：编写内容
+## Step 2: write your content
 
-新建 `main.tex`，用 `\input` 导入样式，然后专注于写作。
+Create `main.tex`, load the style with `\input`, and write. The sample content is in Chinese.
 
 ```latex
 \documentclass[12pt]{article}

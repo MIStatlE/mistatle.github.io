@@ -1,42 +1,41 @@
 ---
-type: "template"
 title: "CN Lecture Note"
-description: "面向中文课程讲义与系列笔记，统一正文层级、定理环境与长篇阅读节奏。"
+description: "For Chinese course handouts and note series, with consistent heading levels, theorem environments and long-form rhythm."
 tags: ["Lecture Note", "CTeX", "XeLaTeX"]
-order: 3
-previews: ["/images/templates/cn-lecture-note-1.webp", "/images/templates/cn-lecture-note-2.webp", "/images/templates/cn-lecture-note-3.webp"]
 ---
 
-## 设计思路
+## Design
 
-这套模板面向 **课程讲义、系列笔记和长篇推导**，介于单页卡片和整本书之间：
+This template is for **course handouts, note series and long derivations in Chinese**. It sits between a one-page card and a full book:
 
-* **按讲次编号**：页码、公式和章节编号都可以按 lecture 组织，适合连续更新。
-* **首页信息集中**：用一块讲义头部面板放课程、学期、讲次、副标题和作者。
-* **统一的定理与说明环境**：`definition / theorem / proposition / remark` 都套在 `tcolorbox` 里，`Analysis / Remark / Summary / Example` 共用同一套盒子。
-* **为中文技术写作准备**：默认 `XeLaTeX / LuaLaTeX + ctex`，并带字体回退，换一台机器也能编译。
+* **Numbered by lecture**: pages, equations and sections can all be numbered per lecture, which suits notes that are updated over time.
+* **One header panel**: course, term, lecture number, subtitle and author sit together in a single panel on the first page.
+* **One system of boxes**: `definition / theorem / proposition / remark` are all wrapped in `tcolorbox`, and `Analysis / Remark / Summary / Example` share the same box style.
+* **Built for Chinese technical writing**: `XeLaTeX / LuaLaTeX + ctex` by default, with font fallbacks so it compiles on another machine.
 
-## 环境要求
+## Requirements
 
-* **编译器**：`XeLaTeX` 或 `LuaLaTeX`
-* **宏包**：`ctex`, `fontspec`, `tcolorbox`, `titlesec`, `fancyhdr`, `tikz`, `mathtools`, `amsthm`, `cleveref`
-* **推荐字体**：
-  * 英文衬线：`Times New Roman`，回退到 `TeX Gyre Termes`
-  * 中文衬线：`Noto Serif CJK SC`，回退到 `Fandol`
+* **Compiler**: `XeLaTeX` or `LuaLaTeX`
+* **Packages**: `ctex`, `fontspec`, `tcolorbox`, `titlesec`, `fancyhdr`, `tikz`, `mathtools`, `amsthm`, `cleveref`
+* **Recommended fonts**:
+  * English serif: `Times New Roman`, falling back to `TeX Gyre Termes`
+  * Chinese serif: `Noto Serif CJK SC`, falling back to `Fandol`
 
-## 源文件
+## Source files
 
 * [CN.tex](/downloads/templates/cn-lecture-note/CN.tex)
 
-## 用法
+## Usage
 
-源文件本身就是一份可以直接编译的示例：
+The source file is itself a working example that compiles as is:
 
-1. 替换 `\LectureBanner` 里的课程名、讲次和作者信息。
-2. 保留或删除示例章节。
-3. 在 `definition / theorem / AnalysisBox / SummaryBox` 这些环境里写内容。
+1. Replace the course name, lecture number and author in `\LectureBanner`.
+2. Keep or delete the sample sections.
+3. Write your content inside `definition / theorem / AnalysisBox / SummaryBox`.
 
-## 完整源码（`CN.tex`）
+## Full source (`CN.tex`)
+
+The sample content inside the file is in Chinese.
 
 ```latex
 \documentclass[11pt]{article}

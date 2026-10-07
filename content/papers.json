@@ -6,7 +6,7 @@
     "venue": "arXiv",
     "url": "https://arxiv.org/abs/2603.19312",
     "status": "noted",
-    "area": "representation",
+    "area": "deep-learning",
     "note": "leworldmodel-sigreg",
     "tags": ["World Model", "JEPA"]
   },

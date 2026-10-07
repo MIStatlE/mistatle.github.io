@@ -125,7 +125,7 @@
       "id": "statistics",
       "track": "foundations",
       "title": {
-        "zh": "统计推断",
+        "zh": "统计",
         "en": "Statistics"
       }
     },
@@ -162,11 +162,11 @@
       }
     },
     {
-      "id": "architectures",
+      "id": "deep-learning",
       "track": "systems",
       "title": {
-        "zh": "模型架构",
-        "en": "Architectures"
+        "zh": "深度学习",
+        "en": "Deep Learning"
       }
     },
     {
@@ -175,14 +175,6 @@
       "title": {
         "zh": "生成模型",
         "en": "Generative Models"
-      }
-    },
-    {
-      "id": "representation",
-      "track": "systems",
-      "title": {
-        "zh": "表示学习与世界模型",
-        "en": "Representation & World Models"
       }
     }
   ],
@@ -229,29 +221,6 @@
       "desc": {
         "zh": "读一篇论文并核对它的论证",
         "en": "Reading a paper and checking its argument"
-      }
-    }
-  ],
-  "levels": [
-    {
-      "id": "intro",
-      "title": {
-        "zh": "入门",
-        "en": "Introductory"
-      }
-    },
-    {
-      "id": "core",
-      "title": {
-        "zh": "进阶",
-        "en": "Intermediate"
-      }
-    },
-    {
-      "id": "deep",
-      "title": {
-        "zh": "深入",
-        "en": "Advanced"
       }
     }
   ],

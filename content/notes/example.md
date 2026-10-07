@@ -4,7 +4,6 @@ description: "排版示例，未发布。"
 date: "2026-03-08"
 area: "probability"
 kind: "derivation"
-level: "intro"
 track: "foundations"
 tags: []
 draft: true

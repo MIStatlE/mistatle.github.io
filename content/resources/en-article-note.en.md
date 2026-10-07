@@ -1,45 +1,42 @@
 ---
-type: "template"
 title: "EN Article Note"
-description: "面向英文技术说明与 expository writing，保持论证结构、公式和引用的清晰。"
+description: "For English technical explainers and expository writing, keeping argument structure, formulas and citations clear."
 tags: ["Article", "Expository", "XeLaTeX"]
-order: 4
-previews: ["/images/templates/en-article-note-1.webp", "/images/templates/en-article-note-2.webp", "/images/templates/en-article-note-3.webp"]
 ---
 
-## 设计思路
+## Design
 
-这套模板面向 **英文说明性笔记（expository notes）**，比正式论文松，比短卡片完整：
+This template is for **expository notes in English**: looser than a formal paper, more complete than a short card.
 
-* **顶部信息栏**：标题、副标题、作者、单位和主题标签在首页一次交代清楚。
-* **清楚的层级**：section 标题、theorem、remark、roadmap、insight 各有明确的视觉层级。
-* **适合屏幕阅读**：版面尺寸和行距按屏幕阅读调整，并带字体回退。
+* **Top metadata bar**: title, subtitle, author, affiliation and topic tags are all stated once on the first page.
+* **Clear hierarchy**: section titles, theorems, remarks, roadmaps and insights each have a distinct visual level.
+* **Made for screens**: page size and line spacing are tuned for reading on a screen, with font fallbacks.
 
-适合写一篇独立的理论笔记、课程 handout 或技术说明文。
+It suits a self-contained theory note, a course handout or a technical explainer.
 
-## 环境要求
+## Requirements
 
-* **编译器**：`XeLaTeX` 或 `LuaLaTeX`
-* **宏包**：`fontspec`, `microtype`, `tcolorbox`, `titlesec`, `fancyhdr`, `tikz`, `mathtools`, `amsthm`, `enumitem`
-* **推荐字体**：
-  * 衬线：`Times New Roman`，回退到 `TeX Gyre Termes`
-  * 无衬线：`Helvetica Neue`，回退到 `TeX Gyre Heros`
-  * 等宽：`JetBrains Mono`，回退到 `Menlo / Courier New`
+* **Compiler**: `XeLaTeX` or `LuaLaTeX`
+* **Packages**: `fontspec`, `microtype`, `tcolorbox`, `titlesec`, `fancyhdr`, `tikz`, `mathtools`, `amsthm`, `enumitem`
+* **Recommended fonts**:
+  * Serif: `Times New Roman`, falling back to `TeX Gyre Termes`
+  * Sans: `Helvetica Neue`, falling back to `TeX Gyre Heros`
+  * Mono: `JetBrains Mono`, falling back to `Menlo / Courier New`
 
-## 源文件
+## Source files
 
 * [EN.tex](/downloads/templates/en-article-note/EN.tex)
 
-## 用法
+## Usage
 
-改 `\MakeArticleHeader` 里的标题、副标题、作者和 tags 即可开始写。正文主要用这几个环境组织：
+Edit the title, subtitle, author and tags in `\MakeArticleHeader` and start writing. The body is mainly organized with:
 
 * `RoadmapBox`
 * `InsightBox`
 * `ExampleBox`
 * `theorem / proposition / remark`
 
-## 完整源码（`EN.tex`）
+## Full source (`EN.tex`)
 
 ```latex
 \documentclass[11pt]{article}

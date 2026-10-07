@@ -94,13 +94,16 @@ function extractFootnotes(src) {
 export function renderMarkdown(source, { warn = () => {}, footnotesLabel = 'Footnotes' } = {}) {
   const { src, notes } = extractFootnotes(source);
   const store = [];
+  const levels = (src.replace(/^ {0,3}(```|~~~)[\s\S]*?^ {0,3}\1[ \t]*$/gm, '').match(/^#{1,6}(?=\s)/gm) || []).map((h) => h.length);
+  const shift = levels.length ? 2 - Math.min(...levels) : 0;
   const toc = [];
   const used = new Map();
 
   const marked = new Marked({ gfm: true });
   marked.use({
     renderer: {
-      heading({ tokens, depth }) {
+      heading({ tokens, depth: raw }) {
+        const depth = Math.min(6, Math.max(2, raw + shift));
         const inner = this.parser.parseInline(tokens);
         let id = slugify(inner) || `section-${toc.length + 1}`;
         const n = used.get(id) || 0;

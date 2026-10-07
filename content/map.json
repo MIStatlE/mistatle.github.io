@@ -98,7 +98,6 @@
     {
       "id": "lln",
       "type": "theorem",
-      "track": "foundations",
       "area": "probability",
       "label": {
         "zh": "大数定律",
@@ -112,7 +111,6 @@
     {
       "id": "entropy",
       "type": "concept",
-      "track": "foundations",
       "area": "information",
       "label": {
         "zh": "Shannon 熵",
@@ -126,7 +124,6 @@
     {
       "id": "kl",
       "type": "concept",
-      "track": "foundations",
       "area": "information",
       "label": {
         "zh": "KL 散度与交叉熵",
@@ -140,7 +137,6 @@
     {
       "id": "typical-set",
       "type": "theorem",
-      "track": "foundations",
       "area": "information",
       "note": "typical-set",
       "label": {
@@ -155,7 +151,6 @@
     {
       "id": "sgd",
       "type": "method",
-      "track": "algorithms",
       "area": "optimization",
       "label": {
         "zh": "随机梯度方法",
@@ -169,7 +164,6 @@
     {
       "id": "mdp",
       "type": "concept",
-      "track": "algorithms",
       "area": "rl",
       "label": {
         "zh": "MDP 与价值函数",
@@ -183,7 +177,6 @@
     {
       "id": "policy-gradient",
       "type": "method",
-      "track": "algorithms",
       "area": "rl",
       "note": "policy-gradient-optimization",
       "label": {
@@ -198,8 +191,7 @@
     {
       "id": "attention",
       "type": "method",
-      "track": "systems",
-      "area": "architectures",
+      "area": "deep-learning",
       "note": "scaled-dot-product-attention",
       "label": {
         "zh": "缩放点积注意力",
@@ -213,7 +205,6 @@
     {
       "id": "vae-elbo",
       "type": "model",
-      "track": "systems",
       "area": "generative",
       "label": {
         "zh": "VAE 与 ELBO",
@@ -227,7 +218,6 @@
     {
       "id": "score-matching",
       "type": "method",
-      "track": "systems",
       "area": "generative",
       "label": {
         "zh": "Score Matching",
@@ -241,7 +231,6 @@
     {
       "id": "conditional",
       "type": "method",
-      "track": "systems",
       "area": "generative",
       "label": {
         "zh": "Conditional Technique",
@@ -255,7 +244,6 @@
     {
       "id": "pf-ode",
       "type": "method",
-      "track": "systems",
       "area": "generative",
       "label": {
         "zh": "Probability Flow ODE",
@@ -269,8 +257,7 @@
     {
       "id": "leworldmodel",
       "type": "paper",
-      "track": "systems",
-      "area": "representation",
+      "area": "deep-learning",
       "note": "leworldmodel-sigreg",
       "label": {
         "zh": "LeWorldModel / SIGReg",

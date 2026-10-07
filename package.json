@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "dev": "node build.mjs --serve"
+    "dev": "node build.mjs --serve",
+    "check": "node check.mjs"
   },
   "dependencies": {
     "@fontsource/playfair-display": "^5.0.0",

@@ -4,7 +4,6 @@ description: "概率质量为什么不在密度最高的点，而会落在高维
 date: "2026-01-21"
 area: "information"
 kind: "derivation"
-level: "core"
 track: "foundations"
 collection: "probability-concentration"
 tags: ["信息论", "高维几何", "AEP"]

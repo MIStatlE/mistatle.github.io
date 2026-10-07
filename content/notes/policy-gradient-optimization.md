@@ -4,7 +4,6 @@ description: "从目标函数、梯度估计、方差与步长选择建立一条
 date: "2026-05-06"
 area: "rl"
 kind: "mechanism"
-level: "deep"
 track: "algorithms"
 collection: "policy-optimization"
 tags: ["强化学习", "Policy Gradient", "PPO", "随机优化"]
