@@ -55,29 +55,44 @@
     mark();
   }
 
-  // Search and a small set of filters operate on published notes only.
+  // Notes hub: one set of filters (search + track / area / type / level / tag) drives the note lists,
+  // the paper list and the map above them.
   const search = document.getElementById('note-search');
   if (search) {
-    const state = { q: '', track: '', area: '', format: '' };
+    const state = { q: '', view: 'topic', track: '', area: '', kind: '', level: '', tag: '' };
     const facets = [...document.querySelectorAll('.facet')];
-    const cards = [...document.querySelectorAll('#note-results .note-card')];
+    const views = [...document.querySelectorAll('.view')];
+    const panes = { topic: document.getElementById('view-topic'), time: document.getElementById('view-time'), papers: document.getElementById('view-papers') };
+    const mapNodes = [...document.querySelectorAll('.hub-map .map-node')];
+    const mapSvg = document.querySelector('.hub-map .kmap-svg');
+    const empty = document.getElementById('notes-empty');
     const counter = document.getElementById('result-count');
     const active = document.getElementById('active-filters');
     const clear = document.getElementById('clear-filters');
+    const matches = (card) => {
+      const d = card.dataset;
+      const words = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+      return (!state.track || d.track === state.track) && (!state.area || d.area === state.area) && (!state.kind || d.kind === state.kind) &&
+        (!state.level || d.level === state.level) && (!state.tag || JSON.parse(d.tags).includes(state.tag)) && words.every((w) => d.text.includes(w));
+    };
     const apply = () => {
-      const words = state.q.toLowerCase().trim().split(/\s+/).filter(Boolean);
+      for (const [name, pane] of Object.entries(panes)) pane.hidden = name !== state.view;
       let shown = 0;
-      for (const card of cards) {
-        const ok = ['track', 'area', 'format'].every((key) => !state[key] || card.dataset[key] === state[key]) && words.every((w) => card.dataset.text.includes(w));
+      for (const card of panes[state.view].querySelectorAll('.note-card, .paper')) {
+        const ok = matches(card);
         card.hidden = !ok;
         if (ok) shown++;
       }
+      for (const group of panes.topic.querySelectorAll('.group')) group.hidden = !group.querySelector('.note-card:not([hidden])');
+      empty.hidden = shown > 0;
+      const scoped = state.track || state.area;
+      mapSvg?.classList.toggle('is-filter', !!scoped);
+      for (const n of mapNodes) n.classList.toggle('is-match', !!scoped && (!state.track || n.dataset.track === state.track) && (!state.area || n.dataset.area === state.area));
       counter.textContent = (shown === 1 ? counter.dataset.one : counter.dataset.many).replace(/\d+/, shown);
-      document.getElementById('notes-empty').hidden = shown > 0;
       const on = facets.filter((f) => state[f.dataset.facet] === f.dataset.value);
       for (const f of facets) f.setAttribute('aria-pressed', String(on.includes(f)));
-      active.replaceChildren(...on.map((f) => Object.assign(document.createElement('span'), { className: 'active-chip', textContent: f.textContent })));
-      clear.hidden = !state.q && !on.length;
+      active.replaceChildren(...on.map((f) => Object.assign(document.createElement('span'), { className: 'active-chip', textContent: f.querySelector('span').lastChild.textContent.replace(/^# /, '') })));
+      clear.hidden = !on.length && !state.q;
     };
     for (const f of facets) f.addEventListener('click', () => {
       const { facet, value } = f.dataset;
@@ -86,23 +101,98 @@
       if (facet === 'area') state.track = '';
       apply();
     });
+    const setView = (name) => {
+      state.view = panes[name] ? name : 'topic';
+      for (const b of views) b.setAttribute('aria-pressed', String(b.dataset.view === state.view));
+      apply();
+    };
+    for (const btn of views) btn.addEventListener('click', () => setView(btn.dataset.view));
+    const fromHash = () => {
+      if (location.hash !== '#papers') return;
+      setView('papers');
+      document.getElementById('list')?.scrollIntoView();
+    };
+    addEventListener('hashchange', fromHash);
+    fromHash();
     clear.addEventListener('click', () => {
-      Object.assign(state, { q: '', track: '', area: '', format: '' });
-      search.value = ''; apply();
+      Object.assign(state, { q: '', track: '', area: '', kind: '', level: '', tag: '' });
+      search.value = '';
+      apply();
     });
     search.addEventListener('input', () => { state.q = search.value; apply(); });
     addEventListener('keydown', (e) => {
-      const editing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
-      if (e.key === '/' && !editing && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); search.focus(); }
+      if (e.key === '/' && document.activeElement !== search && !e.metaKey && !e.ctrlKey) { e.preventDefault(); search.focus(); }
       if (e.key === 'Escape' && document.activeElement === search) { search.value = ''; state.q = ''; apply(); search.blur(); }
     });
+    const details = document.querySelector('.facets details');
+    const wideFacets = matchMedia('(min-width: 60rem)');
+    const syncFacets = () => (details.open = wideFacets.matches);
+    syncFacets();
+    wideFacets.addEventListener('change', syncFacets);
   }
 
+  // Knowledge map: hover lights up a node's neighbours, selecting it fills the detail panel,
+  // and the relation chips in the legend show or hide one kind of link.
   const el = (tag, props = {}, ...kids) => {
     const node = Object.assign(document.createElement(tag), props);
     node.append(...kids.filter(Boolean));
     return node;
   };
+  for (const fig of document.querySelectorAll('.kmap')) {
+    const svg = fig.querySelector('.kmap-svg');
+    const panel = fig.querySelector('.kmap-panel');
+    const data = JSON.parse(fig.querySelector('.kmap-data').textContent);
+    const nodes = [...svg.querySelectorAll('.map-node')];
+    const edges = [...svg.querySelectorAll('.map-edge')];
+    let selected = null;
+    const paint = (id) => {
+      const near = new Set([id]);
+      for (const e of edges) {
+        const hit = id && (e.dataset.from === id || e.dataset.to === id) && !e.classList.contains('is-off');
+        e.classList.toggle('is-on', !!hit);
+        if (hit) { near.add(e.dataset.from); near.add(e.dataset.to); }
+      }
+      for (const n of nodes) n.classList.toggle('is-on', !!id && near.has(n.dataset.id));
+      svg.classList.toggle('is-focus', !!id);
+    };
+    const show = (id) => {
+      selected = id;
+      for (const n of nodes) n.classList.toggle('is-selected', n.dataset.id === id);
+      paint(id);
+      if (!panel) return;
+      const d = data[id];
+      const rel = (l) => el('li', { className: `r-${l.rel}` },
+        el('p', { className: 'rel-line' },
+          l.out || l.sym ? el('span', { className: 'self', textContent: d.label }) : el('button', { type: 'button', className: l.written ? 'jump' : 'jump is-planned', textContent: l.label, onclick: () => show(l.id) }),
+          el('b', { className: 'rel-tag', textContent: l.relTitle }),
+          l.out || l.sym ? el('button', { type: 'button', className: l.written ? 'jump' : 'jump is-planned', textContent: l.label, onclick: () => show(l.id) }) : el('span', { className: 'self', textContent: d.label })),
+        l.why && el('p', { className: 'why', textContent: l.why }));
+      panel.replaceChildren(
+        el('div', { className: `panel-main t-${d.track}` },
+          el('p', { className: 'panel-meta' }, el('span', { className: 'chip', textContent: d.type }), d.area && el('span', { className: 'kind', textContent: d.area }), !d.url && el('span', { className: 'planned-tag', textContent: fig.dataset.planned })),
+          el('h3', { textContent: d.label }),
+          el('p', { className: 'summary', textContent: d.summary }),
+          d.url && el('a', { className: 'pdf', href: d.url, textContent: `${fig.dataset.read} →` })),
+        el('ul', { className: 'rel-list' }, ...d.links.map(rel)));
+    };
+    for (const n of nodes) {
+      const id = n.dataset.id;
+      n.addEventListener('pointerenter', () => paint(id));
+      n.addEventListener('pointerleave', () => paint(selected));
+      n.addEventListener('focus', () => paint(id));
+      n.addEventListener('blur', () => paint(selected));
+      n.addEventListener('click', (e) => { if (panel) { e.preventDefault(); show(id); } });
+      n.addEventListener('keydown', (e) => { if (panel && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(id); } });
+    }
+    for (const btn of fig.querySelectorAll('.rel-toggle')) {
+      btn.addEventListener('click', () => {
+        const on = btn.getAttribute('aria-pressed') !== 'true';
+        btn.setAttribute('aria-pressed', String(on));
+        for (const e of edges) if (e.dataset.rel === btn.dataset.rel) e.classList.toggle('is-off', !on);
+        paint(selected);
+      });
+    }
+  }
 
   // Images: click to enlarge.
   const zoomables = document.querySelectorAll('.zoomable img, .prose figure img');

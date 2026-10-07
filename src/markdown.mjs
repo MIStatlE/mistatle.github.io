@@ -23,7 +23,7 @@ function protectMath(src, store) {
         ? part
         : part
             .replace(/(?<!\\)\$\$([\s\S]+?)\$\$/g, (_, tex) => keep(tex, true))
-            .replace(/(?<![\\$])\$(?!\s)((?:\\.|[^$\\\n])+?)(?<!\s)\$(?!\d)/g, (_, tex) => keep(tex, false))
+            .replace(/(?<![\\$\w])\$(?!\s)((?:\\.|[^$\\\n])+?)(?<!\s)\$(?!\d)/g, (_, tex) => keep(tex, false))
             // CommonMark refuses `**粗体（括号）**后文` because of its flanking rules; CJK prose needs it.
             .replace(/(?<![\\*])\*\*(?![\s*])([^*\n]+?)(?<![\s*])\*\*(?!\*)/g, '<strong>$1</strong>'),
     )
@@ -54,8 +54,7 @@ const slugify = (text) =>
     .replace(/^-+|-+$/g, '');
 
 const CALLOUT_KINDS = [
-  [/^(定义|假设|Definition|Assumption)/i, 'definition'],
-  [/^(定理|引理|命题|推论|Theorem|Lemma|Proposition|Corollary)/i, 'theorem'],
+  [/^(定义|定理|引理|命题|推论|假设|Definition|Theorem|Lemma|Proposition|Corollary|Assumption)/i, 'theorem'],
   [/^(证明|Proof)/i, 'proof'],
 ];
 
@@ -65,25 +64,6 @@ function markCallouts(html) {
     const clean = label.trim().replace(/[：:]$/, '');
     return `<blockquote class="callout callout-${kind}"><p><strong class="callout-label">${clean}</strong>`;
   });
-}
-
-// Legacy notes use titled headings; preserve their anchors and group the statement.
-function wrapStatements(html) {
-  const stack = [];
-  const chunks = html.split(/(<h[2-6]\b[^>]*>[\s\S]*?<\/h[2-6]>)/g);
-  let out = '';
-  for (const chunk of chunks) {
-    const heading = chunk.match(/^<h([2-6])\b[^>]*>([\s\S]*)<\/h[2-6]>$/);
-    if (heading) {
-      const depth = Number(heading[1]);
-      while (stack.length && depth <= stack.at(-1)) { out += '</section>'; stack.pop(); }
-      const label = heading[2].replace(/<a class="anchor"[\s\S]*?<\/a>/, '').replace(/<[^>]+>/g, '').trim();
-      const kind = CALLOUT_KINDS.find(([re]) => re.test(label))?.[1];
-      if (kind) { out += `<section class="statement callout-${kind}">`; stack.push(depth); }
-    }
-    out += chunk;
-  }
-  return out + '</section>'.repeat(stack.length);
 }
 
 // Footnotes: `[^id]` in the text, `[^id]: explanation` on its own line.
@@ -150,7 +130,7 @@ export function renderMarkdown(source, { warn = () => {}, footnotesLabel = 'Foot
 
   let html = marked.parse(protectMath(src, store));
   html = html.replace(/<table>/g, '<div class="table-wrap"><table>').replace(/<\/table>/g, '</table></div>');
-  html = wrapStatements(markCallouts(html));
+  html = markCallouts(html);
   if (notes.length) {
     const items = notes.map((text, i) => `<li id="fn-${i + 1}">${marked.parseInline(protectMath(text, store))} <a class="fn-back" href="#fnref-${i + 1}" aria-label="↩">↩</a></li>`);
     html += `<section class="footnotes"><h2>${esc(footnotesLabel)}</h2><ol>${items.join('')}</ol></section>\n`;

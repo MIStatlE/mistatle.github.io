@@ -1,6 +1,4 @@
 ---
-legacy: "public/data/templates/mi_book_style.md"
-publish: true
 type: "template"
 title: "MI Book / Lecture Note"
 description: "面向中文数学书与长篇讲义，在页眉、章节、定理与封面之间建立一致的阅读系统。"

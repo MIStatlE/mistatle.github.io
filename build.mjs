@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 import { renderMarkdown, esc } from './src/markdown.mjs';
 import * as layout from './src/layout.mjs';
+import { prepareMap } from './src/map.mjs';
 import { faviconSvg } from './src/logo.mjs';
 import { LANGS, BASE, HTML_LANG, UI, pick, formatDate } from './src/i18n.mjs';
 
@@ -44,7 +45,7 @@ function loadCollection(dir, warnings) {
   const out = Object.fromEntries(LANGS.map((l) => [l, []]));
   for (const slug of slugs) {
     const zh = parseFile(`${dir}/${slug}.md`);
-    if (zh.data.draft || zh.data.publish !== true) continue;
+    if (zh.data.draft) continue;
     for (const key of ['title', 'description']) if (!zh.data[key]) throw new Error(`${dir}/${slug}.md: "${key}" is required`);
     const en = files.includes(`${slug}.en.md`) ? parseFile(`${dir}/${slug}.en.md`) : null;
     const render = (src, lang) => renderMarkdown(src.body, { warn: (msg) => warnings.push(`${dir}/${slug}: ${msg}`), footnotesLabel: UI[lang].footnotes });
@@ -68,16 +69,11 @@ function build() {
   const started = Date.now();
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.cpSync(path.join(ROOT, 'static'), DIST, { recursive: true });
-  // Keep existing attachment URLs valid after migration.
-  fs.cpSync(path.join(ROOT, 'public'), path.join(DIST, 'public'), { recursive: true });
-  fs.cpSync(path.join(ROOT, 'assets'), path.join(DIST, 'assets'), { recursive: true });
-  for (const name of ['phase_switch_schematic.pdf', 'phase_switch_schematic.png']) {
-    if (fs.existsSync(path.join(ROOT, name))) fs.copyFileSync(path.join(ROOT, name), path.join(DIST, name));
-  }
   write('favicon.svg', faviconSvg());
 
   const warnings = [];
   const site = JSON.parse(read('content/site.json'));
+  const rawMap = JSON.parse(read('content/map.json'));
   const papers = JSON.parse(read('content/papers.json'));
   const notes = loadCollection('content/notes', warnings);
   const resources = loadCollection('content/resources', warnings);
@@ -91,11 +87,8 @@ function build() {
     if (n.area && !has(site.areas, n.area)) throw new Error(`${where}: unknown area "${n.area}" (see content/site.json)`);
     if (n.kind && !has(site.kinds, n.kind)) throw new Error(`${where}: unknown kind "${n.kind}"`);
     if (n.level && !has(site.levels, n.level)) throw new Error(`${where}: unknown level "${n.level}"`);
-    if (!has(site.formats, n.format)) throw new Error(`${where}: unknown format "${n.format}"`);
     if (n.collection && !has(site.collections, n.collection)) throw new Error(`${where}: unknown collection "${n.collection}"`);
   }
-
-  for (const slug of site.featured || []) if (!notes.zh.some((n) => n.slug === slug)) throw new Error(`Featured note is not published: ${slug}`);
 
   // KaTeX: ship only the woff2 fonts, every modern browser picks those first.
   const katexDir = path.dirname(require.resolve('katex/dist/katex.min.css'));
@@ -130,13 +123,13 @@ function build() {
       lang, base, href, site, assets, papers,
       t: UI[lang], L: (v) => pick(v, lang), date: (iso) => formatDate(iso, lang), htmlLang: HTML_LANG[lang],
       notes: list, resources: res, resourceLinks,
+      map: prepareMap(rawMap, site, list),
     };
     const pages = [
       ['/', layout.homePage(ctx)],
       ['/notes/', layout.notesPage(ctx)],
       ['/resources/', layout.resourcesPage(ctx)],
       ['/about/', layout.aboutPage(ctx)],
-      ...site.collections.filter((c) => list.some((n) => n.collection === c.id)).map((c) => [`/topics/${c.id}/`, layout.topicPage(ctx, c)]),
       ...list.map((n) => [`/notes/${n.slug}/`, layout.notePage(ctx, n)]),
       ...res.map((r) => [`/resources/${r.slug}/`, layout.resourcePage(ctx, r)]),
     ];
@@ -145,7 +138,7 @@ function build() {
       urls.push(p);
     }
     // Addresses used by earlier versions of the site keep working.
-    const moved = { '/topics/': '/notes/', '/map/': '/notes/#topics', '/papers/': '/resources/#reading', '/templates/': '/resources/' };
+    const moved = { '/topics/': '/notes/', '/map/': '/notes/#map', '/papers/': '/notes/#papers', '/templates/': '/resources/' };
     for (const r of res) moved[`/templates/${r.slug}/`] = `/resources/${r.slug}/`;
     for (const [from, to] of Object.entries(moved)) write(`${base}${from}index.html`.replace(/^\//, ''), layout.redirectPage(ctx, href(to)));
     write(`${base}/rss.xml`.replace(/^\//, ''), `<?xml version="1.0" encoding="UTF-8"?>
@@ -166,11 +159,8 @@ ${list.map((n) => `<item>
 </channel>
 </rss>
 `);
-    write(`${base}/404.html`.replace(/^\//, ''), layout.notFoundPage(ctx));
+    if (lang === 'zh') write('404.html', layout.notFoundPage(ctx));
   }
-
-  const zhCtx = { htmlLang: 'en', site };
-  write('writing/deep-exploration/index.html', layout.redirectPage(zhCtx, '/en/notes/deep-exploration/'));
 
   const unique = [...new Set(urls)];
   write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -199,7 +189,7 @@ function serve(port = 4321) {
       res.writeHead(ok ? 200 : 404, { 'content-type': TYPES[path.extname(file)] || 'application/octet-stream' });
       fs.createReadStream(file).pipe(res);
     })
-    .listen(port, '127.0.0.1', () => console.log(`serving http://localhost:${port}`));
+    .listen(port, () => console.log(`serving http://localhost:${port}`));
 }
 
 build();

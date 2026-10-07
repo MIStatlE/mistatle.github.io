@@ -1,0 +1,377 @@
+{
+  "relations": [
+    {
+      "id": "requires",
+      "title": {
+        "zh": "前置",
+        "en": "requires"
+      },
+      "phrase": {
+        "zh": "是它的前置知识",
+        "en": "is a prerequisite for"
+      }
+    },
+    {
+      "id": "derives",
+      "title": {
+        "zh": "推出",
+        "en": "derives"
+      },
+      "phrase": {
+        "zh": "可以推出",
+        "en": "leads to a proof of"
+      }
+    },
+    {
+      "id": "applies",
+      "title": {
+        "zh": "应用",
+        "en": "applied in"
+      },
+      "phrase": {
+        "zh": "被用在",
+        "en": "is used in"
+      }
+    },
+    {
+      "id": "extends",
+      "title": {
+        "zh": "延伸",
+        "en": "extends to"
+      },
+      "phrase": {
+        "zh": "延伸为",
+        "en": "extends to"
+      }
+    },
+    {
+      "id": "contrasts",
+      "title": {
+        "zh": "对比",
+        "en": "contrast"
+      },
+      "phrase": {
+        "zh": "可与之对比",
+        "en": "contrasts with"
+      },
+      "symmetric": true
+    }
+  ],
+  "types": [
+    {
+      "id": "concept",
+      "title": {
+        "zh": "概念",
+        "en": "Concept"
+      }
+    },
+    {
+      "id": "theorem",
+      "title": {
+        "zh": "定理",
+        "en": "Theorem"
+      }
+    },
+    {
+      "id": "method",
+      "title": {
+        "zh": "方法",
+        "en": "Method"
+      }
+    },
+    {
+      "id": "model",
+      "title": {
+        "zh": "模型",
+        "en": "Model"
+      }
+    },
+    {
+      "id": "paper",
+      "title": {
+        "zh": "论文",
+        "en": "Paper"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "lln",
+      "type": "theorem",
+      "track": "foundations",
+      "area": "probability",
+      "label": {
+        "zh": "大数定律",
+        "en": "Law of Large Numbers"
+      },
+      "summary": {
+        "zh": "样本均值依概率收敛到期望。",
+        "en": "Sample means converge in probability to the expectation."
+      }
+    },
+    {
+      "id": "entropy",
+      "type": "concept",
+      "track": "foundations",
+      "area": "information",
+      "label": {
+        "zh": "Shannon 熵",
+        "en": "Shannon Entropy"
+      },
+      "summary": {
+        "zh": "用平均惊奇度度量一个分布的不确定性。",
+        "en": "Uncertainty of a distribution, measured as average surprise."
+      }
+    },
+    {
+      "id": "kl",
+      "type": "concept",
+      "track": "foundations",
+      "area": "information",
+      "label": {
+        "zh": "KL 散度与交叉熵",
+        "en": "KL Divergence & Cross Entropy"
+      },
+      "summary": {
+        "zh": "衡量用一个分布去近似另一个分布要付出的代价。",
+        "en": "The cost of approximating one distribution with another."
+      }
+    },
+    {
+      "id": "typical-set",
+      "type": "theorem",
+      "track": "foundations",
+      "area": "information",
+      "note": "typical-set",
+      "label": {
+        "zh": "典型集与 AEP",
+        "en": "Typical Set & AEP"
+      },
+      "summary": {
+        "zh": "概率质量集中在一个体积很小的集合上；对高斯分布，它是一层薄球壳。",
+        "en": "Probability mass concentrates on a set of tiny volume; for a Gaussian, a thin shell."
+      }
+    },
+    {
+      "id": "sgd",
+      "type": "method",
+      "track": "algorithms",
+      "area": "optimization",
+      "label": {
+        "zh": "随机梯度方法",
+        "en": "Stochastic Gradient Methods"
+      },
+      "summary": {
+        "zh": "用带噪声的梯度估计做迭代，分析噪声、方差与步长。",
+        "en": "Iterating with noisy gradient estimates; analysis of noise, variance and stepsize."
+      }
+    },
+    {
+      "id": "mdp",
+      "type": "concept",
+      "track": "algorithms",
+      "area": "rl",
+      "label": {
+        "zh": "MDP 与价值函数",
+        "en": "MDPs & Value Functions"
+      },
+      "summary": {
+        "zh": "状态、动作、转移与回报，以及策略的价值。",
+        "en": "States, actions, transitions and returns, and the value of a policy."
+      }
+    },
+    {
+      "id": "policy-gradient",
+      "type": "method",
+      "track": "algorithms",
+      "area": "rl",
+      "note": "policy-gradient-optimization",
+      "label": {
+        "zh": "Policy Gradient",
+        "en": "Policy Gradient"
+      },
+      "summary": {
+        "zh": "把策略搜索写成参数优化，通过轨迹估计梯度。",
+        "en": "Policy search as parametric optimization, with gradients estimated from trajectories."
+      }
+    },
+    {
+      "id": "attention",
+      "type": "method",
+      "track": "systems",
+      "area": "architectures",
+      "note": "scaled-dot-product-attention",
+      "label": {
+        "zh": "缩放点积注意力",
+        "en": "Scaled Dot-Product Attention"
+      },
+      "summary": {
+        "zh": "用查询与键的相似度对值加权求和，并用 √dₖ 稳定方差。",
+        "en": "A weighted sum of values by query-key similarity, with √dₖ stabilizing the variance."
+      }
+    },
+    {
+      "id": "vae-elbo",
+      "type": "model",
+      "track": "systems",
+      "area": "generative",
+      "label": {
+        "zh": "VAE 与 ELBO",
+        "en": "VAE & ELBO"
+      },
+      "summary": {
+        "zh": "潜变量生成模型，以及用来训练它的变分下界。",
+        "en": "A latent-variable generative model and the variational bound used to train it."
+      }
+    },
+    {
+      "id": "score-matching",
+      "type": "method",
+      "track": "systems",
+      "area": "generative",
+      "label": {
+        "zh": "Score Matching",
+        "en": "Score Matching"
+      },
+      "summary": {
+        "zh": "不求归一化常数，直接学习对数密度的梯度。",
+        "en": "Learning the gradient of the log-density without the normalizing constant."
+      }
+    },
+    {
+      "id": "conditional",
+      "type": "method",
+      "track": "systems",
+      "area": "generative",
+      "label": {
+        "zh": "Conditional Technique",
+        "en": "Conditional Technique"
+      },
+      "summary": {
+        "zh": "通过对条件量取期望，得到可计算的训练目标。",
+        "en": "Tractable training targets obtained by conditioning."
+      }
+    },
+    {
+      "id": "pf-ode",
+      "type": "method",
+      "track": "systems",
+      "area": "generative",
+      "label": {
+        "zh": "Probability Flow ODE",
+        "en": "Probability Flow ODE"
+      },
+      "summary": {
+        "zh": "与扩散 SDE 具有相同边缘分布的确定性流。",
+        "en": "A deterministic flow with the same marginals as the diffusion SDE."
+      }
+    },
+    {
+      "id": "leworldmodel",
+      "type": "paper",
+      "track": "systems",
+      "area": "representation",
+      "note": "leworldmodel-sigreg",
+      "label": {
+        "zh": "LeWorldModel / SIGReg",
+        "en": "LeWorldModel / SIGReg"
+      },
+      "summary": {
+        "zh": "在潜空间里学动力学，并用 SIGReg 防止表示塌缩。",
+        "en": "Learning dynamics in latent space, with SIGReg preventing representation collapse."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "lln",
+      "to": "typical-set",
+      "type": "derives",
+      "why": {
+        "zh": "对 −log p(X) 使用大数定律，就得到 AEP。",
+        "en": "Applying the law of large numbers to −log p(X) gives the AEP."
+      }
+    },
+    {
+      "from": "entropy",
+      "to": "typical-set",
+      "type": "requires",
+      "why": {
+        "zh": "典型集的大小由熵决定，约为 2^{nH}。",
+        "en": "Entropy sets the size of the typical set, about 2^{nH}."
+      }
+    },
+    {
+      "from": "entropy",
+      "to": "kl",
+      "type": "extends",
+      "why": {
+        "zh": "KL 散度是相对熵：把熵从一个分布推广到两个分布之间。",
+        "en": "KL divergence is relative entropy: entropy extended from one distribution to a pair."
+      }
+    },
+    {
+      "from": "kl",
+      "to": "vae-elbo",
+      "type": "applies",
+      "why": {
+        "zh": "ELBO 中的正则项是一个 KL 散度。",
+        "en": "The regularizer in the ELBO is a KL divergence."
+      }
+    },
+    {
+      "from": "mdp",
+      "to": "policy-gradient",
+      "type": "requires",
+      "why": {
+        "zh": "目标 J(θ) 定义在 MDP 的轨迹分布上。",
+        "en": "The objective J(θ) is defined over the MDP's trajectory distribution."
+      }
+    },
+    {
+      "from": "sgd",
+      "to": "policy-gradient",
+      "type": "applies",
+      "why": {
+        "zh": "策略梯度的更新是对 J(θ) 的随机梯度上升，收敛分析沿用随机非凸优化。",
+        "en": "The update is stochastic gradient ascent on J(θ); its convergence analysis is that of stochastic nonconvex optimization."
+      }
+    },
+    {
+      "from": "vae-elbo",
+      "to": "score-matching",
+      "type": "extends",
+      "why": {
+        "zh": "从潜变量模型的似然下界，走到直接学习 score 的生成目标。",
+        "en": "From a likelihood bound for latent-variable models to objectives that learn the score directly."
+      }
+    },
+    {
+      "from": "score-matching",
+      "to": "conditional",
+      "type": "extends",
+      "why": {
+        "zh": "条件化让 score matching 的目标变得可计算。",
+        "en": "Conditioning makes the score matching objective tractable."
+      }
+    },
+    {
+      "from": "conditional",
+      "to": "pf-ode",
+      "type": "extends",
+      "why": {
+        "zh": "学到 score 之后，可以把 SDE 换成等价的确定性 ODE。",
+        "en": "Once the score is learned, the SDE can be replaced by an equivalent deterministic ODE."
+      }
+    },
+    {
+      "from": "vae-elbo",
+      "to": "leworldmodel",
+      "type": "contrasts",
+      "why": {
+        "zh": "两者都学习潜变量表示：VAE 靠重建观测，LeWorldModel 只在潜空间预测，并靠 SIGReg 防塌缩。",
+        "en": "Both learn latent representations: the VAE reconstructs observations, LeWorldModel predicts only in latent space and relies on SIGReg against collapse."
+      }
+    }
+  ]
+}

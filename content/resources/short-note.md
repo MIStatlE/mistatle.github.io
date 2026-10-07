@@ -1,6 +1,4 @@
 ---
-legacy: "public/data/templates/short_note.md"
-publish: true
 type: "template"
 title: "Short Note"
 description: "为短篇推导与公开笔记准备的极简模板，强调结构、公式与留白。"
@@ -9,9 +7,6 @@ order: 2
 previews: ["/images/templates/short-note-1.webp", "/images/templates/short-note-2.webp", "/images/templates/short-note-3.webp"]
 en: {"title": "Short Note", "description": "A minimal template for short derivations and public notes, built around structure, formulas and white space."}
 ---
-
-[下载完整模板（ZIP）](/downloads/templates/short-note/short-note.zip) · [样式源文件](/downloads/templates/short-note/short-template.tex) · [示例源文件](/downloads/templates/short-note/main.tex)
-
 
 ### Design Philosophy (设计理念)
 

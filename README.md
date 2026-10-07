@@ -1,83 +1,90 @@
 # mistatle.github.io
 
-个人网站。Markdown 是内容源，`build.mjs` 生成静态页面，GitHub Actions 发布 `dist/`。
+个人网站源码。内容是 Markdown，`build.mjs` 把它生成为 `dist/` 里的静态页面。
+
+## 日常使用
 
 ```bash
-npm ci
-npm run dev       # http://127.0.0.1:4321，修改后自动重建
-npm run build
-npm test          # 构建后检查内部链接、公式、双语附件与旧地址
+npm install        # 只需一次
+npm run dev        # 本地预览 http://localhost:4321 ，改动后自动重建
+npm run build      # 生成 dist/
 ```
 
-推送到 `main` 自动构建、检查并部署。GitHub Pages 的 Source 使用 **GitHub Actions**。
+推送到 `main` 后由 GitHub Actions 自动构建并发布（仓库 Settings → Pages → Source 需设为 **GitHub Actions**）。
 
-## 内容与首页
+## 写一篇新笔记
 
-- 首页精选由 `content/site.json` 的 `featured` 指定，顺序由作者决定；最近更新按文章日期排列。
-- 笔记页优先显示已发布文章，提供搜索、主题与阅读形式筛选。
-- `short` 表示聚焦一个问题的短篇，`note` 表示完整笔记；它们不是难度等级。
-- 专题由 `collections` 定义，只在有文章时生成 `/topics/<id>/`，文章底部连接同一专题的内容。
-- 待读论文和待写选题不进入公开阅读入口。
-
-## 添加笔记
-
-在 `content/notes/` 新建 `my-slug.md`：
-
-```yaml
----
-title: "一个具体问题"
-description: "这篇文章解释什么，以及读者能得到什么。"
-date: "2026-10-07"
-publish: false
-format: "short"  # short / note
-track: "foundations"  # foundations / algorithms / systems
-area: "probability"
-kind: "derivation"
-collection: "probability-concentration"  # 可省略
-tags: ["概率"]
-pdf: "/downloads/my-note.pdf"  # 可省略，文件放 static/downloads/
----
-```
-
-只有显式设置 `publish: true` 且没有 `draft: true` 的文章或资源页面才会生成。正文完成不意味着自动发布。新文件默认不公开；不要把私密草稿提交到公开仓库。
-
-主线、领域、阅读形式和专题定义在 `content/site.json`，无效值会使构建失败。资源页也需要 `publish: true`。
-
-## 数学排版
-
-行内公式 `$a^2$`，独立公式 `$$ ... $$`。Markdown 代码块不会被当作公式。
+在 `content/notes/` 新建 `my-slug.md`，文件名即网址 `/notes/my-slug/`：
 
 ```markdown
-> **Definition 1（对象）**
->
-> 定义正文。
+---
+title: "标题"
+description: "一句话摘要，显示在列表和分享卡片里。"
+date: "2026-10-07"
+updated: "2026-11-01"   # 可省略
+track: "foundations"    # 主线：foundations / algorithms / systems
+area: "information"     # 领域，见 content/site.json 的 areas
+kind: "derivation"      # 类型：derivation / mechanism / foundation / paper
+level: "core"           # 难度：intro / core / deep
+collection: "probability-concentration"   # 所属专题，可省略
+tags: ["信息论"]
+pdf: "/downloads/xxx.pdf"                 # 可省略；文件放 static/downloads/
+draft: true                               # 可省略；为 true 时不发布
+---
 
-> **Theorem 1（结论）**
->
-> 精确假设与结论。
-
-> **Proof**
->
-> 证明正文。
+正文。行内公式 $a^2$，独立公式用 $$ ... $$ 。
+以 **定义** / **定理** / **证明** / **注** 开头的引用块会自动套用对应样式。
+脚注写作 [^1]，并在文末另起一行写 `[^1]: 说明文字`。单独成段的图片可以点击放大。
 ```
 
-Definition / Assumption 使用左侧色条，Theorem / Proposition / Lemma / Corollary 使用标题框，Proof 使用正文排版；对应中文标签同样有效。以这些标签开头的旧标题也保留锚点并使用对应环境。
-
-脚注：`[^1]`，另起一行 `[^1]: 内容`。单独成段的图片可放大。
+主线、领域、类型、难度都定义在 `content/site.json` 里，可以增删；写了不存在的值，构建会直接报错并指出是哪个文件。
 
 ## 中英双语
 
-- 中文在 `/notes/x/`，英文在 `/en/notes/x/`。
-- `my-slug.md` 携带共同元数据；`my-slug.en.md` 提供英文标题、摘要、正文和可选的独立 `pdf`。
-- 没有英文正文时，英文页面显示中文原文并提示；无需为每一篇强制制作译文。
-- 界面文字在 `src/i18n.mjs`。
+- 中文在根路径（`/notes/x/`），英文在 `/en/` 下（`/en/notes/x/`），页眉右侧可以互相切换。
+- `my-slug.md` 是中文版，并携带日期、分类等共用信息；英文版是同目录下的 `my-slug.en.md`，只需写 `title`、`description`、`tags` 和正文。
+- 没有 `.en.md` 的页面，英文站会显示中文原文，并在顶部提示。
+- 界面文字在 `src/i18n.mjs`；站点简介、主线、领域、专题等在 `content/site.json`，写成 `{ "zh": "…", "en": "…" }`。
 
-## 资源与旧链接
+## 知识地图
 
-`content/resources/*.md` 是资源介绍，`static/downloads/` 是可下载附件。`content/resources.json` 可添加简单工具或外部链接。`content/papers.json` 仅保留有对应公开笔记的原始文献。
+地图由 `content/map.json` 自动排版，不需要手动摆位置：
 
-原有 `/public/data/` 下载地址保留；旧首页的 `#/writing/read/...` 和资源链接跳转到新页面，中英文选择一并保留。`/writing/deep-exploration/` 继续指向其英文版。
+- `nodes`：`id`、`label`、`track`、`area`、`type`（concept / theorem / method / model / paper）和一句 `summary`。写完对应笔记后加上 `"note": "笔记文件名"`，节点就会点亮。
+- `edges`：`from`、`to`、`type` 和一句 `why`。`type` 是关系类型：`requires` 前置、`derives` 推出、`applies` 应用、`extends` 延伸、`contrasts` 对比。
+- 节点在哪一列，由指向它的关系链有多长决定；三条主线各占一层。
 
-`public/data/` 是兼容旧地址的历史快照。后续文章只编辑 `content/`，不要维护两份正文。旧单页网站可从迁移前的 Git 历史恢复。
+文章底部的"前置与来源 / 后续与相关"也来自这份文件。
 
-评论和统计仍由 `content/site.json` 配置，留空时不加载。
+## 资源
+
+资源页（`/resources/`）按 `content/site.json` 里的 `resourceTypes` 分组，内容有两个来源：
+
+- `content/resources/*.md`：需要单独介绍页的资源，例如模板。frontmatter 里的 `type` 指定分组，`previews` 是预览图。
+- `content/resources.json`：一行一个的简单条目，例如 `{ "type": "link", "title": { "zh": "…", "en": "…" }, "description": { … }, "url": "https://…" }`；`type` 可以是 `tool`、`link` 等，本站文件加 `"file": true`。
+
+没有内容的分组不会显示。
+
+## 评论、统计、论文清单
+
+- **评论（giscus）**：在仓库 Settings 里开启 Discussions，到 giscus.app 填入仓库名后，把页面给出的 `data-repo-id` 和 `data-category-id` 填进 `content/site.json` 的 `comments.repoId`、`comments.categoryId`。两项留空时不显示评论区。
+- **访问统计**：在 `content/site.json` 的 `analytics` 里填 GoatCounter 的站点代码，或 Umami 的脚本地址与网站 ID。留空时不加载任何统计脚本。
+- **论文清单**：编辑 `content/papers.json`，它显示在笔记页的"论文"视图里，和笔记共用同一套筛选。`status` 可取 `noted`（已写笔记，配合 `note` 字段）、`reading`、`read`、`queued`。
+
+## 目录
+
+| 路径 | 内容 |
+| --- | --- |
+| `content/site.json` | 站点文字、社交链接、主线与专题 |
+| `content/map.json` | 知识地图的节点与关系 |
+| `content/papers.json` | 论文清单 |
+| `content/notes/` | 笔记 |
+| `content/resources/` | 资源页面（目前是 LaTeX 模板介绍），`type` 决定它出现在资源页的哪一组 |
+| `content/resources.json` | 不需要单独页面的资源：外部链接、工具、文件 |
+| `static/` | 原样复制到站点根目录的文件（图片、下载、favicon） |
+| `src/site.css` | 全部样式，颜色变量在文件开头 |
+| `src/layout.mjs` | 页面结构 |
+| `src/markdown.mjs` | Markdown、公式、代码高亮 |
+| `src/map.mjs` | 知识地图的排版与绘制 |
+| `src/i18n.mjs` | 两种语言的界面文字 |
+| `src/logo.mjs` | Logo（同时生成 favicon） |

@@ -1,6 +1,4 @@
 ---
-publish: true
-format: note
 title: "Policy Gradient 的优化视角"
 description: "从目标函数、梯度估计、方差与步长选择建立一条连续的优化主线。"
 date: "2026-05-06"

@@ -1,6 +1,4 @@
 ---
-legacy: "public/data/templates/cn_lecture_note.md"
-publish: true
 type: "template"
 title: "CN Lecture Note"
 description: "面向中文课程讲义与系列笔记，统一正文层级、定理环境与长篇阅读节奏。"

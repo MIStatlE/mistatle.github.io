@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "dev": "node build.mjs --serve",
-    "test": "node --test tests/*.test.mjs && node scripts/check-site.mjs"
+    "dev": "node build.mjs --serve"
   },
   "dependencies": {
     "@fontsource/playfair-display": "^5.0.0",
@@ -13,8 +12,5 @@
     "js-yaml": "^4.1.0",
     "katex": "^0.16.11",
     "marked": "^18.0.0"
-  },
-  "engines": {
-    "node": ">=22"
   }
 }

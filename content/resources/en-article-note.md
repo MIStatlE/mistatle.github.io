@@ -1,6 +1,4 @@
 ---
-legacy: "public/data/templates/en_article_note.md"
-publish: true
 type: "template"
 title: "EN Article Note"
 description: "面向英文技术说明与 expository writing，保持论证结构、公式和引用的清晰。"

@@ -14,8 +14,8 @@
     "en": "Notes on mathematics, algorithms and AI: structure, mechanism and boundary."
   },
   "statement": {
-    "zh": "关于数学、算法与 AI 的笔记。围绕一个具体问题，讲清关键推导与结论成立的条件。",
-    "en": "Notes on mathematics, algorithms and AI. One question at a time, with the key derivation and the conditions behind the result."
+    "zh": "这里记录数学、算法与 AI 中值得反复理解的问题：结论依赖怎样的结构，方法为何有效，又在什么条件下失效。",
+    "en": "Notes on the questions in mathematics, algorithms and AI that are worth understanding more than once: what structure a result depends on, why a method works, and under what conditions it fails."
   },
   "principles": [
     {
@@ -58,6 +58,11 @@
       "icon": "youtube",
       "color": "#ff0033",
       "href": "https://www.youtube.com/@ZICHENGLYU-h8y"
+    },
+    {
+      "label": "抖音",
+      "icon": "douyin",
+      "color": "#111111"
     },
     {
       "label": "GitHub",
@@ -298,22 +303,6 @@
         "zh": "从潜变量建模到 latent prediction，比较目标函数与表示几何。",
         "en": "From latent-variable modeling to latent prediction, comparing objectives and representation geometry."
       }
-    },
-    {
-      "id": "sequential-exploration",
-      "track": "algorithms",
-      "title": {
-        "zh": "序列决策与探索",
-        "en": "Sequential Decisions and Exploration"
-      },
-      "question": {
-        "zh": "单步的随机性，如何影响整条轨迹？",
-        "en": "How does randomness at each step shape an entire trajectory?"
-      },
-      "description": {
-        "zh": "从动作之间的关联，理解长期探索的作用。",
-        "en": "Understanding exploration through the dependence between actions."
-      }
     }
   ],
   "comments": {
@@ -362,27 +351,6 @@
       "desc": {
         "zh": "值得反复查阅的外部资料。",
         "en": "External material worth returning to."
-      }
-    }
-  ],
-  "featured": [
-    "typical-set",
-    "deep-exploration",
-    "leworldmodel-sigreg"
-  ],
-  "formats": [
-    {
-      "id": "short",
-      "title": {
-        "zh": "短篇",
-        "en": "Short read"
-      }
-    },
-    {
-      "id": "note",
-      "title": {
-        "zh": "完整笔记",
-        "en": "Full note"
       }
     }
   ]

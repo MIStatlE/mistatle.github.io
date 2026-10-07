@@ -1,6 +1,4 @@
 ---
-publish: true
-format: short
 title: "Typical Set：高维空间中的概率集中"
 description: "概率质量为什么不在密度最高的点，而会落在高维空间中的薄壳上？"
 date: "2026-01-21"

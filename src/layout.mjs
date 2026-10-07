@@ -3,6 +3,7 @@
 import { esc } from './markdown.mjs';
 import { icons } from './icons.mjs';
 import { markSvg } from './logo.mjs';
+import { renderMap, relationList } from './map.mjs';
 import { LANGS, BASE, HTML_LANG } from './i18n.mjs';
 
 const NAV = ['notes', 'resources', 'about'];
@@ -113,17 +114,22 @@ function areaChip(ctx, n) {
   const text = area ? ctx.L(area.title) : track ? ctx.L(track.title) : '';
   return text ? `<span class="chip t-${n.track}"><i></i>${esc(text)}</span>` : '';
 }
-const formatLabel = (ctx, n) => esc(ctx.L(find(ctx.site.formats, n.format)?.title) || '');
+const kindLabel = (ctx, n) => esc(ctx.L(find(ctx.site.kinds, n.kind)?.title) || '');
+function levelMark(ctx, n) {
+  const i = ctx.site.levels.findIndex((l) => l.id === n.level);
+  if (i < 0) return '';
+  return `<span class="level" title="${esc(ctx.L(ctx.site.levels[i].title))}">${ctx.site.levels.map((_, j) => `<i${j <= i ? ' class="on"' : ''}></i>`).join('')}<span>${esc(ctx.L(ctx.site.levels[i].title))}</span></span>`;
+}
 
 function noteCard(ctx, n) {
   const { t, L, site } = ctx;
   const track = trackOf(ctx, n.track), area = find(site.areas, n.area);
-  const text = [n.title, n.description, formatLabel(ctx, n), L(track?.title), L(area?.title), ...n.tags].join(' ').toLowerCase();
-  return `<a class="card note-card t-${n.track}" href="${n.url}" data-track="${n.track}" data-area="${n.area || ''}" data-kind="${n.kind || ''}" data-format="${n.format || ''}" data-tags="${esc(json(n.tags))}" data-text="${esc(text)}">
-  <span class="card-top">${areaChip(ctx, n)}<span class="kind">${formatLabel(ctx, n)}</span></span>
+  const text = [n.title, n.description, kindLabel(ctx, n), L(track?.title), L(area?.title), ...n.tags].join(' ').toLowerCase();
+  return `<a class="card note-card t-${n.track}" href="${n.url}" data-track="${n.track}" data-area="${n.area || ''}" data-kind="${n.kind || ''}" data-level="${n.level || ''}" data-tags="${esc(json(n.tags))}" data-text="${esc(text)}">
+  <span class="card-top">${areaChip(ctx, n)}<span class="kind">${kindLabel(ctx, n)}</span></span>
   <strong>${esc(n.title)}</strong>
   <span class="desc">${esc(n.description)}</span>
-  <span class="card-foot"><time datetime="${n.date}">${n.date}</time><span class="go">${esc(t.read)} <b>→</b></span></span>
+  <span class="card-foot"><time datetime="${n.date}">${n.date}</time>${levelMark(ctx, n)}<span class="go">${esc(t.read)} <b>→</b></span></span>
 </a>`;
 }
 
@@ -138,60 +144,186 @@ const sectionHead = (eyebrow, title, more = '') => `<header class="sec-head">
 
 export function homePage(ctx) {
   const { site, notes, t, L, href, lang } = ctx;
-  const legacy = Object.fromEntries(notes.filter((n) => n.legacy).flatMap((n) => [
-    [n.legacy, `/notes/${n.slug}/`],
-    [n.legacy.replace(/\.md$/, '.en.md'), `/en/notes/${n.slug}/`],
-  ]));
-  const resourceLegacy = Object.fromEntries(ctx.resources.filter((r) => r.legacy).map((r) => [r.legacy, r.url]));
+  const legacy = Object.fromEntries(notes.filter((n) => n.legacy).map((n) => [n.legacy, n.url]));
   const redirect = lang === 'zh'
-    ? `<script>(function(){var raw=location.hash.replace(/^#\\/?/,'');var h;try{h=decodeURIComponent(raw)}catch(e){return}var en=new URLSearchParams(location.search).get('lang')==='en';var m=${json(legacy)},r=${json(resourceLegacy)},t={home:'/',about:'/about/',resources:'/resources/',templates:'/resources/',writing:'/notes/',collections:'/notes/',papers:'/resources/#reading',library:'/notes/'};var p=h.split('/read/'),u=p[1]&&(m[p[1]]||r[p[1]]);if(!u)u=t[p[0]];if(u){if(en&&!u.startsWith('/en/'))u='/en'+u;location.replace(u)}else if(en&&!h)location.replace('/en/')})()</script>`
+    ? `<script>(function(){var h=decodeURIComponent(location.hash.replace(/^#\\/?/,''));if(!h)return;var m=${json(legacy)},t={about:'/about/',resources:'/resources/',writing:'/notes/',collections:'/notes/'};var p=h.split('/read/');if(p[1]&&m[p[1]])return location.replace(m[p[1]]);if(t[p[0]])location.replace(t[p[0]])})()</script>`
     : '';
-  const selected = (site.featured || []).map((slug) => notes.find((n) => n.slug === slug)).filter(Boolean);
-  const body = `<section class="hero hero-compact">
-  <p class="eyebrow">Mathematics · Algorithms · AI</p>
-  <h1>${esc(t.homeTitle)}</h1>
+  const body = `<section class="hero">
+  <span class="hero-glyph g1" aria-hidden="true">∂</span>
+  <span class="hero-glyph g2" aria-hidden="true">λ</span>
+  <p class="pill"><i></i>${esc(site.eyebrow)}</p>
+  <h1>Mathematics,<br><span class="dim">Algorithms</span> &amp; <em>AI</em>.</h1>
   <p class="hero-statement">${esc(L(site.statement))}</p>
-  <p class="hero-links"><a href="${href('/about/')}">${esc(t.aboutAuthor)} →</a><a href="${href('/rss.xml')}">RSS ↗</a></p>
+  <p class="triad"><span>Structure</span><i>/</i><span>Mechanism</span><i>/</i><span>Boundary</span></p>
+  <div class="cta">
+    <a class="btn btn-solid" href="${href('/notes/')}">${esc(t.explore)} <b>→</b></a>
+    <a class="btn" href="${href('/resources/')}">${esc(t.resources)}</a>
+  </div>
+  <div class="elsewhere">
+    <span class="label">${esc(t.elsewhere)}</span>
+    ${socials(ctx)}
+  </div>
+  <div class="hero-foot"><span>Est. ${site.since}</span><span>Mathematics · Algorithms · AI</span><span>${esc(L(site.location))}</span></div>
 </section>
-<section class="sec selected-section">
-${sectionHead('Start here', esc(t.selected), `<a class="more" href="${href('/notes/')}">${esc(t.allNotes(notes.length))} →</a>`)}
-<div class="selected-grid">${selected.map((n, i) => `<a class="card selected-card t-${n.track}" href="${n.url}"><span class="selection-index">0${i + 1} <span>${formatLabel(ctx, n)}</span></span><h3>${esc(n.title)}</h3><p class="desc">${esc(n.description)}</p><span class="go">${esc(t.read)} →</span></a>`).join('')}</div>
+
+<section class="principles">
+${site.principles.map((p) => `  <div>
+    <p class="label">${esc(p.label)}</p>
+    <h2>${esc(L(p.title))}</h2>
+    <p>${esc(L(p.desc))}</p>
+  </div>`).join('\n')}
 </section>
+
 <section class="sec">
-${sectionHead('Recent writing', esc(t.latest))}
-<ul class="recent-list">${notes.slice(0, 3).map((n) => `<li><time datetime="${n.date}">${n.date}</time><a href="${n.url}">${esc(n.title)}</a><span>${formatLabel(ctx, n)}</span></li>`).join('')}</ul>
+${sectionHead('Latest', esc(t.latest), `<a class="more" href="${href('/notes/')}">${esc(t.allNotes(notes.length))} <b>→</b></a>`)}
+${noteGrid(ctx, notes.slice(0, 4))}
 </section>
-<section class="sec resource-entry"><div><p class="eyebrow">Resources</p><h2>${esc(t.resourceEntry)}</h2><p class="desc">${esc(t.resourceEntryDesc)}</p></div><a class="btn" href="${href('/resources/')}">${esc(t.resources)} →</a></section>`;
+
+<section class="sec">
+${sectionHead('Knowledge map', esc(t.mapTitle), `<a class="more" href="${href('/notes/')}#map">${esc(t.mapMore)} <b>→</b></a>`)}
+<div class="sec-wide">
+${renderMap(ctx)}
+</div>
+</section>`;
   return page(ctx, { path: '/', body, head: redirect });
 }
 
-// ---------- notes: the published writing comes first ----------
+// ---------- notes hub: map + notes + papers, one set of filters ----------
+
+function topicGroup(ctx, { track, name, question, description, notes, id }) {
+  return `<section class="group t-${track?.id || 'none'}"${id ? ` id="${id}"` : ''}>
+  <header class="group-head">
+    <span class="glyph-badge" aria-hidden="true">${esc(track?.glyph || '∗')}</span>
+    <div>
+      <p class="topic-name">${esc(name)}</p>
+      ${question ? `<h2>${esc(question)}</h2>` : ''}
+      ${description ? `<p class="desc">${esc(description)}</p>` : ''}
+    </div>
+  </header>
+  ${noteGrid(ctx, notes)}
+</section>`;
+}
+
+function paperList(ctx) {
+  const { papers, notes, site, t, L } = ctx;
+  const order = ['noted', 'reading', 'read', 'queued'];
+  const sorted = [...papers].sort((a, b) => order.indexOf(a.status) - order.indexOf(b.status) || b.year - a.year);
+  return `<ol class="paper-list">
+${sorted.map((p) => {
+    const note = notes.find((n) => n.slug === p.note);
+    const area = find(site.areas, p.area);
+    const text = [p.title, p.authors, p.venue, p.year, L(area?.title), ...(p.tags || [])].join(' ').toLowerCase();
+    return `<li class="card paper item s-${p.status} t-${area?.track || 'none'}" data-track="${area?.track || ''}" data-area="${p.area || ''}" data-kind="paper" data-level="" data-tags="${esc(json(p.tags || []))}" data-text="${esc(text)}">
+  <span class="status">${esc(t.status[p.status] || p.status)}</span>
+  <div class="paper-main">
+    <h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}</a></h3>
+    <p class="by">${esc(p.authors)} · ${esc(p.venue)} ${p.year}</p>
+    <p class="tags">${area ? `<span class="chip t-${area.track}"><i></i>${esc(L(area.title))}</span>` : ''}${(p.tags || []).map((x) => `<span>${esc(x)}</span>`).join('')}</p>
+  </div>
+  <div class="paper-links">
+    ${note ? `<a class="pdf" href="${note.url}">${esc(t.toNote)} →</a>` : ''}
+    <a class="ext" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(t.toPaper)} ↗</a>
+  </div>
+</li>`;
+  }).join('\n')}
+</ol>`;
+}
 
 export function notesPage(ctx) {
-  const { site, notes, t, L, href } = ctx;
-  const facet = (key, id, label) => `<button type="button" class="facet is-pill" data-facet="${key}" data-value="${esc(id)}" aria-pressed="false"><span>${esc(label)}</span></button>`;
-  const groups = site.collections.map((c) => ({ ...c, notes: notes.filter((n) => n.collection === c.id) })).filter((c) => c.notes.length);
-  const body = `<header class="page-head"><p class="eyebrow">Notes</p><h1>${esc(t.nav.notes)}</h1><p class="lede">${esc(t.notesLede)}</p></header>
-<section class="notes-index" id="list">
-  <div class="toolbar"><label class="search">${icons.search}<input type="search" id="note-search" placeholder="${esc(t.search)}" autocomplete="off" aria-label="${esc(t.search)}"><kbd>/</kbd></label></div>
-  <div class="quick-filters" aria-label="${esc(t.filters)}"><div class="facet-row">${site.tracks.filter((tr) => notes.some((n) => n.track === tr.id)).map((tr) => facet('track', tr.id, L(tr.title))).join('')}</div>
-    <details class="more-filters"><summary>${esc(t.moreFilters)}</summary><p class="filter-label">${esc(t.facetFormat)}</p><div class="facet-row">${site.formats.map((f) => facet('format', f.id, L(f.title))).join('')}</div><p class="filter-label">${esc(t.facetTree)}</p><div class="facet-row">${site.areas.filter((a) => notes.some((n) => n.area === a.id)).map((a) => facet('area', a.id, L(a.title))).join('')}</div></details>
+  const { site, notes, papers, map, t, L } = ctx;
+  const groups = site.collections
+    .map((c) => ({ id: c.id, track: trackOf(ctx, c.track), name: L(c.title), question: L(c.question), description: L(c.description), notes: notes.filter((n) => n.collection === c.id) }))
+    .filter((g) => g.notes.length);
+  const loose = notes.filter((n) => !n.collection);
+  if (loose.length) groups.push({ name: t.otherNotes, question: t.otherQuestion, notes: loose });
+
+  const areaTrack = (id) => find(site.areas, id)?.track;
+  const pool = [...notes.map((n) => ({ track: n.track, area: n.area, kind: n.kind, level: n.level, tags: n.tags })), ...papers.map((p) => ({ track: areaTrack(p.area), area: p.area, kind: 'paper', tags: p.tags || [] }))];
+  const facet = (key, id, label, extra = '') => {
+    const c = pool.filter((x) => (key === 'tag' ? x.tags.includes(id) : x[key] === id)).length;
+    return `<button type="button" class="facet${extra}${c ? '' : ' is-empty'}" data-facet="${key}" data-value="${esc(id)}" aria-pressed="false"><span>${label}</span><small>${c}</small></button>`;
+  };
+  const tags = [...new Set(pool.flatMap((x) => x.tags))];
+  const planned = site.tracks.map((tr) => ({ tr, items: map.nodes.filter((n) => n.track === tr.id && !n.url) })).filter((g) => g.items.length);
+  const sep = ctx.lang === 'zh' ? '、' : ', ';
+
+  const body = `<header class="page-head">
+  <p class="eyebrow">Notes · Papers · Map</p>
+  <h1>${esc(t.nav.notes)}</h1>
+  <p class="lede">${esc(t.notesLede)}</p>
+</header>
+<section id="map" class="hub-map">
+${renderMap(ctx)}
+<details class="fold">
+  <summary>${esc(t.foldRelations)}<small>${map.edges.length}</small></summary>
+  <p class="sec-lede">${esc(t.relationsLede)}</p>
+  ${relationList(ctx)}
+</details>
+${planned.length ? `<details class="fold">
+  <summary>${esc(t.foldRoadmap)}<small>${map.nodes.filter((n) => !n.url).length}</small></summary>
+  <div class="topic-grid">
+${planned.map(({ tr, items }) => `<article class="card topic-card t-${tr.id}">
+  <span class="glyph-badge" aria-hidden="true">${esc(tr.glyph)}</span>
+  <p class="topic-name">${esc(L(tr.title))}</p>
+  <ul class="todo">
+    ${items.map((n) => `<li>${esc(L(n.label))}${n.before.length ? `<small>${esc(t.after2(n.before.map((b) => L(b.label)).join(sep)))}</small>` : ''}</li>`).join('\n    ')}
+  </ul>
+</article>`).join('\n')}
   </div>
-  <p class="result-bar"><span id="result-count" role="status" aria-live="polite" data-one="${esc(t.count(1))}" data-many="${esc(t.count(2))}">${esc(t.count(notes.length))}</span><span id="active-filters"></span><button type="button" id="clear-filters" hidden>${esc(t.clear)} ×</button></p>
-  <div id="note-results">${noteGrid(ctx, notes)}</div><p class="empty" id="notes-empty" hidden>${esc(t.empty)}</p>
+</details>` : ''}
 </section>
-<section class="sec" id="topics"><span id="map"></span><details class="fold"><summary>${esc(t.byTopic)}<small>${groups.length}</small></summary><div class="topic-grid">${groups.map((c) => `<a id="${c.id}" class="card topic-card t-${c.track}" href="${href(`/topics/${c.id}/`)}"><p class="topic-name">${esc(L(c.title))}</p><h3>${esc(L(c.question))}</h3><p class="desc">${esc(L(c.description))}</p><span class="go">${esc(t.allNotes(c.notes.length))} →</span></a>`).join('')}</div></details></section>`;
-  return page(ctx, { title: t.nav.notes, description: t.notesLede, path: '/notes/', active: 'notes', body });
+<div class="notes-layout" id="list">
+  <aside class="facets">
+    <details open>
+      <summary>${esc(t.filters)}</summary>
+      <section>
+        <h2>${esc(t.facetTree)}</h2>
+        <ul class="tree">
+          ${site.tracks.map((tr) => `<li class="t-${tr.id}">${facet('track', tr.id, `<b class="tg">${esc(tr.glyph)}</b>${esc(L(tr.title))}`, ' is-track')}
+            <ul>${site.areas.filter((a) => a.track === tr.id).map((a) => `<li>${facet('area', a.id, esc(L(a.title)))}</li>`).join('')}</ul>
+          </li>`).join('\n          ')}
+        </ul>
+      </section>
+      <section>
+        <h2>${esc(t.facetKind)}</h2>
+        <div class="facet-row">${site.kinds.map((k) => facet('kind', k.id, esc(L(k.title)), ' is-pill')).join('')}</div>
+      </section>
+      <section>
+        <h2>${esc(t.facetLevel)}</h2>
+        <div class="facet-row">${site.levels.map((l) => facet('level', l.id, esc(L(l.title)), ' is-pill')).join('')}</div>
+      </section>
+      <section>
+        <h2>${esc(t.facetTag)}</h2>
+        <div class="facet-row">${tags.map((tag) => facet('tag', tag, `# ${esc(tag)}`, ' is-pill is-tag')).join('')}</div>
+      </section>
+    </details>
+  </aside>
+  <div class="results">
+    <div class="toolbar">
+      <label class="search">${icons.search}<input type="search" id="note-search" placeholder="${esc(t.search)}" autocomplete="off" aria-label="${esc(t.search)}"><kbd>/</kbd></label>
+      <div class="views" role="group">
+        <button type="button" class="view" data-view="topic" aria-pressed="true">${esc(t.byTopic)}</button>
+        <button type="button" class="view" data-view="time" aria-pressed="false">${esc(t.byTime)}</button>
+        <button type="button" class="view" data-view="papers" aria-pressed="false">${esc(t.byPapers)} <small>${papers.length}</small></button>
+      </div>
+    </div>
+    <p class="result-bar"><span id="result-count" data-one="${esc(t.count(1))}" data-many="${esc(t.count(2))}">${esc(t.count(notes.length))}</span><span id="active-filters"></span><button type="button" id="clear-filters" hidden>${esc(t.clear)} ×</button></p>
+    <div id="view-topic" class="groups">
+${groups.map((g) => topicGroup(ctx, g)).join('\n')}
+    </div>
+    <div id="view-time" hidden>
+${noteGrid(ctx, notes)}
+    </div>
+    <div id="view-papers" hidden>
+${paperList(ctx)}
+    </div>
+    <p class="empty" id="notes-empty" hidden>${esc(t.empty)}</p>
+  </div>
+</div>`;
+  return page(ctx, { title: t.nav.notes, description: t.notesLede, path: '/notes/', active: 'notes', body, bodyClass: 'is-wide' });
 }
 
-export function topicPage(ctx, collection) {
-  const { t, L, href } = ctx;
-  const notes = ctx.notes.filter((n) => n.collection === collection.id);
-  const body = `<header class="page-head"><a class="more" href="${href('/notes/')}">${esc(t.backNotes)}</a><p class="eyebrow">${esc(L(collection.title))}</p><h1>${esc(L(collection.question))}</h1><p class="lede">${esc(L(collection.description))}</p></header>${noteGrid(ctx, notes)}`;
-  return page(ctx, { title: L(collection.title), description: L(collection.description), path: `/topics/${collection.id}/`, active: 'notes', body });
-}
-
-export const redirectPage = (ctx, to) => `<!doctype html><html lang="${ctx.htmlLang}"><head><meta charset="utf-8"><title>${esc(ctx.site.name)}</title><link rel="canonical" href="${ctx.site.url}${esc(to)}"><meta http-equiv="refresh" content="0; url=${esc(to)}"><meta name="robots" content="noindex"></head><body><a href="${esc(to)}">${esc(ctx.site.name)}</a></body></html>`;
+export const redirectPage = (ctx, to) => `<!doctype html><html lang="${ctx.htmlLang}"><head><meta charset="utf-8"><title>${esc(ctx.site.name)}</title><link rel="canonical" href="${ctx.site.url}${to}"><meta http-equiv="refresh" content="0; url=${to}"><meta name="robots" content="noindex"></head><body><a href="${to}">${esc(ctx.site.name)}</a></body></html>`;
 
 // ---------- note ----------
 
@@ -222,13 +354,19 @@ export function notePage(ctx, n) {
   const coll = find(site.collections, n.collection);
   const i = notes.indexOf(n);
   const newer = notes[i - 1], older = notes[i + 1];
-  const related = coll ? notes.filter((x) => x.slug !== n.slug && x.collection === coll.id) : [];
-  const around = related.length ? `<div class="steps"><p class="steps-label">${esc(t.related)}</p><ul>${related.map((x) => `<li><a href="${x.url}">${esc(x.title)}</a></li>`).join('')}</ul></div>` : '';
+  const node = ctx.map.byNote.get(n.slug);
+  const steps = (label, links) =>
+    links.length
+      ? `<div class="steps"><p class="steps-label">${esc(label)}</p><ul>${links
+          .map(({ edge, other }) => `<li class="r-${edge.rel.id}"><b class="rel-tag">${esc(L(edge.rel.title))}</b>${other.url ? `<a href="${other.url}">${esc(L(other.label))}</a>` : `<span class="is-planned">${esc(L(other.label))}<small>${esc(t.planned)}</small></span>`}</li>`)
+          .join('')}</ul></div>`
+      : '';
+  const around = node ? steps(t.before, node.links.filter((l) => !l.out)) + steps(t.after, node.links.filter((l) => l.out)) : '';
   const toc = tocBlock(ctx, n.toc);
   const foreign = n.bodyLang !== ctx.lang;
   const body = `<article class="article t-${n.track}${toc ? ' has-toc' : ''}">
   <header class="article-head">
-    <p class="crumbs"><a href="${href('/notes/')}">${esc(t.backNotes)}</a>${areaChip(ctx, n)}<span class="kind">${formatLabel(ctx, n)}</span></p>
+    <p class="crumbs"><a href="${href('/notes/')}">${esc(t.backNotes)}</a>${areaChip(ctx, n)}<span class="kind">${track ? esc(L(track.title)) + ' · ' : ''}${kindLabel(ctx, n)}</span>${levelMark(ctx, n)}</p>
     <h1>${esc(n.title)}</h1>
     <p class="lede">${esc(n.description)}</p>
     <p class="meta">
@@ -248,8 +386,8 @@ ${n.html}
     ${coll || around ? `<aside class="in-topic">
       <span class="glyph-badge" aria-hidden="true">${esc(track?.glyph || '∗')}</span>
       <div>
-        ${coll ? `<p class="topic-name">${esc(t.inTopic)} · ${esc(L(coll.title))}</p>\n        <p class="q"><a href="${href(`/topics/${coll.id}/`)}">${esc(L(coll.question))}</a></p>` : `<p class="topic-name">${esc(t.inMap)}</p>`}
-        ${around ? `<div class="around">${around}</div>` : ''}
+        ${coll ? `<p class="topic-name">${esc(t.inTopic)} · ${esc(L(coll.title))}</p>\n        <p class="q"><a href="${href('/notes/')}#${coll.id}">${esc(L(coll.question))}</a></p>` : `<p class="topic-name">${esc(t.inMap)}</p>`}
+        ${around ? `<div class="around">${around}</div><p class="to-map"><a href="${href('/notes/')}#map">${esc(t.viewMap)} <b>→</b></a></p>` : ''}
       </div>
     </aside>` : ''}
     <p class="feedback">${esc(t.feedback)} <a href="mailto:${site.email}">${site.email}</a></p>
@@ -309,8 +447,7 @@ ${list.map((x) => `<li class="card res-row">
   <a class="pdf" href="${esc(x.url)}"${x.external ? ' target="_blank" rel="noopener"' : ''}>${esc(x.file ? t.download : t.open)}${x.file ? ' ↓' : ' ↗'}</a>
 </li>`).join('\n')}
 </ul>`}
-</section>`).join('\n')}
-<section class="sec" id="reading">${sectionHead('Reading', esc(t.readingSources))}<p class="sec-lede">${esc(t.readingSourcesDesc)}</p><ul class="res-list">${ctx.papers.filter((p) => ctx.notes.some((n) => n.slug === p.note)).map((p) => `<li class="card res-row"><div><h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}</a></h3><p class="desc">${esc(p.authors)} · ${esc(p.venue)} ${p.year}</p></div><a class="pdf" href="${ctx.notes.find((n) => n.slug === p.note).url}">${esc(t.toNote)} →</a></li>`).join('')}</ul></section>`;
+</section>`).join('\n')}`;
   return page(ctx, { title: t.nav.resources, path: '/resources/', active: 'resources', body, description: t.resourcesLede });
 }
 

@@ -8,9 +8,26 @@
     "status": "noted",
     "area": "representation",
     "note": "leworldmodel-sigreg",
-    "tags": [
-      "World Model",
-      "JEPA"
-    ]
+    "tags": ["World Model", "JEPA"]
+  },
+  {
+    "title": "Denoising Diffusion Probabilistic Models",
+    "authors": "Ho, Jain, Abbeel",
+    "year": 2020,
+    "venue": "NeurIPS",
+    "url": "https://arxiv.org/abs/2006.11239",
+    "status": "read",
+    "area": "generative",
+    "tags": ["Diffusion", "Foundation"]
+  },
+  {
+    "title": "Score-Based Generative Modeling through Stochastic Differential Equations",
+    "authors": "Song, Sohl-Dickstein, Kingma, Kumar, Ermon, Poole",
+    "year": 2021,
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2011.13456",
+    "status": "queued",
+    "area": "generative",
+    "tags": ["SDE", "Theory"]
   }
 ]

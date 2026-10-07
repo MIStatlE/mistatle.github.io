@@ -1,6 +1,4 @@
 ---
-legacy: "public/data/templates/reading_inquiry_note.md"
-publish: true
 type: "template"
 title: "Problem-Led Reading"
 description: "先形成自己的问题与判断，再请 AI 扩展可能性，最后回到原文核验和修订。"
