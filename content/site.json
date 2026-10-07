@@ -1,0 +1,389 @@
+{
+  "name": "MIStatlE",
+  "url": "https://mistatle.github.io",
+  "title": "Mathematics, Algorithms & AI",
+  "since": 2025,
+  "location": {
+    "zh": "上海",
+    "en": "Shanghai"
+  },
+  "email": "mistatle@163.com",
+  "eyebrow": "PERSONAL WEBSITE",
+  "description": {
+    "zh": "数学、算法与 AI 的笔记：结构、机制与边界。",
+    "en": "Notes on mathematics, algorithms and AI: structure, mechanism and boundary."
+  },
+  "statement": {
+    "zh": "关于数学、算法与 AI 的笔记。围绕一个具体问题，讲清关键推导与结论成立的条件。",
+    "en": "Notes on mathematics, algorithms and AI. One question at a time, with the key derivation and the conditions behind the result."
+  },
+  "principles": [
+    {
+      "label": "STRUCTURE",
+      "title": {
+        "zh": "数学澄清结构",
+        "en": "Mathematics clarifies structure"
+      },
+      "desc": {
+        "zh": "从定义、假设与推导中找出真正决定结论的部分。",
+        "en": "Find, among definitions, assumptions and derivations, the part that actually decides the result."
+      }
+    },
+    {
+      "label": "MECHANISM",
+      "title": {
+        "zh": "算法解释过程",
+        "en": "Algorithms explain process"
+      },
+      "desc": {
+        "zh": "关注不变量、信息流与计算步骤，而不只给出结果。",
+        "en": "Follow invariants, information flow and computational steps instead of only stating the outcome."
+      }
+    },
+    {
+      "label": "BOUNDARY",
+      "title": {
+        "zh": "核验标出边界",
+        "en": "Verification marks the boundary"
+      },
+      "desc": {
+        "zh": "用反例、实验与来源说明结论何时成立、何时失效。",
+        "en": "Use counterexamples, experiments and sources to show when a claim holds and when it breaks."
+      }
+    }
+  ],
+  "links": [
+    {
+      "label": "YouTube",
+      "icon": "youtube",
+      "color": "#ff0033",
+      "href": "https://www.youtube.com/@ZICHENGLYU-h8y"
+    },
+    {
+      "label": "GitHub",
+      "icon": "github",
+      "color": "#333333",
+      "href": "https://github.com/mistatle"
+    },
+    {
+      "label": "小红书",
+      "icon": "xiaohongshu",
+      "color": "#ff2442",
+      "href": "https://www.xiaohongshu.com/user/profile/64d362e1000000000b0087a6"
+    },
+    {
+      "label": "知乎",
+      "icon": "zhihu",
+      "color": "#0084ff",
+      "href": "https://www.zhihu.com/people/kkk-36-70-64"
+    }
+  ],
+  "tracks": [
+    {
+      "id": "foundations",
+      "code": "FND",
+      "glyph": "∑",
+      "title": {
+        "zh": "数学基础",
+        "en": "Mathematical Foundations"
+      }
+    },
+    {
+      "id": "algorithms",
+      "code": "ALG",
+      "glyph": "∇",
+      "title": {
+        "zh": "算法与优化",
+        "en": "Algorithms & Optimization"
+      }
+    },
+    {
+      "id": "systems",
+      "code": "SYS",
+      "glyph": "ψ",
+      "title": {
+        "zh": "学习与智能系统",
+        "en": "Learning Systems"
+      }
+    }
+  ],
+  "areas": [
+    {
+      "id": "probability",
+      "track": "foundations",
+      "title": {
+        "zh": "概率论",
+        "en": "Probability"
+      }
+    },
+    {
+      "id": "statistics",
+      "track": "foundations",
+      "title": {
+        "zh": "统计推断",
+        "en": "Statistics"
+      }
+    },
+    {
+      "id": "information",
+      "track": "foundations",
+      "title": {
+        "zh": "信息论",
+        "en": "Information Theory"
+      }
+    },
+    {
+      "id": "optimization",
+      "track": "algorithms",
+      "title": {
+        "zh": "优化",
+        "en": "Optimization"
+      }
+    },
+    {
+      "id": "rl",
+      "track": "algorithms",
+      "title": {
+        "zh": "强化学习",
+        "en": "Reinforcement Learning"
+      }
+    },
+    {
+      "id": "theory",
+      "track": "systems",
+      "title": {
+        "zh": "学习理论",
+        "en": "Learning Theory"
+      }
+    },
+    {
+      "id": "architectures",
+      "track": "systems",
+      "title": {
+        "zh": "模型架构",
+        "en": "Architectures"
+      }
+    },
+    {
+      "id": "generative",
+      "track": "systems",
+      "title": {
+        "zh": "生成模型",
+        "en": "Generative Models"
+      }
+    },
+    {
+      "id": "representation",
+      "track": "systems",
+      "title": {
+        "zh": "表示学习与世界模型",
+        "en": "Representation & World Models"
+      }
+    }
+  ],
+  "kinds": [
+    {
+      "id": "derivation",
+      "title": {
+        "zh": "推导",
+        "en": "Derivation"
+      },
+      "desc": {
+        "zh": "从定义出发，一步步推出结论",
+        "en": "From definitions to the result, step by step"
+      }
+    },
+    {
+      "id": "mechanism",
+      "title": {
+        "zh": "机制",
+        "en": "Mechanism"
+      },
+      "desc": {
+        "zh": "解释一个方法为什么有效",
+        "en": "Why a method works"
+      }
+    },
+    {
+      "id": "foundation",
+      "title": {
+        "zh": "基础",
+        "en": "Foundation"
+      },
+      "desc": {
+        "zh": "后续内容依赖的基本对象",
+        "en": "Basic objects later notes rely on"
+      }
+    },
+    {
+      "id": "paper",
+      "title": {
+        "zh": "论文研读",
+        "en": "Paper Reading"
+      },
+      "desc": {
+        "zh": "读一篇论文并核对它的论证",
+        "en": "Reading a paper and checking its argument"
+      }
+    }
+  ],
+  "levels": [
+    {
+      "id": "intro",
+      "title": {
+        "zh": "入门",
+        "en": "Introductory"
+      }
+    },
+    {
+      "id": "core",
+      "title": {
+        "zh": "进阶",
+        "en": "Intermediate"
+      }
+    },
+    {
+      "id": "deep",
+      "title": {
+        "zh": "深入",
+        "en": "Advanced"
+      }
+    }
+  ],
+  "collections": [
+    {
+      "id": "probability-concentration",
+      "track": "foundations",
+      "title": {
+        "zh": "概率、信息与集中",
+        "en": "Probability, Information and Concentration"
+      },
+      "question": {
+        "zh": "概率质量如何在高维空间中组织起来？",
+        "en": "How does probability mass organize itself in high dimensions?"
+      },
+      "description": {
+        "zh": "从典型集出发，连接集中现象、信息量与高维几何。",
+        "en": "Starting from the typical set, connecting concentration, information and high-dimensional geometry."
+      }
+    },
+    {
+      "id": "policy-optimization",
+      "track": "algorithms",
+      "title": {
+        "zh": "策略优化",
+        "en": "Policy Optimization"
+      },
+      "question": {
+        "zh": "策略梯度究竟在优化什么，又受什么分布约束？",
+        "en": "What exactly does policy gradient optimize, and which distributions constrain it?"
+      },
+      "description": {
+        "zh": "从目标、梯度估计和覆盖分布理解强化学习中的优化结构。",
+        "en": "Understanding the optimization structure of reinforcement learning through objectives, gradient estimators and coverage."
+      }
+    },
+    {
+      "id": "generative-world-models",
+      "track": "systems",
+      "title": {
+        "zh": "生成模型与世界模型",
+        "en": "Generative Models and World Models"
+      },
+      "question": {
+        "zh": "学习系统如何形成可预测、可用而不塌缩的表示？",
+        "en": "How do learning systems form representations that are predictable, usable and do not collapse?"
+      },
+      "description": {
+        "zh": "从潜变量建模到 latent prediction，比较目标函数与表示几何。",
+        "en": "From latent-variable modeling to latent prediction, comparing objectives and representation geometry."
+      }
+    },
+    {
+      "id": "sequential-exploration",
+      "track": "algorithms",
+      "title": {
+        "zh": "序列决策与探索",
+        "en": "Sequential Decisions and Exploration"
+      },
+      "question": {
+        "zh": "单步的随机性，如何影响整条轨迹？",
+        "en": "How does randomness at each step shape an entire trajectory?"
+      },
+      "description": {
+        "zh": "从动作之间的关联，理解长期探索的作用。",
+        "en": "Understanding exploration through the dependence between actions."
+      }
+    }
+  ],
+  "comments": {
+    "provider": "giscus",
+    "repo": "mistatle/mistatle.github.io",
+    "repoId": "",
+    "category": "Announcements",
+    "categoryId": ""
+  },
+  "analytics": {
+    "goatcounter": "",
+    "umami": {
+      "src": "",
+      "websiteId": ""
+    }
+  },
+  "resourceTypes": [
+    {
+      "id": "template",
+      "title": {
+        "zh": "LaTeX 模板",
+        "en": "LaTeX templates"
+      },
+      "desc": {
+        "zh": "本站笔记与讲义使用的 XeLaTeX 模板，可直接下载源文件。",
+        "en": "The XeLaTeX templates behind the notes and lecture notes on this site, with source files."
+      }
+    },
+    {
+      "id": "tool",
+      "title": {
+        "zh": "工具与代码",
+        "en": "Tools and code"
+      },
+      "desc": {
+        "zh": "写作和实验中用到的小工具。",
+        "en": "Small tools used for writing and experiments."
+      }
+    },
+    {
+      "id": "link",
+      "title": {
+        "zh": "延伸阅读",
+        "en": "Further reading"
+      },
+      "desc": {
+        "zh": "值得反复查阅的外部资料。",
+        "en": "External material worth returning to."
+      }
+    }
+  ],
+  "featured": [
+    "typical-set",
+    "deep-exploration",
+    "leworldmodel-sigreg"
+  ],
+  "formats": [
+    {
+      "id": "short",
+      "title": {
+        "zh": "短篇",
+        "en": "Short read"
+      }
+    },
+    {
+      "id": "note",
+      "title": {
+        "zh": "完整笔记",
+        "en": "Full note"
+      }
+    }
+  ]
+}

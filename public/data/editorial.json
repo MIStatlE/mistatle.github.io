@@ -77,6 +77,7 @@
       "question": "概率质量如何在高维空间中组织起来？",
       "desc": "从典型集出发，连接集中现象、信息量与高维几何。",
       "entryIds": [
+        "log-sobolev-entropy",
         "typical-set"
       ],
       "i18n": {
@@ -141,6 +142,44 @@
     }
   ],
   "entries": [
+    {
+      "id": "log-sobolev-entropy",
+      "trackId": "foundations",
+      "collectionId": "probability-concentration",
+      "kind": "Mathematical Note",
+      "title": "改变一个分布，需要多少局部变化？",
+      "desc": "从概率重加权和两区间反例，理解熵、梯度能量，以及 #093 所声称的线性到非线性桥梁。",
+      "date": "2026-10-07",
+      "language": "zh",
+      "formats": {
+        "article": {
+          "path": "public/data/library/probability/log-sobolev-entropy.md",
+          "label": "Article"
+        },
+        "pdf": {
+          "path": "public/data/library/probability/source/log-sobolev-entropy.pdf",
+          "label": "PDF"
+        }
+      },
+      "i18n": {
+        "en": {
+          "title": "What does it cost to change a distribution?",
+          "desc": "Reweighting and a two-interval example explain entropy, gradient energy, and the implication claimed in #093."
+        }
+      },
+      "editions": {
+        "en": {
+          "article": {
+            "path": "public/data/library/probability/log-sobolev-entropy.en.md",
+            "label": "Article"
+          },
+          "pdf": {
+            "path": "public/data/library/probability/source/log-sobolev-entropy-en.pdf",
+            "label": "PDF"
+          }
+        }
+      }
+    },
     {
       "id": "typical-set",
       "trackId": "foundations",

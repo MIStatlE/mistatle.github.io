@@ -1,0 +1,378 @@
+% Problem-Led Reading
+% An open, modular reading template with an optional AI margin.
+% Compile with XeLaTeX or LuaLaTeX.
+\documentclass[10pt,fontset=none]{ctexart}
+
+\usepackage{iftex}
+\ifPDFTeX\errmessage{Please compile with XeLaTeX or LuaLaTeX}\fi
+\usepackage{fontspec}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{tabularx,array}
+
+\geometry{
+  paperwidth=7.5in,paperheight=10in,
+  left=0.62in,right=0.62in,top=0.48in,bottom=0.45in,
+  headsep=0in,footskip=0.23in
+}
+
+\IfFontExistsTF{Songti SC}
+  {\setCJKmainfont{Songti SC}[AutoFakeBold=2.0]}
+  {\IfFontExistsTF{Source Han Serif SC}
+    {\setCJKmainfont{Source Han Serif SC}[AutoFakeBold=2.0]}
+    {\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]}}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Helvetica Neue}
+  {\setsansfont{Helvetica Neue}}
+  {\setsansfont{TeX Gyre Heros}}
+\IfFontExistsTF{Hiragino Sans GB}
+  {\setCJKsansfont{Hiragino Sans GB}[AutoFakeBold=2.0]}
+  {\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]}
+
+\definecolor{navy}{HTML}{163A60}
+\definecolor{ink}{HTML}{171B20}
+\definecolor{muted}{HTML}{707981}
+\definecolor{rule}{HTML}{D3D8DC}
+\definecolor{soft}{HTML}{F4F6F7}
+\definecolor{paper}{HTML}{FCFBF8}
+
+\pagecolor{paper}
+\color{ink}
+\linespread{1.045}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\raggedbottom
+\clubpenalty=10000
+\widowpenalty=10000
+
+% -----------------------------------------------------------------
+% Reuse: change only the example source identity.
+% -----------------------------------------------------------------
+\newcommand{\SeriesNumber}{01}
+\newcommand{\SourceTitle}{Probability Inequalities for Sums of Bounded Random Variables}
+\newcommand{\SourceAuthors}{Wassily Hoeffding}
+\newcommand{\SourceContext}{JASA 58 (1963)}
+\newcommand{\SourceURL}{https://doi.org/10.1080/01621459.1963.10500830}
+\newcommand{\ReadDate}{2026.08.18}
+
+\hypersetup{
+  colorlinks=true,urlcolor=navy,linkcolor=navy,
+  pdfauthor={MIStatlE},
+  pdftitle={Problem-Led Reading}
+}
+
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[L]{\footnotesize\sffamily\color{muted}PROBLEM-LED READING \enspace \SeriesNumber}
+\fancyfoot[R]{\footnotesize\sffamily\color{navy}@MIStatlE \enspace\textperiodcentered\enspace \thepage/4}
+\pagestyle{fancy}
+
+% -----------------------------------------------------------------
+% A small grammar of freely composable note elements.
+% -----------------------------------------------------------------
+\newcommand{\PageMark}[2]{%
+  \noindent
+  \begin{minipage}[t]{0.72\linewidth}
+    {\sffamily\bfseries\scriptsize\color{navy}#1}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.24\linewidth}
+    \raggedleft{\sffamily\scriptsize\color{muted}#2}
+  \end{minipage}}
+
+\newcommand{\PageTitle}[2]{%
+  \PageMark{PROBLEM-LED READING \enspace/\enspace #1}{\ReadDate}
+  \vspace{0.18em}
+  {\bfseries\fontsize{23pt}{27pt}\selectfont\color{ink}#2\par}}
+
+\newcommand{\SourceLine}{%
+  {\small\color{muted}\SourceTitle\par}
+  \vspace{0.07em}
+  {\footnotesize\color{muted}\SourceAuthors\quad\textperiodcentered\quad
+   \SourceContext\quad\textperiodcentered\quad\href{\SourceURL}{source}\par}}
+
+\newcommand{\RuleHead}[2]{%
+  \vspace{0.56em}
+  \noindent{\sffamily\bfseries\scriptsize\color{muted}#1}\hspace{0.65em}%
+  {\sffamily\bfseries\large\color{navy}#2}\hspace{0.75em}%
+  {\color{rule}\leaders\hrule height 0.45pt\hfill\kern0pt}\par
+  \vspace{0.28em}}
+
+\newcommand{\Tag}[1]{%
+  {\sffamily\bfseries\scriptsize\color{navy}\MakeUppercase{#1}}}
+
+\newcommand{\SourceNote}[3]{%
+  \noindent
+  \begin{minipage}[t]{0.17\linewidth}
+    \vspace{0pt}{\sffamily\scriptsize\color{muted}#1}
+  \end{minipage}
+  \begin{minipage}[t]{0.17\linewidth}
+    \vspace{0pt}\Tag{#2}
+  \end{minipage}
+  \begin{minipage}[t]{0.62\linewidth}
+    \vspace{0pt}\raggedright #3
+  \end{minipage}\par}
+
+\newcommand{\MarginQuestion}[2]{%
+  \Tag{#1}\par
+  \vspace{0.12em}{\small #2}\par}
+
+\newcommand{\OpenLine}[1]{%
+  {\small\color{muted}#1}\par
+  \vspace{0.32em}{\color{rule}\hrule height 0.45pt}\vspace{0.52em}}
+
+\tcbset{
+  openbox/.style={enhanced,colback=paper,colframe=rule,boxrule=0.45pt,
+    arc=0pt,left=10pt,right=10pt,top=7.5pt,bottom=7.5pt},
+  marginbox/.style={enhanced,colback=soft,frame hidden,
+    borderline west={1.8pt}{0pt}{navy},arc=0pt,
+    left=10pt,right=9pt,top=7.5pt,bottom=7.5pt}
+}
+
+\begin{document}
+
+% =================================================================
+% PAGE 1 -- blank reusable page
+% =================================================================
+\PageMark{PROBLEM-LED READING \enspace/\enspace \SeriesNumber}{OPEN TEMPLATE}
+
+\vspace{0.40em}
+{\bfseries\fontsize{28pt}{32pt}\selectfont\color{ink}问题研读\par}
+\vspace{0.05em}
+{\large\color{navy}Problem-Led Reading\par}
+
+\vspace{0.48em}
+{\small\color{muted}
+  先读原文，形成初步判断；再让 AI 展开候选，最后回到来源修订。}
+
+\RuleHead{START}{Reading question}
+
+\begin{tcolorbox}[openbox]
+  {\color{muted}阅读这份材料，我希望厘清：}\par
+  \vspace{0.55em}{\color{rule}\hrule height 0.45pt}\vspace{0.62em}
+  {\color{rule}\hrule height 0.45pt}
+\end{tcolorbox}
+
+\vspace{0.30em}
+\begin{minipage}[t]{0.69\linewidth}
+  \vspace{0pt}
+  \RuleHead{SOURCE}{First pass}
+  \OpenLine{\textsf{p./sec./fig.}\quad 一条可定位的主张、证据或机制。}
+  \OpenLine{\textsf{?}\quad 一个阻碍理解或可能改变判断的问题。}
+
+  \RuleHead{MY READ}{Current interpretation}
+  \begin{tcolorbox}[openbox,height=1.10in,valign=top]
+    {\small\color{muted}我目前如何理解它？哪一处仍不确定？}
+  \end{tcolorbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.26\linewidth}
+  \vspace{0pt}
+  \RuleHead{OPTIONAL}{AI margin}
+  \begin{tcolorbox}[marginbox]
+    \MarginQuestion{clarify}{隐含前提是什么？}
+    \vspace{0.62em}
+    \MarginQuestion{alternate}{替代解释是什么？}
+    \vspace{0.62em}
+    \MarginQuestion{check}{如何回到来源核验？}
+  \end{tcolorbox}
+\end{minipage}
+
+\RuleHead{WORK}{Think on paper}
+
+\begin{tcolorbox}[openbox,height=2.25in,valign=top]
+  {\footnotesize\color{muted}
+    quote / diagram / derivation / mechanism / objection}
+\end{tcolorbox}
+
+\RuleHead{RETURN}{Next place to resume}
+\OpenLine{下次从以下位置继续：}
+
+\newpage
+
+% =================================================================
+% PAGE 2 -- a raw first read before AI
+% =================================================================
+\PageTitle{ESSAY EXAMPLE / 01 FIRST PASS}{初读：形成判断}
+\vspace{0.08em}
+\SourceLine
+
+\RuleHead{QUESTION}{Initial question}
+
+{\bfseries\fontsize{17pt}{22pt}\selectfont
+  为什么有界独立变量之和会呈现二次指数衰减？\par}
+
+\vspace{0.16em}
+{\small\color{muted}
+  先处理原文，区分主张、证据与个人解释；暂不引入 AI 生成内容。}
+
+\vspace{0.40em}
+\begin{minipage}[t]{0.69\linewidth}
+  \vspace{0pt}
+  \RuleHead{TRACE}{Source notes}
+
+  \SourceNote{定理}{claim}{
+    若独立变量 $X_i\in[a_i,b_i]$，则对 $t>0$，
+    \[
+      \Pr\!\left(S_n-\mathbb ES_n\ge t\right)
+      \le \exp\!\left(-\frac{2t^2}{\sum_i(b_i-a_i)^2}\right).
+    \]}
+  \vspace{0.55em}{\color{rule}\hrule height 0.4pt}\vspace{0.52em}
+  \SourceNote{引理}{local bound}{
+    对单个有界变量，
+    $\log\mathbb E e^{\lambda(X_i-\mathbb EX_i)}
+    \le \lambda^2(b_i-a_i)^2/8$。}
+  \vspace{0.55em}{\color{rule}\hrule height 0.4pt}\vspace{0.52em}
+  \SourceNote{证明}{mechanism}{
+    独立性将和的 MGF 分解为乘积；再用 Markov--Chernoff 界并优化 $\lambda$。}
+
+  \RuleHead{MY READ}{A tension worth keeping}
+  \begin{tcolorbox}[openbox]
+    {\bfseries 高斯型尾部似乎主要来自变量有界。}\par
+    \vspace{0.35em}
+    {\small\color{muted}
+      个人解释；尚未区分有界性与独立性的作用。}
+  \end{tcolorbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.26\linewidth}
+  \vspace{0pt}
+  \RuleHead{AI OFF}{First pass}
+  \begin{tcolorbox}[marginbox]
+    {\footnotesize\color{muted}
+      暂不生成结论，仅保留初读中的张力与问题。}
+
+    \vspace{0.72em}
+    \MarginQuestion{concept}{二次指数从哪一步出现？}
+    \vspace{0.72em}
+    \MarginQuestion{evidence}{独立性只方便证明，还是决定尺度？}
+    \vspace{0.72em}
+    \MarginQuestion{boundary}{变量完全相关时会怎样？}
+  \end{tcolorbox}
+\end{minipage}
+
+\vfill
+\RuleHead{STOP}{First-pass record}
+{\small
+  一个定理、一个引理、一条证明链、三个问题。初读到此为止。}
+\vspace{0.24in}
+
+\newpage
+
+% =================================================================
+% PAGE 3 -- AI expands the search space without owning the note
+% =================================================================
+\PageTitle{ESSAY EXAMPLE / 02 EXPAND}{扩展：生成候选}
+\vspace{0.08em}
+\SourceLine
+
+\begin{minipage}[t]{0.69\linewidth}
+  \vspace{0pt}
+  \RuleHead{HANDOFF}{Inputs and constraints}
+  \begin{tcolorbox}[openbox]
+    {\small
+      输入：定理、MGF 引理、证明链与初步判断。\par
+      \color{muted}约束：只拆分假设的作用；反例与推广必须明确标记。}
+  \end{tcolorbox}
+
+  \RuleHead{BRANCH 01}{Separate the roles}
+  {\bfseries 候选解释：}\;
+  有界性给出单变量的二次 MGF 控制；独立性使对数 MGF 可加。
+  两者共同产生平方和尺度。\par
+  \vspace{0.25em}
+  {\footnotesize\color{muted}
+    核验：逐步标出每个假设进入证明的位置。}
+
+  \RuleHead{BRANCH 02}{Break independence}
+  {\bfseries 候选反例：}\;
+  令 $Y$ 为 Rademacher 变量且 $X_i=Y$。各变量均有界，但 $S_n=nY$；
+  在 $t=n$ 处真实概率为 $1/2$，独立情形的指数界失效。\par
+  \vspace{0.25em}
+  {\footnotesize\color{muted}
+    结论：独立性不是可以无条件删除的技术细节。}
+
+  \RuleHead{BRANCH 03}{Transfer carefully}
+  {\bfseries 候选迁移：}\;
+  对鞅差分，以条件 MGF 控制替代乘积分解，得到 Azuma--Hoeffding 型界。\par
+  \vspace{0.25em}
+  {\footnotesize\color{muted}
+    标记：这是后续推广，不属于原定理本身。}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.26\linewidth}
+  \vspace{0pt}
+  \RuleHead{OPTIONAL}{AI margin}
+  \begin{tcolorbox}[marginbox]
+    {\footnotesize\color{muted}
+      AI 仅扩展假设空间，不修改主笔记。}
+
+    \vspace{0.70em}
+    \MarginQuestion{clarify}{分别指出有界性与独立性的作用。}
+    \vspace{0.70em}
+    \MarginQuestion{alternate}{方差控制会导向什么替代界？}
+    \vspace{0.70em}
+    \MarginQuestion{falsify}{构造删除独立性后的反例。}
+    \vspace{0.70em}
+    \MarginQuestion{provenance}{区分原定理与鞅推广。}
+  \end{tcolorbox}
+\end{minipage}
+
+\vfill
+\RuleHead{SELECT}{Selected branch}
+\begin{tcolorbox}[openbox]
+  推进分支 02：用完全相关的 Rademacher 变量检验独立性是否只是技术条件。
+  推广分支暂不写回。
+\end{tcolorbox}
+\vspace{0.22in}
+
+\newpage
+
+% =================================================================
+% PAGE 4 -- write back only what survived checking
+% =================================================================
+\PageTitle{ESSAY EXAMPLE / 03 CHECK}{回源：修订判断}
+\vspace{0.30em}
+\SourceLine
+
+\RuleHead{KEEP}{Source-backed}
+\begin{tcolorbox}[openbox,fontupper=\small]
+  原定理同时使用每个变量的取值范围与独立性；
+  尾部尺度由 $\sum_i(b_i-a_i)^2$ 控制。
+\end{tcolorbox}
+
+\RuleHead{REVISE}{Before / after}
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{0pt}\Tag{before}\par
+  \vspace{0.25em}
+  \begin{tcolorbox}[openbox,height=1.05in,valign=top,fontupper=\small]
+    高斯型尾部主要来自变量有界。
+  \end{tcolorbox}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{0pt}\Tag{after}\par
+  \vspace{0.25em}
+  \begin{tcolorbox}[openbox,height=1.05in,valign=top,fontupper=\small]
+    有界性提供局部 MGF 控制；独立性使控制量可加。二者缺一不可。
+  \end{tcolorbox}
+\end{minipage}
+
+\RuleHead{OPEN}{One question to carry}
+\begin{tcolorbox}[openbox,fontupper=\small]
+  独立性可以在多大程度上被条件 MGF 控制、鞅差分或弱依赖结构替代？
+  这是从原证明结构延伸出的新问题。
+\end{tcolorbox}
+
+\vfill
+\RuleHead{AI ROLE}{Expand, then step back}
+\begin{tcolorbox}[marginbox]
+  {\small
+    AI 提供候选解释；最终写回只依据原文核验与个人判断修订。}
+\end{tcolorbox}
+\vspace{0.24in}
+
+\end{document}

@@ -1,0 +1,145 @@
+\documentclass[10pt,openany]{book}
+\usepackage{miextras}
+
+\renewcommand{\seriesnum}{I}
+\renewcommand{\BookShortTitle}{集中不等式}
+\renewcommand{\BookFooterLabel}{@MIStatlE}
+
+\begin{document}
+
+\MakeBookCoverUltraSimple
+  {集中不等式}
+  {高维概率与机器学习理论中的浓缩现象}
+  {上册 · 预印本}
+
+\frontmatter
+\setcounter{tocdepth}{2}
+\TOCwithoutHeadFoot
+
+\mainmatter
+
+\part{预备知识与工具}
+
+\chapter{次高斯变量与 Orlicz 范数}
+\ChapterEpigraph[Kolmogorov]{The theory of probability as a mathematical discipline can and should be developed from axioms in exactly the same way as geometry and algebra.}
+
+\begin{SideBar}
+\textbf{阅读建议}：这一章先建立统一语言。之后的 Bernstein、Hoeffding、Hanson--Wright 都会不断回到这些范数、矩母函数和尾部控制工具。
+\end{SideBar}
+
+\section{核心定义}
+
+\begin{definition}[Orlicz 范数]
+随机变量 $Z$ 的 $\psi_2$ 范数定义为
+\[
+\norm{Z}_{\psi_2} := \inf\left\{ s>0 : \E \exp\left(\frac{Z^2}{s^2}\right) \le 2 \right\}.
+\]
+它衡量的是尾部衰减速度，而不是单纯的方差大小。
+\end{definition}
+
+\begin{lemma}[次高斯平方的次指数性]
+若 $X$ 是中心化次高斯随机变量，则 $X^2-\E X^2$ 是次指数随机变量，且其 $\psi_1$ 范数由 $\norm{X}_{\psi_2}^2$ 控制。
+\end{lemma}
+
+\begin{KeyBox}
+\textbf{要点}：在高维概率中，$\psi_2$ 控制小偏差，$\psi_1$ 控制平方后的重尾项。把“次高斯 $\to$ 次指数”的链条记住，很多浓缩不等式都会自然展开。
+\end{KeyBox}
+
+\section{从矩母函数到尾界}
+
+对独立中心化变量族 $\{X_i\}_{i=1}^n$，如果存在常数 $K$ 使得 $\norm{X_i}_{\psi_2}\le K$，那么任意线性组合都会表现出稳定的高斯型尾部。这个现象可以理解为：即使维度增大，真正主导偏差的仍然是“方向上的能量”和“单坐标上的最坏情况”。
+
+\begin{theorem}[Bernstein 型界]
+设 $Z_1,\dots,Z_n$ 独立且中心化，并满足 $\norm{Z_i}_{\psi_1}\le v$。则对任意系数向量 $a\in\mathbb{R}^n$ 与任意 $t\ge 0$，
+\[
+\mathbb{P}\left\{ \abs*{\sum_{i=1}^n a_i Z_i} \ge t \right\}
+\le 2\exp\left[
+  -c \min\left(
+    \frac{t^2}{v^2\norm{a}_2^2},
+    \frac{t}{v\norm{a}_\infty}
+  \right)
+\right].
+\]
+\end{theorem}
+
+\begin{Takeaway}
+小偏差受 $\norm{a}_2$ 主导，大偏差受 $\norm{a}_\infty$ 主导。这个二阶段结构几乎就是 Bernstein 不等式的直觉本体。
+\end{Takeaway}
+
+\begin{remark}
+如果你在读算法分析，可以把这里的“$\norm{a}_\infty$ 控制极端坐标”理解成最坏样本或最坏梯度分量的影响。
+\end{remark}
+
+\chapter{矩阵浓缩的入口}
+
+\section{为什么要看矩阵版本}
+
+很多机器学习问题中的对象并不是标量和，而是样本协方差矩阵、Hessian 或随机特征矩阵。标量浓缩只告诉我们某个方向上的偏差，而矩阵浓缩试图统一控制全部方向。
+
+\begin{definition}[样本协方差]
+设 $X_1,\dots,X_n\in\mathbb{R}^d$ 独立同分布，且 $\E X_i = 0$，则样本协方差矩阵定义为
+\[
+\widehat{\Sigma} := \frac{1}{n}\sum_{i=1}^n X_i X_i^\top.
+\]
+\end{definition}
+
+\begin{proposition}[各向同性次高斯向量]
+若 $X$ 是各向同性次高斯向量，则对足够大的 $n$，$\widehat{\Sigma}$ 以高概率接近单位阵，偏差尺度大约是 $\sqrt{d/n}$ 与更高阶尾项的组合。
+\end{proposition}
+
+\begin{Example}
+当 $X$ 的坐标独立且服从标准高斯时，$\widehat{\Sigma}$ 的谱范数偏差可以用矩阵 Bernstein 或更精细的随机矩阵工具来控制。这一页里的 Example 环境适合放“具体计算、反例或 sanity check”。
+\end{Example}
+
+\part{主结果}
+
+\chapter{Hanson--Wright 不等式}
+\section{二次型的浓缩}
+
+\begin{theorem}[Hanson--Wright]
+设 $X=(X_1,\dots,X_n)$ 的坐标独立、中心化且次高斯，$A\in\mathbb{R}^{n\times n}$。则存在常数 $c>0$，使得对任意 $t\ge 0$，
+\[
+\begin{aligned}
+\mathbb{P}\left\{
+  \abs*{X^\top A X - \E(X^\top A X)} \ge t
+\right\}
+&\le 2\exp\Biggl(
+-c \min\Bigl\{
+\frac{t^2}{K^4 \norm{A}_F^2}, \\
+&\qquad\qquad
+\frac{t}{K^2 \norm{A}_{\mathrm{op}}}
+\Bigr\}
+\Biggr).
+\end{aligned}
+\]
+\end{theorem}
+
+\begin{corollary}[谱初始化中的应用]
+当随机矩阵来自噪声污染的特征模型时，Hanson--Wright 能把二次型波动压到可控范围，从而解释谱初始化和某些非凸方法为什么能稳定起步。
+\end{corollary}
+
+\begin{Takeaway}
+把二次型看成“线性浓缩 + 交叉项控制”的升级版，会比死记公式更有用。真正重要的是 Frobenius 范数和算子范数分别对应的两个尺度。
+\end{Takeaway}
+
+\appendix
+\part{附录}
+
+\chapter{记号表}
+\begin{itemize}
+  \item $\E$：数学期望。
+  \item $\Var$：方差算子。
+  \item $\norm{\cdot}_{\psi_1}, \norm{\cdot}_{\psi_2}$：次指数 / 次高斯 Orlicz 范数。
+  \item $\norm{A}_{\mathrm{op}}$：矩阵算子范数。
+\end{itemize}
+
+\backmatter
+\begin{thebibliography}{9}
+\bibitem{vershynin}
+Roman Vershynin. \emph{High-Dimensional Probability}. Cambridge University Press, 2018.
+
+\bibitem{wainwright}
+Martin Wainwright. \emph{High-Dimensional Statistics}. Cambridge University Press, 2019.
+\end{thebibliography}
+
+\end{document}

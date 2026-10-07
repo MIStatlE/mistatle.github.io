@@ -1,0 +1,16 @@
+[
+  {
+    "title": "LeWorldModel: Stable End-to-End Joint-Embedding Predictive Architecture from Pixels",
+    "authors": "Maes, Le Lidec, Scieur, LeCun, Balestriero",
+    "year": 2026,
+    "venue": "arXiv",
+    "url": "https://arxiv.org/abs/2603.19312",
+    "status": "noted",
+    "area": "representation",
+    "note": "leworldmodel-sigreg",
+    "tags": [
+      "World Model",
+      "JEPA"
+    ]
+  }
+]
