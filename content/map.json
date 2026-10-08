@@ -9,7 +9,8 @@
       "phrase": {
         "zh": "是它的前置知识",
         "en": "is a prerequisite for"
-      }
+      },
+      "order": true
     },
     {
       "id": "derives",
@@ -94,11 +95,24 @@
       }
     }
   ],
+  "groups": [
+    {
+      "id": "score-based",
+      "area": "generative",
+      "title": {
+        "zh": "基于 score 的生成",
+        "en": "Score-based generation"
+      }
+    }
+  ],
   "nodes": [
     {
       "id": "lln",
       "type": "theorem",
       "area": "probability",
+      "also": [
+        "statistics"
+      ],
       "label": {
         "zh": "大数定律",
         "en": "Law of Large Numbers"
@@ -125,6 +139,11 @@
       "id": "kl",
       "type": "concept",
       "area": "information",
+      "also": [
+        "probability",
+        "generative",
+        "rl"
+      ],
       "label": {
         "zh": "KL 散度与交叉熵",
         "en": "KL Divergence & Cross Entropy"
@@ -138,6 +157,9 @@
       "id": "typical-set",
       "type": "theorem",
       "area": "information",
+      "also": [
+        "probability"
+      ],
       "note": "typical-set",
       "label": {
         "zh": "典型集与 AEP",
@@ -152,6 +174,9 @@
       "id": "sgd",
       "type": "method",
       "area": "optimization",
+      "also": [
+        "deep-learning"
+      ],
       "label": {
         "zh": "随机梯度方法",
         "en": "Stochastic Gradient Methods"
@@ -165,6 +190,9 @@
       "id": "mdp",
       "type": "concept",
       "area": "rl",
+      "also": [
+        "optimization"
+      ],
       "label": {
         "zh": "MDP 与价值函数",
         "en": "MDPs & Value Functions"
@@ -178,6 +206,10 @@
       "id": "policy-gradient",
       "type": "method",
       "area": "rl",
+      "also": [
+        "optimization",
+        "deep-learning"
+      ],
       "note": "policy-gradient-optimization",
       "label": {
         "zh": "Policy Gradient",
@@ -206,6 +238,10 @@
       "id": "vae-elbo",
       "type": "model",
       "area": "generative",
+      "also": [
+        "deep-learning",
+        "information"
+      ],
       "label": {
         "zh": "VAE 与 ELBO",
         "en": "VAE & ELBO"
@@ -219,6 +255,9 @@
       "id": "score-matching",
       "type": "method",
       "area": "generative",
+      "also": [
+        "statistics"
+      ],
       "label": {
         "zh": "Score Matching",
         "en": "Score Matching"
@@ -226,7 +265,8 @@
       "summary": {
         "zh": "不求归一化常数，直接学习对数密度的梯度。",
         "en": "Learning the gradient of the log-density without the normalizing constant."
-      }
+      },
+      "group": "score-based"
     },
     {
       "id": "conditional",
@@ -239,12 +279,16 @@
       "summary": {
         "zh": "通过对条件量取期望，得到可计算的训练目标。",
         "en": "Tractable training targets obtained by conditioning."
-      }
+      },
+      "group": "score-based"
     },
     {
       "id": "pf-ode",
       "type": "method",
       "area": "generative",
+      "also": [
+        "probability"
+      ],
       "label": {
         "zh": "Probability Flow ODE",
         "en": "Probability Flow ODE"
@@ -252,7 +296,8 @@
       "summary": {
         "zh": "与扩散 SDE 具有相同边缘分布的确定性流。",
         "en": "A deterministic flow with the same marginals as the diffusion SDE."
-      }
+      },
+      "group": "score-based"
     },
     {
       "id": "leworldmodel",

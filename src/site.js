@@ -65,6 +65,7 @@
     const mapNodes = [...document.querySelectorAll('.hub-map .map-node')];
     const mapSvg = document.querySelector('.hub-map .kmap-svg');
     const zoneLabels = [...document.querySelectorAll('.hub-map .zone-label')];
+    const mapRegions = [...document.querySelectorAll('.hub-map .region-fill, .hub-map .region-ring')];
     const empty = document.getElementById('notes-empty');
     const counter = document.getElementById('result-count');
     const clear = document.getElementById('clear-filters');
@@ -85,7 +86,8 @@
       const planned = state.area && !state.q ? facets.find((f) => f.dataset.value === state.area)?.dataset.planned : '';
       empty.textContent = planned ? empty.dataset.planned + planned : empty.dataset.empty;
       mapSvg?.classList.toggle('is-filter', !!state.area);
-      for (const n of mapNodes) n.classList.toggle('is-match', !!state.area && n.dataset.area === state.area);
+      for (const n of mapNodes) n.classList.toggle('is-match', !!state.area && n.dataset.area.split(' ').includes(state.area));
+      for (const r of mapRegions) r.classList.toggle('is-match', r.dataset.area === state.area);
       for (const z of zoneLabels) z.classList.toggle('is-current', z.dataset.area === state.area);
       counter.textContent = (shown === 1 ? counter.dataset.one : counter.dataset.many).replace(/\d+/, shown);
       for (const f of facets) f.setAttribute('aria-pressed', String(f.dataset.value === state.area));
@@ -142,36 +144,60 @@
     const nodes = [...svg.querySelectorAll('.map-node')];
     const chips = [...fig.querySelectorAll('.ochip')];
     const edges = [...svg.querySelectorAll('.map-edge')];
+    const doors = [...svg.querySelectorAll('[data-for]')];
+    const fills = [...svg.querySelectorAll('.region-fill, .region-ring')];
+    const names = [...svg.querySelectorAll('.region-name')];
     let selected = null;
     const paint = (id) => {
-      const near = new Set([id]);
+      // On a course map a relation implied by position is not drawn, but its two ends still light up together.
+      const near = new Set([id, ...(data[id]?.links || []).map((l) => l.id)]);
       for (const e of edges) {
         const hit = id && (e.dataset.from === id || e.dataset.to === id) && !e.classList.contains('is-off');
         e.classList.toggle('is-on', !!hit);
         if (hit) { near.add(e.dataset.from); near.add(e.dataset.to); }
       }
       for (const n of nodes) n.classList.toggle('is-on', !!id && near.has(n.dataset.id));
+      for (const d of doors) d.classList.toggle('is-on', !!id && near.has(d.dataset.for));
       svg.classList.toggle('is-focus', !!id);
+      // On the big map, the regions a concept stands in stay coloured.
+      const home = id ? (nodes.find((n) => n.dataset.id === id)?.dataset.area || '').split(' ') : [];
+      for (const f of fills) f.classList.toggle('is-on', home.includes(f.dataset.area));
+      for (const r of names) r.classList.toggle('is-on', home.includes(r.dataset.area));
+      svg.classList.toggle('is-area', !!id && fills.length > 0);
+    };
+    // Selecting a node also keeps what has to be read before it in view.
+    const trace = (id) => {
+      const path = new Set(id ? data[id].path.map((p) => p.id) : []);
+      for (const n of nodes) n.classList.toggle('is-path', path.has(n.dataset.id));
+      for (const e of edges) e.classList.toggle('is-path', !!id && path.has(e.dataset.from) && (path.has(e.dataset.to) || e.dataset.to === id));
     };
     const show = (id) => {
       selected = id;
       for (const n of [...nodes, ...chips]) n.classList.toggle('is-selected', n.dataset.id === id);
       paint(id);
+      trace(id);
       if (!panel) return;
       const d = data[id];
+      // A node of another subject is a link to that subject's map; one on this map is selected in place.
+      const jump = (x, base) => x.href
+        ? el('a', { className: `${base}${x.written ? '' : ' is-planned'}`, href: x.href }, el('small', { textContent: x.area }), x.label)
+        : el('button', { type: 'button', className: `${base}${x.written ? '' : ' is-planned'}`, textContent: x.label, onclick: () => show(x.id) });
       const rel = (l) => el('li', { className: `r-${l.rel}` },
         el('p', { className: 'rel-line' },
-          l.out || l.sym ? el('span', { className: 'self', textContent: d.label }) : el('button', { type: 'button', className: l.written ? 'jump' : 'jump is-planned', textContent: l.label, onclick: () => show(l.id) }),
+          l.out || l.sym ? el('span', { className: 'self', textContent: d.label }) : jump(l, 'jump'),
           el('b', { className: 'rel-tag', textContent: l.relTitle }),
-          l.out || l.sym ? el('button', { type: 'button', className: l.written ? 'jump' : 'jump is-planned', textContent: l.label, onclick: () => show(l.id) }) : el('span', { className: 'self', textContent: d.label })),
+          l.out || l.sym ? jump(l, 'jump') : el('span', { className: 'self', textContent: d.label })),
         l.why && el('p', { className: 'why', textContent: l.why }));
-      panel.replaceChildren(
+      panel.replaceChildren(...[
+        d.path.length > 0 && el('div', { className: `read-path t-${d.track}` }, el('span', { textContent: fig.dataset.path }),
+          el('ol', {}, ...d.path.map((x) => el('li', {}, jump(x, ''))), el('li', {}, el('span', { className: 'here', textContent: d.label })))),
         el('div', { className: `panel-main t-${d.track}` },
           el('p', { className: 'panel-meta' }, el('span', { className: 'chip', textContent: d.type }), d.area && el('span', { className: 'kind', textContent: d.area }), !d.url && el('span', { className: 'planned-tag', textContent: fig.dataset.planned })),
           el('h3', { textContent: d.label }),
+          d.areas?.length > 1 && el('p', { className: 'panel-areas' }, ...d.areas.map((a) => el('a', { className: a.color, href: a.href }, el('i'), a.title))),
           el('p', { className: 'summary', textContent: d.summary }),
           d.url && el('a', { className: 'pdf', href: d.url, textContent: `${fig.dataset.read} →` })),
-        el('ul', { className: 'rel-list' }, ...d.links.map(rel)));
+        el('ul', { className: 'rel-list' }, ...d.links.map(rel))].filter(Boolean));
     };
     for (const n of nodes) {
       const id = n.dataset.id;
@@ -182,10 +208,28 @@
       n.addEventListener('click', (e) => { if (panel) { e.preventDefault(); show(id); } });
       n.addEventListener('keydown', (e) => { if (panel && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(id); } });
     }
-    for (const chip of chips) chip.addEventListener('click', () => {
+    for (const chip of chips) if (chip.dataset.id) chip.addEventListener('click', () => {
       show(chip.dataset.id);
       panel?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
+    // "/map/<subject>/#<node>" opens that node: the address a door on another subject's map points to.
+    const fromHash = () => { const id = decodeURIComponent(location.hash.slice(1)); if (panel && data[id]) show(id); };
+    addEventListener('hashchange', fromHash);
+    fromHash();
+    // Pointing at a subject's name shows its region and every concept in it, shared ones included.
+    for (const name of svg.querySelectorAll('.region-name')) {
+      const area = name.dataset.area;
+      const on = () => {
+        for (const n of nodes) n.classList.toggle('is-on', n.dataset.area.split(' ').includes(area));
+        for (const e of edges) e.classList.remove('is-on');
+        for (const f of fills) f.classList.toggle('is-on', f.dataset.area === area);
+        for (const r of names) r.classList.toggle('is-on', r.dataset.area === area);
+        svg.classList.add('is-focus', 'is-area');
+      };
+      const off = () => paint(selected);
+      name.addEventListener('pointerenter', on); name.addEventListener('focus', on);
+      name.addEventListener('pointerleave', off); name.addEventListener('blur', off);
+    }
     // Hovering a link explains it in one sentence.
     const tip = el('div', { className: 'kmap-tip', hidden: true });
     fig.append(tip);

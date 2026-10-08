@@ -125,7 +125,7 @@ function build() {
       t: UI[lang], L: (v) => pick(v, lang), date: (iso) => formatDate(iso, lang), htmlLang: HTML_LANG[lang],
       notes: list, resources: res, resourceLinks,
       updated: list.map((n) => n.updated || n.date).sort().at(-1),
-      map: prepareMap(rawMap, site, list),
+      map: prepareMap(rawMap, site, list, href),
     };
     const pages = [
       ['/', layout.homePage(ctx)],
@@ -134,6 +134,7 @@ function build() {
       ['/about/', layout.aboutPage(ctx)],
       ...list.map((n) => [`/notes/${n.slug}/`, layout.notePage(ctx, n)]),
       ...res.map((r) => [`/resources/${r.slug}/`, layout.resourcePage(ctx, r)]),
+      ...ctx.map.areas.filter((a) => a.url).map((a) => [`/map/${a.id}/`, layout.coursePage(ctx, a)]),
     ];
     for (const [p, html] of pages) {
       write(`${base}${p}index.html`.replace(/^\//, ''), html);

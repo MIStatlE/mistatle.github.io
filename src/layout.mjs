@@ -3,7 +3,7 @@
 import { esc } from './markdown.mjs';
 import { icons } from './icons.mjs';
 import { markSvg } from './logo.mjs';
-import { renderMap, relationList } from './map.mjs';
+import { renderMap, renderCourse, relationList } from './map.mjs';
 import { LANGS, BASE, HTML_LANG } from './i18n.mjs';
 
 const NAV = ['notes', 'resources', 'about'];
@@ -284,6 +284,44 @@ ${paperList(ctx)}
   return page(ctx, { title: t.nav.notes, description: t.notesLede, path: '/notes/', active: 'notes', body, bodyClass: 'is-wide' });
 }
 
+// ---------- one subject's own map ----------
+
+export function coursePage(ctx, area) {
+  const { map, notes, t, L, href } = ctx;
+  const track = trackOf(ctx, area.track);
+  const mine = notes.filter((n) => n.area === area.id);
+  // Other subjects this one shares concepts with, or reaches through a relation.
+  const inside = (n) => n.areas.includes(area.id);
+  const linked = new Set([
+    ...area.nodes.flatMap((n) => n.areas),
+    ...map.edges.filter((e) => inside(e.a) !== inside(e.b)).flatMap((e) => [e.a.area, e.b.area]),
+  ].filter((id) => id !== area.id));
+  const relations = map.edges.filter((e) => inside(e.a) || inside(e.b));
+  const others = map.areas.filter((a) => a.url && a.id !== area.id);
+  const lede = t.courseLede(area.done, area.nodes.length, linked.size);
+  const body = `<header class="page-head course-head t-${area.track}">
+  <p class="crumbs"><a href="${href('/notes/')}#map">← ${esc(t.backMap)}</a><span class="chip t-${area.track}"><i></i>${esc(track?.glyph || '')} ${esc(L(track?.title))}</span></p>
+  <h1>${esc(L(area.title))}</h1>
+  <p class="lede">${esc(lede)}</p>
+</header>
+<section class="hub-map">
+${renderCourse(ctx, area)}
+${relations.length ? `<details class="fold">
+  <summary>${esc(t.courseRelations)}<small>${relations.length}</small></summary>
+  ${relationList(ctx, area)}
+</details>` : ''}
+</section>
+${mine.length ? `<section class="sec">
+${sectionHead('Notes', esc(t.courseNotes), `<a class="more" href="${href('/notes/')}#s-${area.id}">${esc(t.courseAll)} <b>→</b></a>`)}
+${noteGrid(ctx, mine)}
+</section>` : ''}
+${others.length ? `<nav class="course-nav" aria-label="${esc(t.courseOthers)}">
+  <p class="label">${esc(t.courseOthers)}</p>
+  <p>${others.map((a) => `<a class="chip-link t-${a.track}" href="${a.url}"><i></i>${esc(L(a.title))}<small>${a.done}/${a.nodes.length}</small></a>`).join('')}</p>
+</nav>` : ''}`;
+  return page(ctx, { title: `${L(area.title)} · ${t.mapTitle}`, description: lede, path: `/map/${area.id}/`, active: 'notes', body, bodyClass: 'is-wide' });
+}
+
 export const redirectPage = (ctx, to) => `<!doctype html><html lang="${ctx.htmlLang}"><head><meta charset="utf-8"><title>${esc(ctx.site.name)}</title><link rel="canonical" href="${ctx.site.url}${to}"><meta http-equiv="refresh" content="0; url=${to}"><meta name="robots" content="noindex"></head><body><a href="${to}">${esc(ctx.site.name)}</a></body></html>`;
 
 // ---------- note ----------
@@ -348,7 +386,7 @@ ${n.html}
       <span class="glyph-badge" aria-hidden="true">${esc(track?.glyph || '∗')}</span>
       <div>
         ${coll ? `<p class="topic-name">${esc(t.inTopic)} · ${esc(L(coll.title))}</p>\n        <p class="q"><a href="${href('/notes/')}#${coll.id}">${esc(L(coll.question))}</a></p>` : `<p class="topic-name">${esc(t.inMap)}</p>`}
-        ${around ? `<div class="around">${around}</div><p class="to-map"><a href="${href('/notes/')}#map">${esc(t.viewMap)} <b>→</b></a></p>` : ''}
+        ${around ? `<div class="around">${around}</div><p class="to-map"><a href="${node.mapUrl}">${esc(t.viewMap)} <b>→</b></a></p>` : ''}
       </div>
     </aside>` : ''}
     <p class="feedback">${esc(t.feedback)} <a href="mailto:${site.email}">${site.email}</a></p>
@@ -485,7 +523,7 @@ export function searchIndex(ctx) {
   const area = (id) => L(site.areas.find((a) => a.id === id)?.title) || '';
   return [
     ...notes.map((n) => ({ k: t.kindNote, t: n.title, d: n.description, u: n.url, x: [area(n.area), ...n.tags].join(' ') })),
-    ...map.nodes.filter((n) => !n.url).map((n) => ({ k: t.kindPlanned, t: L(n.label), d: L(n.summary) || '', u: href('/notes/') + '#map', x: area(n.area) })),
+    ...map.nodes.filter((n) => !n.url).map((n) => ({ k: t.kindPlanned, t: L(n.label), d: L(n.summary) || '', u: n.mapUrl, x: area(n.area) })),
     ...papers.map((p) => ({ k: t.kindPaper, t: p.title, d: `${p.authors} · ${p.venue} ${p.year}`, u: notes.find((n) => n.slug === p.note)?.url || p.url, x: (p.tags || []).join(' ') })),
     ...ctx.resources.map((r) => ({ k: t.kindResource, t: r.title, d: r.description, u: r.url, x: r.tags.join(' ') })),
   ];
